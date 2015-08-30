@@ -35,20 +35,30 @@ int Window::addTab(const QUrl &url)
   QWebEngineView *view = new QWebEngineView;
   view->load(url);
 
-  PagePtr page = make_shared<Page>(label, view, view);
-  connect(label, &TabLabel::triggered, this, [=] { setCurrentPage(page); });
+  Page *page = new Page(label, view, view, this);
+  connect(page, &Page::triggered, this, &Window::setCurrentPage);
+  connect(page, &Page::titleChanged, this, &Window::updateTitle);
 
   m_pages.append(page);
-
   m_tabs->addWidget(page->label());
   m_stack->addWidget(page->viewport());
-
   setCurrentPage(page);
 
   return index;
 }
 
-void Window::setCurrentPage(PagePtr page)
+void Window::setCurrentPage(Page *p)
 {
-  m_stack->setCurrentWidget(page->viewport());
+  m_current = p;
+  m_stack->setCurrentWidget(m_current->viewport());
+
+  updateTitle(m_current);
+}
+
+void Window::updateTitle(Page *p)
+{
+  if(p != m_current)
+    return;
+
+  setWindowTitle(m_current->engine()->title());
 }

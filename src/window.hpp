@@ -1,7 +1,5 @@
 #include <QWidget>
 
-#include "page_fwd.hpp"
-
 class Page;
 class QHBoxLayout;
 class QStackedLayout;
@@ -13,10 +11,13 @@ public:
   Window(QWidget *parent = 0);
 
   int addTab(const QUrl &url);
-  void setCurrentPage(PagePtr page);
+  void setCurrentPage(Page *);
 
 private:
-  QList<PagePtr> m_pages;
+  void updateTitle(Page *);
+
+  QList<Page *> m_pages;
   QStackedLayout *m_stack;
   QHBoxLayout *m_tabs;
+  Page *m_current;
 };

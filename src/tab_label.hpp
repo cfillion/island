@@ -10,7 +10,6 @@ public:
 
   int index() const { return m_index; }
   void setIndex(const int);
-
   void setTitle(const QString &);
 
 Q_SIGNALS:
