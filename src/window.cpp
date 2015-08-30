@@ -3,6 +3,7 @@
 #include "page.hpp"
 #include "tab_bar.hpp"
 #include "tab_label.hpp"
+#include "viewport.hpp"
 
 #include <QStackedLayout>
 #include <QUrl>
@@ -26,7 +27,8 @@ Window::Window(QWidget *parent)
   connect(m_tabs, &TabBar::triggered, this, &Window::setCurrentTab);
   connect(m_tabs, &TabBar::wheelMotion, this, &Window::currentTabMotion);
 
-  addPage(QUrl("http://cfillion.tk"));
+  addPage(QUrl("http://cfillion.tk"), NewTab);
+  addPage(QUrl("http://cfillion.tk"), Split);
   addPage(QUrl("http://files.cfillion.tk"));
   addPage(QUrl("data:text/html,<h1>test</h1>"));
   setCurrentTab(0);
@@ -34,7 +36,7 @@ Window::Window(QWidget *parent)
 
 int Window::addPage(const QUrl &url, const Window::OpenMode mode)
 {
-  int index = currentIndex();
+  int index = currentPageIndex();
 
   if(index == -1)
     index = m_pages.size();
@@ -45,20 +47,25 @@ int Window::addPage(const QUrl &url, const Window::OpenMode mode)
   connect(page, &Page::titleChanged, this, &Window::updateTitle);
   connect(page, &Page::iconChanged, this, &Window::updateTitle);
 
-  m_pages.insert(index, page);
-  m_tabs->insertLabel(index, page->label());
-  updatePageIndex(index);
+  Viewport *vp;
+  const Page *current = 0;
+  if(!m_pages.isEmpty())
+    current = m_current ? m_current : m_pages.last();
 
   switch(mode) {
-  case Fullscreen:
+  case NewTab:
+    vp = new Viewport(this);
+    vp->addPage(page);
+    m_stack->addWidget(vp);
     break;
-  case VSplit:
-    break;
-  case HSplit:
+  case Split:
+    current->viewport()->addPage(page);
     break;
   };
 
-  m_stack->addWidget(page->engine());
+  m_pages.insert(index, page);
+  m_tabs->insertLabel(index, page->label());
+  updatePageIndex(index);
 
   return index;
 }
@@ -72,15 +79,14 @@ void Window::setCurrentTab(const int index)
 void Window::setCurrentPage(Page *p)
 {
   m_current = p;
-  m_stack->setCurrentWidget(m_current->engine());
+  m_stack->setCurrentWidget(m_current->viewport());
 
   updateTitle(m_current);
 }
 
 void Window::currentTabMotion(const bool polarity, const int size)
 {
-  // TODO: switch from viewport to viewport instead of page to page
-  int index = currentIndex();
+  int index = currentPageIndex();
   index += polarity ? -size : size;
 
   // TODO: add a setting to enable or disable infinite scrolling
@@ -100,7 +106,7 @@ void Window::updateTitle(Page *p)
   setWindowIcon(m_current->icon());
 }
 
-int Window::currentIndex() const
+int Window::currentPageIndex() const
 {
   return m_current ? m_current->label()->index() : -1;
 }

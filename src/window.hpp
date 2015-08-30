@@ -8,18 +8,17 @@ class TabLabel;
 class Window : public QWidget {
 public:
   enum OpenMode {
-    Fullscreen,
-    VSplit,
-    HSplit
+    NewTab,
+    Split,
   };
 
   Window(QWidget *parent = 0);
 
-  int addPage(const QUrl &url, const OpenMode mode = Fullscreen);
+  int addPage(const QUrl &url, const OpenMode mode = NewTab);
   void setCurrentPage(Page *);
   void setCurrentTab(const int index);
   void currentTabMotion(const bool polarity, const int size);
-  int currentIndex() const;
+  int currentPageIndex() const;
 
 private:
   void updateTitle(Page *);

@@ -5,6 +5,7 @@ class QNetworkReply;
 class QWebEngineView;
 class QWidget;
 class TabLabel;
+class Viewport;
 class Window;
 
 #include <QIcon>
@@ -15,8 +16,9 @@ class Page : public QObject {
 public:
   Page(const QUrl &, Window *parent = 0);
 
+  void setViewport(Viewport *v) { m_viewport = v; }
+  Viewport *viewport() const { return m_viewport; }
   TabLabel *label() const { return m_label; }
-  // QWidget *viewport() const { return m_viewport; }
   QWebEngineView *engine() const { return m_engine; }
   Window *window() const { return m_window; }
 
@@ -29,10 +31,10 @@ Q_SIGNALS:
 private:
   void fetchIcon(const QUrl &);
 
-  TabLabel *m_label;
-  // QWidget *m_viewport; // TODO: s/QWidget/Viewport
-  QWebEngineView *m_engine;
   Window *m_window;
+  Viewport *m_viewport;
+  TabLabel *m_label;
+  QWebEngineView *m_engine;
 
   QNetworkReply *m_iconReply;
   QNetworkAccessManager *m_iconRequestManager;
