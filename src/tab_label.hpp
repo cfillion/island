@@ -1,3 +1,6 @@
+#ifndef ISLAND_TAB_LABEL_HPP
+#define ISLAND_TAB_LABEL_HPP
+
 #include <QWidget>
 
 class QLabel;
@@ -23,3 +26,5 @@ private:
   QLabel *m_prefix;
   QLabel *m_title;
 };
+
+#endif

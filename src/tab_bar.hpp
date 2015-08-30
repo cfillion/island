@@ -1,3 +1,6 @@
+#ifndef ISLAND_TAB_BAR_HPP
+#define ISLAND_TAB_BAR_HPP
+
 #include <QWidget>
 
 class QHBoxLayout;
@@ -24,3 +27,5 @@ private:
 
   QHBoxLayout *m_layout;
 };
+
+#endif

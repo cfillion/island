@@ -1,3 +1,6 @@
+#ifndef ISLAND_PAGE_HPP
+#define ISLAND_PAGE_HPP
+
 #include <QObject>
 
 class QNetworkAccessManager;
@@ -24,6 +27,11 @@ public:
 
   const QIcon &icon() const { return m_icon; }
 
+  int index() const;
+  void setIndex(const int);
+  bool isCurrent() const;
+  void setCurrent(const bool);
+
 Q_SIGNALS:
   void titleChanged(Page *);
   void iconChanged(Page *);
@@ -40,3 +48,5 @@ private:
   QNetworkAccessManager *m_iconRequestManager;
   QIcon m_icon;
 };
+
+#endif

@@ -2,7 +2,6 @@
 
 #include "page.hpp"
 #include "tab_bar.hpp"
-#include "tab_label.hpp"
 #include "viewport.hpp"
 
 #include <QStackedLayout>
@@ -78,6 +77,10 @@ void Window::setCurrentTab(const int index)
 
 void Window::setCurrentPage(Page *p)
 {
+  if(m_current)
+    m_current->setCurrent(false);
+
+  p->setCurrent(true);
   m_current = p;
   m_stack->setCurrentWidget(m_current->viewport());
 
@@ -108,12 +111,12 @@ void Window::updateTitle(Page *p)
 
 int Window::currentPageIndex() const
 {
-  return m_current ? m_current->label()->index() : -1;
+  return m_current ? m_current->index() : -1;
 }
 
 void Window::updatePageIndex(const int start)
 {
   const int pageCount = m_pages.size();
   for(int i = start; i < pageCount; i++)
-    m_pages[i]->label()->setIndex(i);
+    m_pages[i]->setIndex(i);
 }

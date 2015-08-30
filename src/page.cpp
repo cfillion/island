@@ -47,3 +47,23 @@ void Page::fetchIcon(const QUrl &url)
     Q_EMIT iconChanged(this);
   });
 }
+
+int Page::index() const
+{
+  return label()->index();
+}
+
+void Page::setIndex(const int newIndex)
+{
+  label()->setIndex(newIndex);
+}
+
+bool Page::isCurrent() const
+{
+  return label()->isEnabled();
+}
+
+void Page::setCurrent(const bool isCurrent)
+{
+  label()->setEnabled(isCurrent);
+}

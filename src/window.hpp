@@ -1,3 +1,6 @@
+#ifndef ISLAND_WINDOW_HPP
+#define ISLAND_WINDOW_HPP
+
 #include <QWidget>
 
 class Page;
@@ -29,3 +32,5 @@ private:
   TabBar *m_tabs;
   Page *m_current;
 };
+
+#endif

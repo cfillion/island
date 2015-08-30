@@ -1,4 +1,5 @@
-#ifndef VIEWPORT_HPP
+#ifndef ISLAND_VIEWPORT_HPP
+#define ISLAND_VIEWPORT_HPP
 
 #include <QWidget>
 

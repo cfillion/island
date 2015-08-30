@@ -9,6 +9,7 @@ TabLabel::TabLabel(QWidget *parent)
   : QWidget(parent)
 {
   setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
+  setDisabled(true);
 
   m_icon = new QLabel;
   m_prefix = new QLabel;
