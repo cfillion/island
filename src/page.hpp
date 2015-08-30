@@ -23,7 +23,6 @@ public:
   const QIcon &icon() const { return m_icon; }
 
 Q_SIGNALS:
-  void triggered(Page *);
   void titleChanged(Page *);
   void iconChanged(Page *);
 

@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QLabel>
+#include <QMouseEvent>
 
 TabLabel::TabLabel(QWidget *parent)
   : QWidget(parent)
@@ -35,9 +36,4 @@ void TabLabel::setTitle(const QString &newTitle)
 void TabLabel::setIcon(const QIcon &icon)
 {
   m_icon->setPixmap(icon.pixmap(16, 16));
-}
-
-void TabLabel::mousePressEvent(QMouseEvent *)
-{
-  Q_EMIT triggered(m_index);
 }

@@ -13,12 +13,6 @@ public:
   void setTitle(const QString &);
   void setIcon(const QIcon &);
 
-Q_SIGNALS:
-  void triggered(const int index);
-
-protected:
-  void mousePressEvent(QMouseEvent *);
-
 private:
   int m_index;
 

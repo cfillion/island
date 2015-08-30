@@ -14,9 +14,6 @@ Page::Page(TabLabel *l, QWidget *v, QWebEngineView *e, Window *w)
   // TODO: use a global app-wide instance
   m_iconRequestManager = new QNetworkAccessManager(this);
 
-  connect(label(), &TabLabel::triggered,
-      this, [=] { Q_EMIT triggered(this); });
-
   connect(engine(), &QWebEngineView::titleChanged,
       this, [=] { Q_EMIT titleChanged(this); });
 

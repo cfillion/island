@@ -1,9 +1,9 @@
 #include <QWidget>
 
 class Page;
-class QHBoxLayout;
 class QStackedLayout;
 class QWebEngineView;
+class TabBar;
 class TabLabel;
 
 class Window : public QWidget {
@@ -12,12 +12,14 @@ public:
 
   int addTab(const QUrl &url);
   void setCurrentPage(Page *);
+  void setCurrentTab(const int index);
+  void currentTabMotion(const bool polarity, const int size);
 
 private:
   void updateTitle(Page *);
 
   QList<Page *> m_pages;
   QStackedLayout *m_stack;
-  QHBoxLayout *m_tabs;
+  TabBar *m_tabs;
   Page *m_current;
 };
