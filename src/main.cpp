@@ -1,14 +1,13 @@
 #include <QApplication>
 
-#include <QWebEngineView>
+#include "window.hpp"
 
 int main(int argc, char *argv[])
 {
   QApplication app(argc, argv);
 
-  QWebEngineView *view = new QWebEngineView();
-  view->load(QUrl("http://cfillion.tk"));
-  view->show();
+  Window win;
+  win.show();
 
   return app.exec();
 }
