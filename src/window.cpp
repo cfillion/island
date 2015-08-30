@@ -5,13 +5,14 @@
 #include "tab_label.hpp"
 
 #include <QStackedLayout>
+#include <QUrl>
 #include <QVBoxLayout>
 #include <QWebEngineView>
 
 using namespace std;
 
 Window::Window(QWidget *parent)
-  : QWidget(parent)
+  : QWidget(parent), m_current(0)
 {
   m_tabs = new TabBar;
   m_stack = new QStackedLayout;
@@ -25,29 +26,39 @@ Window::Window(QWidget *parent)
   connect(m_tabs, &TabBar::triggered, this, &Window::setCurrentTab);
   connect(m_tabs, &TabBar::wheelMotion, this, &Window::currentTabMotion);
 
-  addTab(QUrl("http://cfillion.tk"));
-  addTab(QUrl("http://files.cfillion.tk"));
-  addTab(QUrl("data:text/html,<h1>test</h1>"));
+  addPage(QUrl("http://cfillion.tk"));
+  addPage(QUrl("http://files.cfillion.tk"));
+  addPage(QUrl("data:text/html,<h1>test</h1>"));
+  setCurrentTab(0);
 }
 
-int Window::addTab(const QUrl &url)
+int Window::addPage(const QUrl &url, const Window::OpenMode mode)
 {
-  const int index = m_pages.size();
+  int index = currentIndex();
 
-  TabLabel *label = new TabLabel;
-  label->setIndex(index);
+  if(index == -1)
+    index = m_pages.size();
+  else
+    index += 1; // insert after the current index
 
-  QWebEngineView *view = new QWebEngineView;
-  view->load(url);
-
-  Page *page = new Page(label, view, view, this);
+  Page *page = new Page(url, this);
   connect(page, &Page::titleChanged, this, &Window::updateTitle);
   connect(page, &Page::iconChanged, this, &Window::updateTitle);
 
-  m_pages.append(page);
-  m_tabs->addLabel(page->label());
-  m_stack->addWidget(page->viewport());
-  setCurrentPage(page);
+  m_pages.insert(index, page);
+  m_tabs->insertLabel(index, page->label());
+  updatePageIndex(index);
+
+  switch(mode) {
+  case Fullscreen:
+    break;
+  case VSplit:
+    break;
+  case HSplit:
+    break;
+  };
+
+  m_stack->addWidget(page->engine());
 
   return index;
 }
@@ -61,7 +72,7 @@ void Window::setCurrentTab(const int index)
 void Window::setCurrentPage(Page *p)
 {
   m_current = p;
-  m_stack->setCurrentWidget(m_current->viewport());
+  m_stack->setCurrentWidget(m_current->engine());
 
   updateTitle(m_current);
 }
@@ -69,8 +80,8 @@ void Window::setCurrentPage(Page *p)
 void Window::currentTabMotion(const bool polarity, const int size)
 {
   // TODO: switch from viewport to viewport instead of page to page
-  int index = m_current->label()->index();
-  index += polarity ? size : -size;
+  int index = currentIndex();
+  index += polarity ? -size : size;
 
   // TODO: add a setting to enable or disable infinite scrolling
   if(index < 0)
@@ -87,4 +98,16 @@ void Window::updateTitle(Page *p)
 
   setWindowTitle(m_current->engine()->title());
   setWindowIcon(m_current->icon());
+}
+
+int Window::currentIndex() const
+{
+  return m_current ? m_current->label()->index() : -1;
+}
+
+void Window::updatePageIndex(const int start)
+{
+  const int pageCount = m_pages.size();
+  for(int i = start; i < pageCount; i++)
+    m_pages[i]->label()->setIndex(i);
 }

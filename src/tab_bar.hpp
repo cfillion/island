@@ -8,7 +8,7 @@ class TabBar : public QWidget {
 
 public:
   TabBar(QWidget *parent = 0);
-  void addLabel(TabLabel *);
+  void insertLabel(const int index, TabLabel *);
 
 Q_SIGNALS:
   void triggered(const int index);

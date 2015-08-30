@@ -14,9 +14,9 @@ TabBar::TabBar(QWidget *parent)
   m_layout->setContentsMargins(QMargins());
 }
 
-void TabBar::addLabel(TabLabel *label)
+void TabBar::insertLabel(const int index, TabLabel *label)
 {
-  m_layout->addWidget(label);
+  m_layout->insertWidget(index, label);
 }
 
 void TabBar::mousePressEvent(QMouseEvent *e)
