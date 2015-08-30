@@ -10,6 +10,7 @@ TabBar::TabBar(QWidget *parent)
   : QWidget(parent), m_wheelDelta(0), m_wheelPolarity(false)
 {
   m_layout = new QHBoxLayout(this);
+  m_layout->setSpacing(1);
   m_layout->setContentsMargins(QMargins());
 }
 

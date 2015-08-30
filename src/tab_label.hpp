@@ -13,6 +13,9 @@ public:
   void setTitle(const QString &);
   void setIcon(const QIcon &);
 
+protected:
+  void resizeEvent(QResizeEvent *) override;
+
 private:
   int m_index;
 
