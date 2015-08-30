@@ -72,10 +72,10 @@ void Window::currentTabMotion(const bool polarity, const int size)
   int index = m_current->label()->index();
   index += polarity ? size : -size;
 
-  if(index < 0)
-    index = m_pages.size() - index;
-
   // TODO: add a setting to enable or disable infinite scrolling
+  if(index < 0)
+    index = m_pages.size() - abs(index);
+
   index %= m_pages.size();
   setCurrentPage(m_pages[index]);
 }

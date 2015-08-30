@@ -56,6 +56,6 @@ void TabBar::wheelEvent(QWheelEvent *e)
   if(m_wheelDelta < 1.0)
     return;
 
-  Q_EMIT wheelMotion(polarity, 5);
+  Q_EMIT wheelMotion(polarity, 1);
   m_wheelDelta = 0;
 }
