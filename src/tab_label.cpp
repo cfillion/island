@@ -1,11 +1,13 @@
 #include "tab_label.hpp"
 
 #include <QHBoxLayout>
+#include <QIcon>
 #include <QLabel>
 
 TabLabel::TabLabel(QWidget *parent)
   : QWidget(parent)
 {
+  m_icon = new QLabel;
   m_prefix = new QLabel;
   m_title = new QLabel;
 
@@ -13,9 +15,10 @@ TabLabel::TabLabel(QWidget *parent)
   setTitle("---");
 
   QHBoxLayout *layout = new QHBoxLayout(this);
+  layout->addWidget(m_icon);
   layout->addWidget(m_prefix);
   layout->addWidget(m_title);
-  layout->setStretch(1, 2);
+  layout->setStretch(2, 2);
 }
 
 void TabLabel::setIndex(const int newIndex)
@@ -27,6 +30,11 @@ void TabLabel::setIndex(const int newIndex)
 void TabLabel::setTitle(const QString &newTitle)
 {
   m_title->setText(newTitle);
+}
+
+void TabLabel::setIcon(const QIcon &icon)
+{
+  m_icon->setPixmap(icon.pixmap(16, 16));
 }
 
 void TabLabel::mousePressEvent(QMouseEvent *)

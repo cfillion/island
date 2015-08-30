@@ -11,6 +11,7 @@ public:
   int index() const { return m_index; }
   void setIndex(const int);
   void setTitle(const QString &);
+  void setIcon(const QIcon &);
 
 Q_SIGNALS:
   void triggered(const int index);
@@ -21,6 +22,7 @@ protected:
 private:
   int m_index;
 
+  QLabel *m_icon;
   QLabel *m_prefix;
   QLabel *m_title;
 };

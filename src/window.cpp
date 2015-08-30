@@ -38,6 +38,7 @@ int Window::addTab(const QUrl &url)
   Page *page = new Page(label, view, view, this);
   connect(page, &Page::triggered, this, &Window::setCurrentPage);
   connect(page, &Page::titleChanged, this, &Window::updateTitle);
+  connect(page, &Page::iconChanged, this, &Window::updateTitle);
 
   m_pages.append(page);
   m_tabs->addWidget(page->label());
@@ -61,4 +62,5 @@ void Window::updateTitle(Page *p)
     return;
 
   setWindowTitle(m_current->engine()->title());
+  setWindowIcon(m_current->icon());
 }
