@@ -17,6 +17,7 @@ Window::Window(QWidget *parent)
   m_stack = new QStackedLayout;
 
   QVBoxLayout *main_layout = new QVBoxLayout(this);
+  main_layout->setSpacing(0);
   main_layout->setContentsMargins(QMargins());
   main_layout->addWidget(m_tabs);
   main_layout->addLayout(m_stack);
@@ -26,6 +27,7 @@ Window::Window(QWidget *parent)
 
   addTab(QUrl("http://cfillion.tk"));
   addTab(QUrl("http://files.cfillion.tk"));
+  addTab(QUrl("data:text/html,<h1>test</h1>"));
 }
 
 int Window::addTab(const QUrl &url)

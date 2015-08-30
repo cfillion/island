@@ -11,11 +11,13 @@ TabLabel::TabLabel(QWidget *parent)
   m_icon = new QLabel;
   m_prefix = new QLabel;
   m_title = new QLabel;
+  m_title->setTextFormat(Qt::PlainText);
 
   setIndex(0);
   setTitle("---");
 
   QHBoxLayout *layout = new QHBoxLayout(this);
+  layout->setContentsMargins(QMargins());
   layout->addWidget(m_icon);
   layout->addWidget(m_prefix);
   layout->addWidget(m_title);
