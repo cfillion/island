@@ -8,8 +8,6 @@
 #include <QUrl>
 #include <QVBoxLayout>
 
-using namespace std;
-
 Window::Window(QWidget *parent)
   : QWidget(parent), m_current(0)
 {
@@ -46,17 +44,17 @@ int Window::addPage(const QUrl &url, const Window::OpenMode mode)
   connect(page, &Page::iconChanged, this, &Window::updateTitle);
   connect(page, &Page::triggered, this, &Window::setCurrentPage);
 
-  Viewport *vp;
   const Page *current = 0;
   if(!m_pages.isEmpty())
     current = m_current ? m_current : m_pages.last();
 
   switch(mode) {
-  case NewTab:
-    vp = new Viewport(this);
+  case NewTab: {
+    Viewport *vp = new Viewport(this);
     vp->addPage(page);
     m_stack->addWidget(vp);
     break;
+  }
   case Split:
     current->viewport()->addPage(page);
     break;
