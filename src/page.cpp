@@ -24,6 +24,10 @@ Page::Page(const QUrl &url, Window *parent)
   connect(engine(), &Engine::iconUrlChanged, this, &Page::fetchIcon);
   connect(engine(), &Engine::titleChanged, this, &Page::setTitle);
   connect(engine(), &Engine::triggered, this, &Page::trigger);
+
+  connect(engine(), &Engine::loadStarted, label(), &TabLabel::showProgress);
+  connect(engine(), &Engine::loadProgress, label(), &TabLabel::setProgress);
+  connect(engine(), &Engine::loadFinished, label(), &TabLabel::hideProgress);
 }
 
 void Page::fetchIcon(const QUrl &url)

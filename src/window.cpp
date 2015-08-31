@@ -26,8 +26,8 @@ Window::Window(QWidget *parent)
   connect(m_tabs, &TabBar::wheelMotion, this, &Window::currentTabMotion);
 
   addPage(QUrl("http://cfillion.tk"), NewTab);
-  addPage(QUrl("http://cfillion.tk"), Split);
   addPage(QUrl("http://files.cfillion.tk"));
+  addPage(QUrl("http://google.com/"), Split);
   addPage(QUrl("data:text/html,<h1>test</h1>"));
   setCurrentTab(0);
 }

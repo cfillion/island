@@ -16,6 +16,10 @@ public:
   void setTitle(const QString &);
   void setIcon(const QIcon &);
 
+  void showProgress();
+  void setProgress(const int);
+  void hideProgress();
+
 protected:
   void resizeEvent(QResizeEvent *) override;
 
@@ -25,6 +29,7 @@ private:
   QLabel *m_icon;
   QLabel *m_prefix;
   QLabel *m_title;
+  QLabel *m_progress;
 };
 
 #endif
