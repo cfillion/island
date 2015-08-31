@@ -1,9 +1,9 @@
 #include "viewport.hpp"
 
+#include "engine.hpp"
 #include "page.hpp"
 
 #include <QHBoxLayout>
-#include <QWebEngineView>
 
 Viewport::Viewport(QWidget *parent)
   : QWidget(parent)

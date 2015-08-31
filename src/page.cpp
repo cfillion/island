@@ -1,29 +1,28 @@
 #include "page.hpp"
 
+#include "engine.hpp"
 #include "tab_label.hpp"
 #include "window.hpp"
 
 #include <QNetworkReply>
 #include <QNetworkRequest>
-#include <QWebEngineView>
 
 Page::Page(const QUrl &url, Window *parent)
   : QObject(parent), m_window(parent), m_viewport(0), m_iconReply(0)
 {
+  m_engine = new Engine(url, parent);
+
   m_label = new TabLabel(parent);
-  m_engine = new QWebEngineView(parent);
-  m_engine->load(url);
+  m_label->setTitle("*"+url
+    .toString(QUrl::RemoveScheme | QUrl::RemoveUserInfo | QUrl::DecodeReserved)
+    .remove(QRegExp("^//(www\\.)?"))
+  );
 
   // TODO: use a global app-wide instance
   m_iconRequestManager = new QNetworkAccessManager(this);
 
-  connect(engine(), &QWebEngineView::titleChanged,
-      this, [=] { Q_EMIT titleChanged(this); });
-
-  connect(engine(), &QWebEngineView::iconUrlChanged, this, &Page::fetchIcon);
-
-  connect(engine(), &QWebEngineView::titleChanged,
-      label(), &TabLabel::setTitle);
+  connect(engine(), &Engine::iconUrlChanged, this, &Page::fetchIcon);
+  connect(engine(), &Engine::titleChanged, this, &Page::setTitle);
 }
 
 void Page::fetchIcon(const QUrl &url)
@@ -46,6 +45,14 @@ void Page::fetchIcon(const QUrl &url)
     label()->setIcon(m_icon);
     Q_EMIT iconChanged(this);
   });
+}
+
+void Page::setTitle(const QString &newTitle)
+{
+  m_title = newTitle;
+  label()->setTitle(m_title);
+
+  Q_EMIT titleChanged(this);
 }
 
 int Page::index() const

@@ -7,7 +7,6 @@
 #include <QStackedLayout>
 #include <QUrl>
 #include <QVBoxLayout>
-#include <QWebEngineView>
 
 using namespace std;
 
@@ -105,7 +104,7 @@ void Window::updateTitle(Page *p)
   if(p != m_current)
     return;
 
-  setWindowTitle(m_current->engine()->title());
+  setWindowTitle(m_current->title());
   setWindowIcon(m_current->icon());
 }
 

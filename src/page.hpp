@@ -3,9 +3,9 @@
 
 #include <QObject>
 
+class Engine;
 class QNetworkAccessManager;
 class QNetworkReply;
-class QWebEngineView;
 class QWidget;
 class TabLabel;
 class Viewport;
@@ -22,10 +22,11 @@ public:
   void setViewport(Viewport *v) { m_viewport = v; }
   Viewport *viewport() const { return m_viewport; }
   TabLabel *label() const { return m_label; }
-  QWebEngineView *engine() const { return m_engine; }
+  Engine *engine() const { return m_engine; }
   Window *window() const { return m_window; }
 
   const QIcon &icon() const { return m_icon; }
+  const QString &title() { return m_title; }
 
   int index() const;
   void setIndex(const int);
@@ -37,16 +38,18 @@ Q_SIGNALS:
   void iconChanged(Page *);
 
 private:
+  void setTitle(const QString &);
   void fetchIcon(const QUrl &);
 
   Window *m_window;
   Viewport *m_viewport;
   TabLabel *m_label;
-  QWebEngineView *m_engine;
+  Engine *m_engine;
 
   QNetworkReply *m_iconReply;
   QNetworkAccessManager *m_iconRequestManager;
   QIcon m_icon;
+  QString m_title;
 };
 
 #endif

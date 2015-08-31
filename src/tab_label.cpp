@@ -17,7 +17,7 @@ TabLabel::TabLabel(QWidget *parent)
   m_title->setTextFormat(Qt::PlainText);
 
   setIndex(0);
-  setTitle("---");
+  setTitle(QString());
 
   QHBoxLayout *layout = new QHBoxLayout(this);
   layout->setAlignment(Qt::AlignLeft);
@@ -37,7 +37,7 @@ void TabLabel::setIndex(const int newIndex)
 
 void TabLabel::setTitle(const QString &newTitle)
 {
-  m_title->setText(newTitle);
+  m_title->setText(newTitle.isEmpty() ? "---" : newTitle);
 }
 
 void TabLabel::setIcon(const QIcon &icon)
