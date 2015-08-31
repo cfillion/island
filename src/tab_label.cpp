@@ -10,6 +10,7 @@ TabLabel::TabLabel(QWidget *parent)
 {
   setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
   setDisabled(true);
+  setFixedHeight(16); // TODO: setting
 
   m_icon = new QLabel;
   m_prefix = new QLabel;
@@ -47,8 +48,9 @@ void TabLabel::setTitle(const QString &newTitle)
 
 void TabLabel::setIcon(const QIcon &icon)
 {
-  m_icon->setPixmap(icon.pixmap(16, 16));
-  m_icon->setHidden(m_icon->pixmap()->isNull());
+  const QPixmap pixmap(icon.pixmap(height(), height()));
+  m_icon->setPixmap(pixmap);
+  m_icon->setHidden(pixmap.isNull());
 }
 
 void TabLabel::showProgress()
