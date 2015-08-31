@@ -23,6 +23,7 @@ Page::Page(const QUrl &url, Window *parent)
 
   connect(engine(), &Engine::iconUrlChanged, this, &Page::fetchIcon);
   connect(engine(), &Engine::titleChanged, this, &Page::setTitle);
+  connect(engine(), &Engine::urlChanged, this, &Page::setUrl);
   connect(engine(), &Engine::triggered, this, &Page::trigger);
 
   connect(engine(), &Engine::loadStarted, label(), &TabLabel::showProgress);
@@ -84,4 +85,10 @@ void Page::trigger()
 {
   if(!isCurrent())
     Q_EMIT triggered(this);
+}
+
+void Page::setUrl(const QUrl &url)
+{
+  m_url = url;
+  Q_EMIT urlChanged(this);
 }

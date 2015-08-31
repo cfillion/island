@@ -5,8 +5,8 @@
 
 class Page;
 class QStackedLayout;
+class StatusBar;
 class TabBar;
-class TabLabel;
 
 class Window : public QWidget {
 public:
@@ -24,13 +24,14 @@ public:
   int currentPageIndex() const;
 
 private:
-  void updateTitle(Page *);
+  void pageChanged(Page *);
   void updatePageIndex(const int start = 0);
 
   QList<Page *> m_pages;
   QStackedLayout *m_stack;
   TabBar *m_tabs;
   Page *m_current;
+  StatusBar *m_status;
 };
 
 #endif

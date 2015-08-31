@@ -3,6 +3,7 @@
 #include "page.hpp"
 #include "tab_bar.hpp"
 #include "viewport.hpp"
+#include "statusbar.hpp"
 
 #include <QStackedLayout>
 #include <QUrl>
@@ -13,12 +14,14 @@ Window::Window(QWidget *parent)
 {
   m_tabs = new TabBar;
   m_stack = new QStackedLayout;
+  m_status = new StatusBar;
 
   QVBoxLayout *main_layout = new QVBoxLayout(this);
   main_layout->setSpacing(0);
   main_layout->setContentsMargins(QMargins());
   main_layout->addWidget(m_tabs);
   main_layout->addLayout(m_stack);
+  main_layout->addWidget(m_status);
 
   connect(m_tabs, &TabBar::triggered, this, &Window::setCurrentTab);
   connect(m_tabs, &TabBar::wheelMotion, this, &Window::currentTabMotion);
@@ -40,8 +43,9 @@ int Window::addPage(const QUrl &url, const Window::OpenMode mode)
     index += 1; // insert after the current index
 
   Page *page = new Page(url, this);
-  connect(page, &Page::titleChanged, this, &Window::updateTitle);
-  connect(page, &Page::iconChanged, this, &Window::updateTitle);
+  connect(page, &Page::titleChanged, this, &Window::pageChanged);
+  connect(page, &Page::iconChanged, this, &Window::pageChanged);
+  connect(page, &Page::urlChanged, this, &Window::pageChanged);
   connect(page, &Page::triggered, this, &Window::setCurrentPage);
 
   const Page *current = 0;
@@ -82,7 +86,7 @@ void Window::setCurrentPage(Page *p)
   m_current = p;
   m_stack->setCurrentWidget(m_current->viewport());
 
-  updateTitle(m_current);
+  pageChanged(m_current);
 }
 
 void Window::currentTabMotion(const bool polarity, const int size)
@@ -98,13 +102,14 @@ void Window::currentTabMotion(const bool polarity, const int size)
   setCurrentPage(m_pages[index]);
 }
 
-void Window::updateTitle(Page *p)
+void Window::pageChanged(Page *p)
 {
   if(p != m_current)
     return;
 
   setWindowTitle(m_current->title());
   setWindowIcon(m_current->icon());
+  m_status->setUrl(m_current->url());
 }
 
 int Window::currentPageIndex() const

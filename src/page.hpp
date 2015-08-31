@@ -12,6 +12,7 @@ class Viewport;
 class Window;
 
 #include <QIcon>
+#include <QUrl>
 
 class Page : public QObject {
   Q_OBJECT
@@ -26,7 +27,8 @@ public:
   Window *window() const { return m_window; }
 
   const QIcon &icon() const { return m_icon; }
-  const QString &title() { return m_title; }
+  const QString &title() const { return m_title; }
+  const QUrl &url() const { return m_url; }
 
   int index() const;
   void setIndex(const int);
@@ -36,11 +38,13 @@ public:
 Q_SIGNALS:
   void titleChanged(Page *);
   void iconChanged(Page *);
+  void urlChanged(Page *);
   void triggered(Page *);
 
 private:
   void setTitle(const QString &);
   void fetchIcon(const QUrl &);
+  void setUrl(const QUrl &);
   void trigger();
 
   Window *m_window;
@@ -52,6 +56,7 @@ private:
   QNetworkAccessManager *m_iconRequestManager;
   QIcon m_icon;
   QString m_title;
+  QUrl m_url;
 };
 
 #endif
