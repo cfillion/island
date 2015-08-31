@@ -1,4 +1,4 @@
-#include "tab_label.hpp"
+#include "tablabel.hpp"
 
 #include <QHBoxLayout>
 #include <QIcon>

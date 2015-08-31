@@ -1,7 +1,7 @@
 #include "window.hpp"
 
 #include "page.hpp"
-#include "tab_bar.hpp"
+#include "tabbar.hpp"
 #include "viewport.hpp"
 #include "statusbar.hpp"
 

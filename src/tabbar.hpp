@@ -1,5 +1,5 @@
-#ifndef ISLAND_TAB_BAR_HPP
-#define ISLAND_TAB_BAR_HPP
+#ifndef ISLAND_TABBAR_HPP
+#define ISLAND_TABBAR_HPP
 
 #include <QWidget>
 

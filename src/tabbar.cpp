@@ -1,6 +1,6 @@
-#include "tab_bar.hpp"
+#include "tabbar.hpp"
 
-#include "tab_label.hpp"
+#include "tablabel.hpp"
 
 #include <QHBoxLayout>
 #include <QMouseEvent>
