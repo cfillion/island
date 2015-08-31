@@ -7,6 +7,8 @@
 StatusBar::StatusBar(QWidget *parent)
   : QWidget(parent)
 {
+  setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
+
   m_url = new QLabel;
   m_url->setAlignment(Qt::AlignRight);
   m_url->setTextFormat(Qt::PlainText);

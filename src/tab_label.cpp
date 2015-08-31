@@ -18,6 +18,7 @@ TabLabel::TabLabel(QWidget *parent)
   m_progress = new QLabel;
 
   setIndex(0);
+  setIcon(QIcon());
   setTitle(QString());
   hideProgress();
 
