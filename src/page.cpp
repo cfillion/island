@@ -8,7 +8,7 @@
 #include <QNetworkRequest>
 
 Page::Page(const QUrl &url, Window *parent)
-  : QObject(parent), m_window(parent), m_viewport(0), m_iconReply(0)
+  : QObject(parent), m_window(parent), m_viewport(0), m_iconReply(0), m_url(url)
 {
   m_engine = new Engine(url, parent);
 
