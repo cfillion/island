@@ -21,14 +21,22 @@ Page::Page(const QUrl &url, Window *parent)
   // TODO: use a global app-wide instance
   m_iconRequestManager = new QNetworkAccessManager(this);
 
+  connect(engine(), &Engine::titleChanged, label(), &TabLabel::setTitle);
   connect(engine(), &Engine::iconUrlChanged, this, &Page::fetchIcon);
-  connect(engine(), &Engine::titleChanged, this, &Page::setTitle);
   connect(engine(), &Engine::urlChanged, this, &Page::setUrl);
-  connect(engine(), &Engine::triggered, this, &Page::trigger);
+  connect(engine(), &Engine::triggered, this, [=] { Q_EMIT triggered(this); });
 
-  connect(engine(), &Engine::loadStarted, label(), &TabLabel::showProgress);
-  connect(engine(), &Engine::loadProgress, label(), &TabLabel::setProgress);
-  connect(engine(), &Engine::loadFinished, label(), &TabLabel::hideProgress);
+  connect(engine(), &Engine::loadStarted, this, &Page::loadStarted);
+  connect(engine(), &Engine::loadProgress, this, &Page::loadProgress);
+  connect(engine(), &Engine::loadFinished, this, &Page::loadFinished);
+
+  connect(label(), &TabLabel::textChanged, this, &Page::titleChanged);
+
+  connect(this, &Page::iconChanged, label(), &TabLabel::setIcon);
+  connect(this, &Page::loadStarted, label(), &TabLabel::showProgress);
+  connect(this, &Page::loadProgress, label(), &TabLabel::setProgress);
+  connect(this, &Page::loadFinished, label(), &TabLabel::hideProgress);
+
 }
 
 void Page::fetchIcon(const QUrl &url)
@@ -47,18 +55,13 @@ void Page::fetchIcon(const QUrl &url)
   connect(m_iconReply, &QNetworkReply::finished, this, [=] {
     const QByteArray data = m_iconReply->readAll();
     m_icon = QIcon(QPixmap::fromImage(QImage::fromData(data)));
-
-    label()->setIcon(m_icon);
-    Q_EMIT iconChanged(this);
+    Q_EMIT iconChanged(m_icon);
   });
 }
 
-void Page::setTitle(const QString &newTitle)
+QString Page::displayTitle() const
 {
-  m_title = newTitle;
-  label()->setTitle(m_title);
-
-  Q_EMIT titleChanged(this);
+  return label()->text();
 }
 
 int Page::index() const
@@ -79,12 +82,6 @@ bool Page::isCurrent() const
 void Page::setCurrent(const bool isCurrent)
 {
   label()->setEnabled(isCurrent);
-}
-
-void Page::trigger()
-{
-  if(!isCurrent())
-    Q_EMIT triggered(this);
 }
 
 void Page::setUrl(const QUrl &url)

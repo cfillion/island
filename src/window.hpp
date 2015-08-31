@@ -24,8 +24,7 @@ public:
   int currentPageIndex() const;
 
 private:
-  void pageChanged(Page *);
-  void updatePageIndex(const int start = 0);
+  void shiftPageIndexes(const int start = 0);
 
   QList<Page *> m_pages;
   QStackedLayout *m_stack;

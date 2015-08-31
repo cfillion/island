@@ -42,6 +42,7 @@ void TabLabel::setIndex(const int newIndex)
 void TabLabel::setTitle(const QString &newTitle)
 {
   m_title->setText(newTitle.isEmpty() ? "---" : newTitle);
+  Q_EMIT textChanged(text());
 }
 
 void TabLabel::setIcon(const QIcon &icon)
@@ -53,16 +54,21 @@ void TabLabel::setIcon(const QIcon &icon)
 void TabLabel::showProgress()
 {
   m_progress->show();
+  Q_EMIT textChanged(text());
 }
 
 void TabLabel::setProgress(const int progress)
 {
   m_progress->setText(QString("[%1%]").arg(progress));
+  Q_EMIT textChanged(text());
 }
 
 void TabLabel::hideProgress()
 {
   m_progress->hide();
+
+  // this is actually called before showProgress,
+  // so this is the best spot for both the initialization and the reset
   setProgress(0);
 }
 
@@ -72,4 +78,12 @@ void TabLabel::resizeEvent(QResizeEvent *e)
 
   m_prefix->setVisible(m_icon->isHidden() || width > 32);
   m_title->setVisible(width > 48);
+}
+
+QString TabLabel::text() const
+{
+  if(m_progress->isVisible())
+    return QString("%0 %2").arg(m_progress->text(), m_title->text());
+  else
+    return m_title->text();
 }

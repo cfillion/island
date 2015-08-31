@@ -3,15 +3,26 @@
 
 #include <QWidget>
 
+class Page;
 class QLabel;
+class QProgressBar;
 
 class StatusBar : public QWidget {
 public:
   StatusBar(QWidget *parent = 0);
-  void setUrl(const QUrl &);
+
+  void setPage(Page *);
+  void setPageCount(const int);
 
 private:
+  void updateLabels();
+  void showProgressBar();
+
+  Page *m_page;
+  int m_pageCount;
   QLabel *m_url;
+  QProgressBar *m_progress;
+  QLabel *m_tabPosition;
 };
 
 #endif

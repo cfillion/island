@@ -28,8 +28,8 @@ Window::Window(QWidget *parent)
 
   addPage(QUrl("http://cfillion.tk"), NewTab);
   addPage(QUrl("http://files.cfillion.tk"));
-  addPage(QUrl("http://google.com/"), Split);
-  addPage(QUrl("data:text/html,<h1>test</h1>"));
+  addPage(QUrl("data:text/html,<h1>test</h1>"), Split);
+  addPage(QUrl("http://google.com/"));
   setCurrentTab(0);
 }
 
@@ -43,9 +43,6 @@ int Window::addPage(const QUrl &url, const Window::OpenMode mode)
     index += 1; // insert after the current index
 
   Page *page = new Page(url, this);
-  connect(page, &Page::titleChanged, this, &Window::pageChanged);
-  connect(page, &Page::iconChanged, this, &Window::pageChanged);
-  connect(page, &Page::urlChanged, this, &Window::pageChanged);
   connect(page, &Page::triggered, this, &Window::setCurrentPage);
 
   const Page *current = 0;
@@ -66,7 +63,9 @@ int Window::addPage(const QUrl &url, const Window::OpenMode mode)
 
   m_pages.insert(index, page);
   m_tabs->insertLabel(index, page->label());
-  updatePageIndex(index);
+  shiftPageIndexes(index);
+
+  m_status->setPageCount(m_pages.size());
 
   return index;
 }
@@ -79,14 +78,24 @@ void Window::setCurrentTab(const int index)
 
 void Window::setCurrentPage(Page *p)
 {
-  if(m_current)
+  if(m_current) {
     m_current->setCurrent(false);
+    m_current->disconnect(this);
+    connect(m_current, &Page::triggered, this, &Window::setCurrentPage);
+  }
+
+  p->disconnect(this);
+  connect(p, &Page::titleChanged, this, &Window::setWindowTitle);
+  connect(p, &Page::iconChanged, this, &Window::setWindowIcon);
 
   p->setCurrent(true);
   m_current = p;
-  m_stack->setCurrentWidget(m_current->viewport());
 
-  pageChanged(m_current);
+  m_stack->setCurrentWidget(m_current->viewport());
+  m_status->setPage(m_current);
+
+  setWindowTitle(m_current->displayTitle());
+  setWindowIcon(m_current->icon());
 }
 
 void Window::currentTabMotion(const bool polarity, const int size)
@@ -102,22 +111,12 @@ void Window::currentTabMotion(const bool polarity, const int size)
   setCurrentPage(m_pages[index]);
 }
 
-void Window::pageChanged(Page *p)
-{
-  if(p != m_current)
-    return;
-
-  setWindowTitle(m_current->title());
-  setWindowIcon(m_current->icon());
-  m_status->setUrl(m_current->url());
-}
-
 int Window::currentPageIndex() const
 {
   return m_current ? m_current->index() : -1;
 }
 
-void Window::updatePageIndex(const int start)
+void Window::shiftPageIndexes(const int start)
 {
   const int pageCount = m_pages.size();
   for(int i = start; i < pageCount; i++)

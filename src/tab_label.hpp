@@ -20,6 +20,11 @@ public:
   void setProgress(const int);
   void hideProgress();
 
+  QString text() const;
+
+Q_SIGNALS:
+  void textChanged(const QString &);
+
 protected:
   void resizeEvent(QResizeEvent *) override;
 

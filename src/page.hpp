@@ -26,9 +26,9 @@ public:
   Engine *engine() const { return m_engine; }
   Window *window() const { return m_window; }
 
-  const QIcon &icon() const { return m_icon; }
-  const QString &title() const { return m_title; }
   const QUrl &url() const { return m_url; }
+  const QIcon &icon() const { return m_icon; }
+  QString displayTitle() const;
 
   int index() const;
   void setIndex(const int);
@@ -36,16 +36,19 @@ public:
   void setCurrent(const bool);
 
 Q_SIGNALS:
-  void titleChanged(Page *);
-  void iconChanged(Page *);
+  void titleChanged(const QString &);
+  void iconChanged(const QIcon &);
+  void progressChanged(Page *);
   void urlChanged(Page *);
   void triggered(Page *);
 
+  void loadStarted();
+  void loadProgress(const int);
+  void loadFinished();
+
 private:
-  void setTitle(const QString &);
-  void fetchIcon(const QUrl &);
   void setUrl(const QUrl &);
-  void trigger();
+  void fetchIcon(const QUrl &);
 
   Window *m_window;
   Viewport *m_viewport;
@@ -55,7 +58,6 @@ private:
   QNetworkReply *m_iconReply;
   QNetworkAccessManager *m_iconRequestManager;
   QIcon m_icon;
-  QString m_title;
   QUrl m_url;
 };
 
