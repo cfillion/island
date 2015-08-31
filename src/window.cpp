@@ -44,6 +44,7 @@ int Window::addPage(const QUrl &url, const Window::OpenMode mode)
   Page *page = new Page(url, this);
   connect(page, &Page::titleChanged, this, &Window::updateTitle);
   connect(page, &Page::iconChanged, this, &Window::updateTitle);
+  connect(page, &Page::triggered, this, &Window::setCurrentPage);
 
   Viewport *vp;
   const Page *current = 0;

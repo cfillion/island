@@ -36,10 +36,12 @@ public:
 Q_SIGNALS:
   void titleChanged(Page *);
   void iconChanged(Page *);
+  void triggered(Page *);
 
 private:
   void setTitle(const QString &);
   void fetchIcon(const QUrl &);
+  void trigger();
 
   Window *m_window;
   Viewport *m_viewport;

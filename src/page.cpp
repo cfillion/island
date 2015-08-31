@@ -23,6 +23,7 @@ Page::Page(const QUrl &url, Window *parent)
 
   connect(engine(), &Engine::iconUrlChanged, this, &Page::fetchIcon);
   connect(engine(), &Engine::titleChanged, this, &Page::setTitle);
+  connect(engine(), &Engine::triggered, this, &Page::trigger);
 }
 
 void Page::fetchIcon(const QUrl &url)
@@ -73,4 +74,10 @@ bool Page::isCurrent() const
 void Page::setCurrent(const bool isCurrent)
 {
   label()->setEnabled(isCurrent);
+}
+
+void Page::trigger()
+{
+  if(!isCurrent())
+    Q_EMIT triggered(this);
 }

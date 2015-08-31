@@ -5,15 +5,20 @@
 #include <QWebEngineView>
 
 class Engine : public QWebEngineView {
+  Q_OBJECT
+
 public:
   Engine(const QUrl &url, QWidget *parent = 0);
-  const QUrl &initialUrl() const { return m_initialUrl; }
+
+Q_SIGNALS:
+  void triggered();
 
 protected:
-  void paintEvent(QPaintEvent *) override;
+  void showEvent(QShowEvent *) override;
+  void enterEvent(QEvent *) override;
 
 private:
-  QUrl m_initialUrl;
+  QUrl m_deferredUrl;
 };
 
 #endif
