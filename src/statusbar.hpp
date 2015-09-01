@@ -14,12 +14,17 @@ public:
   void setPage(Page *);
   void setPageCount(const int);
 
+protected:
+  void resizeEvent(QResizeEvent *) override;
+
 private:
   void updateLabels();
 
   Page *m_page;
   int m_pageCount;
 
+  QLabel *m_status;
+  QLabel *m_buffer;
   QLabel *m_url;
   QProgressBar *m_progress;
   QLabel *m_tabPosition;

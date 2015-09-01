@@ -5,12 +5,20 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QProgressBar>
+#include <QResizeEvent>
 #include <QUrl>
 
 StatusBar::StatusBar(QWidget *parent)
   : QWidget(parent), m_page(0), m_pageCount(0)
 {
   setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
+  setFixedHeight(16);
+
+  m_status = new QLabel;
+  m_buffer = new QLabel;
+
+  m_status->setText("-- INSERT --");
+  m_buffer->setText("5d");
 
   m_url = new QLabel;
   m_url->setAlignment(Qt::AlignRight);
@@ -25,11 +33,14 @@ StatusBar::StatusBar(QWidget *parent)
 
   QHBoxLayout *layout = new QHBoxLayout(this);
   layout->setSpacing(5);
-  layout->setContentsMargins(QMargins());
+  layout->setContentsMargins(5, 0, 2, 0);
+  layout->addWidget(m_status);
+  layout->addWidget(m_buffer);
   layout->addWidget(m_url);
   layout->addWidget(m_tabPosition);
   layout->addWidget(m_progress);
-  layout->setStretch(0, 2);
+  layout->setStretch(0, 20);
+  layout->setStretch(1, 2);
 }
 
 void StatusBar::setPage(Page *p)
@@ -63,4 +74,14 @@ void StatusBar::setPageCount(const int pageCount)
 {
   m_pageCount = pageCount;
   updateLabels();
+}
+
+void StatusBar::resizeEvent(QResizeEvent *e)
+{
+  const int width = e->size().width();
+  const bool showAll = width > 150;
+
+  m_url->setVisible(width > 400);
+  m_buffer->setVisible(showAll);
+  m_tabPosition->setVisible(showAll);
 }
