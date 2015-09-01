@@ -1,5 +1,7 @@
 #include "engine.hpp"
 
+#include <QChildEvent>
+
 Engine::Engine(const QUrl &url, QWidget *parent)
   : QWebEngineView(parent), m_deferredUrl(url)
 {
@@ -14,7 +16,20 @@ void Engine::showEvent(QShowEvent *)
   }
 }
 
-void Engine::enterEvent(QEvent *)
+void Engine::childEvent(QChildEvent *e)
 {
-  Q_EMIT triggered();
+  if(!e->added())
+    return;
+
+  // using childEvent is required to handle events on the webview
+  // see https://bugreports.qt.io/browse/QTBUG-43602
+  e->child()->installEventFilter(this);
+}
+
+bool Engine::eventFilter(QObject *, QEvent *e)
+{
+  if(e->type() == QEvent::MouseButtonPress)
+    Q_EMIT triggered();
+
+  return false;
 }

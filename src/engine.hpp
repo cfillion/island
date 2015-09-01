@@ -15,7 +15,8 @@ Q_SIGNALS:
 
 protected:
   void showEvent(QShowEvent *) override;
-  void enterEvent(QEvent *) override;
+  void childEvent(QChildEvent *) override;
+  bool eventFilter(QObject *, QEvent *) override;
 
 private:
   QUrl m_deferredUrl;
