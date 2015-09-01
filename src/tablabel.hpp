@@ -16,9 +16,10 @@ public:
   void setTitle(const QString &);
   void setIcon(const QIcon &);
 
-  void showProgress();
-  void setProgress(const int);
-  void hideProgress();
+  bool isLoading() const;
+  void setLoading(const bool);
+  int loadProgress() const { return m_loadProgress; }
+  void setLoadProgress(const int);
 
   QString text() const;
 
@@ -30,6 +31,7 @@ protected:
 
 private:
   int m_index;
+  int m_loadProgress;
 
   QLabel *m_icon;
   QLabel *m_prefix;

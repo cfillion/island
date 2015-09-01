@@ -16,7 +16,6 @@ public:
 
 private:
   void updateLabels();
-  void showProgressBar();
 
   Page *m_page;
   int m_pageCount;

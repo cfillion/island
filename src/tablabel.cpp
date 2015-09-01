@@ -21,7 +21,7 @@ TabLabel::TabLabel(QWidget *parent)
   setIndex(0);
   setIcon(QIcon());
   setTitle(QString());
-  hideProgress();
+  setLoading(false);
 
   QHBoxLayout *layout = new QHBoxLayout(this);
   layout->setAlignment(Qt::AlignLeft);
@@ -53,25 +53,22 @@ void TabLabel::setIcon(const QIcon &icon)
   m_icon->setHidden(pixmap.isNull());
 }
 
-void TabLabel::showProgress()
+bool TabLabel::isLoading() const
 {
-  m_progress->show();
-  Q_EMIT textChanged(text());
+  return m_progress->isVisible();
 }
 
-void TabLabel::setProgress(const int progress)
+void TabLabel::setLoading(const bool isLoading)
 {
-  m_progress->setText(QString("[%1%]").arg(progress));
-  Q_EMIT textChanged(text());
+  m_progress->setVisible(isLoading);
+  setLoadProgress(0);
 }
 
-void TabLabel::hideProgress()
+void TabLabel::setLoadProgress(const int progress)
 {
-  m_progress->hide();
-
-  // this is actually called before showProgress,
-  // so this is the best spot for both the initialization and the reset
-  setProgress(0);
+  m_loadProgress = progress;
+  m_progress->setText(QString("[%1%]").arg(m_loadProgress));
+  Q_EMIT textChanged(text());
 }
 
 void TabLabel::resizeEvent(QResizeEvent *e)

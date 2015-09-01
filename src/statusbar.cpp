@@ -34,24 +34,19 @@ StatusBar::StatusBar(QWidget *parent)
 
 void StatusBar::setPage(Page *p)
 {
-  if(m_page) {
+  if(m_page)
     m_page->disconnect(this);
-    m_page->disconnect(m_progress);
-  }
 
   m_page = p;
   connect(m_page, &Page::urlChanged, this, &StatusBar::updateLabels);
-
-  connect(m_page, &Page::loadStarted, m_progress, &QProgressBar::show);
-  connect(m_page, &Page::loadStarted, m_progress, &QProgressBar::reset);
-  connect(m_page, &Page::loadProgress, m_progress, &QProgressBar::setValue);
-  connect(m_page, &Page::loadFinished, m_progress, &QProgressBar::hide);
+  connect(m_page, &Page::progressChanged, this, &StatusBar::updateLabels);
 
   updateLabels();
 }
 
 void StatusBar::updateLabels()
 {
+  // this can be called from setPageCount before the current page is set
   if(!m_page)
     return;
 
@@ -60,16 +55,13 @@ void StatusBar::updateLabels()
 
   const int pageId = m_page->index() + 1;
   m_tabPosition->setText(QString("[%0/%2]").arg(pageId).arg(m_pageCount));
+
+  m_progress->setVisible(m_page->isLoading());
+  m_progress->setValue(m_page->loadProgress());
 }
 
 void StatusBar::setPageCount(const int pageCount)
 {
   m_pageCount = pageCount;
   updateLabels();
-}
-
-void StatusBar::showProgressBar()
-{
-  m_progress->setValue(0);
-  m_progress->show();
 }

@@ -12,7 +12,6 @@ class Viewport;
 class Window;
 
 #include <QIcon>
-#include <QUrl>
 
 class Page : public QObject {
   Q_OBJECT
@@ -26,29 +25,29 @@ public:
   Engine *engine() const { return m_engine; }
   Window *window() const { return m_window; }
 
-  const QUrl &url() const { return m_url; }
   const QIcon &icon() const { return m_icon; }
   QString displayTitle() const;
+  QUrl url() const;
 
   int index() const;
   void setIndex(const int);
   bool isCurrent() const;
   void setCurrent(const bool);
+  bool isLoading() const;
+  int loadProgress() const;
 
 Q_SIGNALS:
   void titleChanged(const QString &);
   void iconChanged(const QIcon &);
-  void progressChanged(Page *);
-  void urlChanged(Page *);
+  void urlChanged(const QUrl &);
+  void progressChanged();
   void triggered(Page *);
-
-  void loadStarted();
-  void loadProgress(const int);
-  void loadFinished();
 
 private:
   void setUrl(const QUrl &);
   void fetchIcon(const QUrl &);
+  void setLoading(const bool);
+  void setLoadProgress(const int);
 
   Window *m_window;
   Viewport *m_viewport;
@@ -57,8 +56,8 @@ private:
 
   QNetworkReply *m_iconReply;
   QNetworkAccessManager *m_iconRequestManager;
+
   QIcon m_icon;
-  QUrl m_url;
 };
 
 #endif
