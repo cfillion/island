@@ -9,9 +9,11 @@ class Engine : public QWebEngineView {
 
 public:
   Engine(const QUrl &url, QWidget *parent = 0);
+  QUrl url() const;
 
 Q_SIGNALS:
   void triggered();
+  void linkHovered(const QString &);
 
 protected:
   void showEvent(QShowEvent *) override;

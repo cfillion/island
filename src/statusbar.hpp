@@ -19,6 +19,7 @@ private:
 
   Page *m_page;
   int m_pageCount;
+
   QLabel *m_url;
   QProgressBar *m_progress;
   QLabel *m_tabPosition;

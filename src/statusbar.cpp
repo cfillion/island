@@ -38,7 +38,7 @@ void StatusBar::setPage(Page *p)
     m_page->disconnect(this);
 
   m_page = p;
-  connect(m_page, &Page::urlChanged, this, &StatusBar::updateLabels);
+  connect(m_page, &Page::displayUrlChanged, this, &StatusBar::updateLabels);
   connect(m_page, &Page::progressChanged, this, &StatusBar::updateLabels);
 
   updateLabels();
@@ -50,8 +50,7 @@ void StatusBar::updateLabels()
   if(!m_page)
     return;
 
-  const QUrl url = m_page->url();
-  m_url->setText(url.toString(QUrl::RemoveUserInfo | QUrl::DecodeReserved));
+  m_url->setText(m_page->displayUrl());
 
   const int pageId = m_page->index() + 1;
   m_tabPosition->setText(QString("[%0/%2]").arg(pageId).arg(m_pageCount));

@@ -85,7 +85,7 @@ void Window::setCurrentPage(Page *p)
   }
 
   p->disconnect(this);
-  connect(p, &Page::titleChanged, this, &Window::setWindowTitle);
+  connect(p, &Page::displayTitleChanged, this, &Window::setWindowTitle);
   connect(p, &Page::iconChanged, this, &Window::setWindowIcon);
 
   p->setCurrent(true);

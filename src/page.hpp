@@ -27,7 +27,7 @@ public:
 
   const QIcon &icon() const { return m_icon; }
   QString displayTitle() const;
-  QUrl url() const;
+  QString displayUrl() const;
 
   int index() const;
   void setIndex(const int);
@@ -37,9 +37,9 @@ public:
   int loadProgress() const;
 
 Q_SIGNALS:
-  void titleChanged(const QString &);
+  void displayTitleChanged(const QString &);
   void iconChanged(const QIcon &);
-  void urlChanged(const QUrl &);
+  void displayUrlChanged();
   void progressChanged();
   void triggered(Page *);
 
@@ -48,6 +48,7 @@ private:
   void fetchIcon(const QUrl &);
   void setLoading(const bool);
   void setLoadProgress(const int);
+  void setHoveredLink(const QString &);
 
   Window *m_window;
   Viewport *m_viewport;
@@ -58,6 +59,7 @@ private:
   QNetworkAccessManager *m_iconRequestManager;
 
   QIcon m_icon;
+  QString m_hoveredLink;
 };
 
 #endif

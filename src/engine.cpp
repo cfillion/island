@@ -5,6 +5,8 @@
 Engine::Engine(const QUrl &url, QWidget *parent)
   : QWebEngineView(parent), m_deferredUrl(url)
 {
+  connect(page(), &QWebEnginePage::linkHovered, this, &Engine::linkHovered);
+
   // TODO: optional load on focus setting
 }
 
@@ -32,4 +34,17 @@ bool Engine::eventFilter(QObject *, QEvent *e)
     Q_EMIT triggered();
 
   return false;
+}
+
+QUrl Engine::url() const
+{
+  if(!m_deferredUrl.isEmpty())
+    return m_deferredUrl;
+
+  QUrl url(page()->url());
+
+  if(url.isEmpty())
+    return page()->requestedUrl();
+
+  return url;
 }

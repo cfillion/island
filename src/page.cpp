@@ -22,16 +22,18 @@ Page::Page(const QUrl &url, Window *parent)
   m_iconRequestManager = new QNetworkAccessManager(this);
 
   connect(this, &Page::iconChanged, label(), &TabLabel::setIcon);
-  connect(engine(), &Engine::titleChanged, label(), &TabLabel::setTitle);
-  connect(label(), &TabLabel::textChanged, this, &Page::titleChanged);
-  connect(engine(), &Engine::urlChanged, this, &Page::urlChanged);
-  connect(engine(), &Engine::iconUrlChanged, this, &Page::fetchIcon);
-  connect(engine(), &Engine::triggered, this, [=] { Q_EMIT triggered(this); });
 
+  connect(engine(), &Engine::titleChanged, label(), &TabLabel::setTitle);
+  connect(engine(), &Engine::triggered, this, [=] { Q_EMIT triggered(this); });
+  connect(engine(), &Engine::linkHovered, this, &Page::setHoveredLink);
+  connect(engine(), &Engine::iconUrlChanged, this, &Page::fetchIcon);
   connect(engine(), &Engine::loadStarted, this, [=] { setLoading(true); });
   connect(engine(), &Engine::loadProgress, this, &Page::setLoadProgress);
   connect(engine(), &Engine::loadFinished, this, [=] { setLoading(false); });
 
+  // proxy connections
+  connect(label(), &TabLabel::textChanged, this, &Page::displayTitleChanged);
+  connect(engine(), &Engine::urlChanged, this, &Page::displayUrlChanged);
 }
 
 void Page::fetchIcon(const QUrl &url)
@@ -79,14 +81,13 @@ void Page::setCurrent(const bool isCurrent)
   label()->setEnabled(isCurrent);
 }
 
-QUrl Page::url() const
+QString Page::displayUrl() const
 {
+  if(!m_hoveredLink.isEmpty())
+    return m_hoveredLink;
+
   const QUrl url(engine()->url());
-
-  if(url.isEmpty())
-    return engine()->page()->requestedUrl();
-
-  return url;
+  return url.toString(QUrl::RemoveUserInfo | QUrl::DecodeReserved);
 }
 
 bool Page::isLoading() const
@@ -109,4 +110,10 @@ void Page::setLoadProgress(const int progress)
 {
   label()->setLoadProgress(progress);
   Q_EMIT progressChanged();
+}
+
+void Page::setHoveredLink(const QString &url)
+{
+  m_hoveredLink = url;
+  Q_EMIT displayUrlChanged();
 }
