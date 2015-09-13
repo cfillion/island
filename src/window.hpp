@@ -29,13 +29,14 @@ public:
 
 private:
   void shiftPageIndexes(const int start = 0);
+  QString keyEventToString(const QKeyEvent *) const;
 
   QList<Page *> m_pages;
   QStackedLayout *m_stack;
   TabBar *m_tabs;
   Page *m_current;
   StatusBar *m_status;
-  QString m_buffer;
+  QStringList m_buffer;
 };
 
 #endif

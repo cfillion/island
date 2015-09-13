@@ -77,7 +77,7 @@ void StatusBar::setPageCount(const int pageCount)
 
 void StatusBar::setBuffer(const QString &text)
 {
-  m_buffer->setText(text.right(10));
+  m_buffer->setText(text.right(16));
 }
 
 void StatusBar::resizeEvent(QResizeEvent *e)
