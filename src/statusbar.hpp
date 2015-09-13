@@ -14,6 +14,8 @@ public:
   void setPage(Page *);
   void setPageCount(const int);
 
+  void setBuffer(const QString &);
+
 protected:
   void resizeEvent(QResizeEvent *) override;
 

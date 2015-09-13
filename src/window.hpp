@@ -9,6 +9,8 @@ class StatusBar;
 class TabBar;
 
 class Window : public QWidget {
+  Q_OBJECT
+
 public:
   enum OpenMode {
     NewTab,
@@ -23,6 +25,8 @@ public:
   void currentTabMotion(const bool polarity, const int size);
   int currentPageIndex() const;
 
+  bool handleKeyEvent(const QKeyEvent *);
+
 private:
   void shiftPageIndexes(const int start = 0);
 
@@ -31,6 +35,7 @@ private:
   TabBar *m_tabs;
   Page *m_current;
   StatusBar *m_status;
+  QString m_buffer;
 };
 
 #endif

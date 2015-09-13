@@ -5,6 +5,8 @@
 #include "viewport.hpp"
 #include "statusbar.hpp"
 
+#include <QApplication>
+#include <QKeyEvent>
 #include <QStackedLayout>
 #include <QUrl>
 #include <QVBoxLayout>
@@ -121,4 +123,26 @@ void Window::shiftPageIndexes(const int start)
   const int pageCount = m_pages.size();
   for(int i = start; i < pageCount; i++)
     m_pages[i]->setIndex(i);
+}
+
+bool Window::handleKeyEvent(const QKeyEvent *e)
+{
+  const int key = e->key();
+  QString buffer;
+
+  switch(key) {
+  case Qt::Key_Escape:
+  case Qt::Key_Return:
+  case Qt::Key_Enter:
+  case Qt::Key_Backspace:
+    m_buffer.clear();
+    break;
+  }
+
+  if(key >= Qt::Key_Exclam && key <= Qt::Key_ydiaeresis)
+    m_buffer += e->text();
+
+  m_status->setBuffer(m_buffer);
+
+  return true;
 }

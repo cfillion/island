@@ -18,7 +18,6 @@ StatusBar::StatusBar(QWidget *parent)
   m_buffer = new QLabel;
 
   m_status->setText("-- INSERT --");
-  m_buffer->setText("5d");
 
   m_url = new QLabel;
   m_url->setAlignment(Qt::AlignRight);
@@ -74,6 +73,11 @@ void StatusBar::setPageCount(const int pageCount)
 {
   m_pageCount = pageCount;
   updateLabels();
+}
+
+void StatusBar::setBuffer(const QString &text)
+{
+  m_buffer->setText(text.right(10));
 }
 
 void StatusBar::resizeEvent(QResizeEvent *e)
