@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 
+#include "mapping.hpp"
 #include "window.hpp"
 
 class EventFilter : public QObject {
@@ -18,12 +19,15 @@ protected:
 
 int main(int argc, char *argv[])
 {
-  EventFilter filter;
-
   QApplication app(argc, argv);
+
+  EventFilter filter;
   app.installEventFilter(&filter);
 
-  Window win;
+  Mapping mapping;
+  mapping.nmap("i", ":insert");
+
+  Window win(&mapping);
   win.show();
 
   return app.exec();

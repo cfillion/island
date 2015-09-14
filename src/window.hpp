@@ -3,6 +3,9 @@
 
 #include <QWidget>
 
+#include "global.hpp"
+
+class Mapping;
 class Page;
 class QStackedLayout;
 class StatusBar;
@@ -17,7 +20,7 @@ public:
     Split,
   };
 
-  Window(QWidget *parent = 0);
+  Window(Mapping *mapping, QWidget *parent = 0);
 
   int addPage(const QUrl &url, const OpenMode mode = NewTab);
   void setCurrentPage(Page *);
@@ -27,10 +30,18 @@ public:
 
   bool handleKeyEvent(const QKeyEvent *);
 
+Q_SIGNALS:
+  void bufferChanged(const QStringList &);
+  void modeChanged(const Island::Mode);
+
 private:
   void shiftPageIndexes(const int start = 0);
   QString keyEventToString(const QKeyEvent *) const;
+  void setMode(const Island::Mode);
+  void execPrompt(const QString &);
 
+  Island::Mode m_mode;
+  Mapping *m_mapping;
   QList<Page *> m_pages;
   QStackedLayout *m_stack;
   TabBar *m_tabs;

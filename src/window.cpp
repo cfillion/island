@@ -8,11 +8,14 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include <QStackedLayout>
+#include <QTimer>
 #include <QUrl>
 #include <QVBoxLayout>
 
-Window::Window(QWidget *parent)
-  : QWidget(parent), m_current(0)
+using namespace Island;
+
+Window::Window(Mapping *mapping, QWidget *parent)
+  : QWidget(parent), m_mapping(mapping), m_current(0)
 {
   m_tabs = new TabBar;
   m_stack = new QStackedLayout;
@@ -28,11 +31,18 @@ Window::Window(QWidget *parent)
   connect(m_tabs, &TabBar::triggered, this, &Window::setCurrentTab);
   connect(m_tabs, &TabBar::wheelMotion, this, &Window::currentTabMotion);
 
+  connect(this, &Window::bufferChanged, m_status, &StatusBar::setBuffer);
+  connect(this, &Window::modeChanged, m_status, &StatusBar::setMode);
+  connect(m_status, &StatusBar::promptFinished, this, &Window::execPrompt);
+
   addPage(QUrl("http://cfillion.tk"), NewTab);
   addPage(QUrl("http://files.cfillion.tk"));
   addPage(QUrl("data:text/html,<h1>test</h1>"), Split);
   addPage(QUrl("http://google.com/"));
   setCurrentTab(0);
+
+  m_status->setPrompt(StatusBar::Command);
+  setMode(Prompt);
 }
 
 int Window::addPage(const QUrl &url, const Window::OpenMode mode)
@@ -127,6 +137,9 @@ void Window::shiftPageIndexes(const int start)
 
 bool Window::handleKeyEvent(const QKeyEvent *e)
 {
+  if(m_mode == Prompt)
+    return false;
+
   const Qt::KeyboardModifiers mod = e->modifiers();
 
   const QString text = keyEventToString(e);
@@ -152,7 +165,7 @@ bool Window::handleKeyEvent(const QKeyEvent *e)
   else
     m_buffer << parts.join(QChar());
 
-  m_status->setBuffer(m_buffer.join(QChar()));
+  Q_EMIT bufferChanged(m_buffer);
 
   return true;
 }
@@ -224,4 +237,19 @@ QString Window::keyEventToString(const QKeyEvent *e) const
   }
 
   return "";
+}
+
+void Window::setMode(const Mode mode)
+{
+  m_mode = mode;
+  Q_EMIT modeChanged(m_mode);
+}
+
+void Window::execPrompt(const QString &input)
+{
+  // prevents <CR> from being added to the input buffer
+  QTimer::singleShot(0, this, [=] { setMode(Normal); });
+
+  if(input.isEmpty())
+    return;
 }
