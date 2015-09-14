@@ -1,4 +1,5 @@
 MAIN_TARGET = bin/island
+TEST_TARGET = bin/tests
 
 MOC = moc
 CXX = c++
@@ -19,3 +20,6 @@ LDFLAGS += `pkg-config --libs Qt5WebEngineWidgets`
 : foreach src/*.hpp |> !moc |> build/moc_%B.cpp
 : foreach src/*.cpp build/moc_*.cpp |> !build |> build/%B.o
 : build/*.o |> !link |> $(MAIN_TARGET)
+
+: foreach test/*.cpp |> !build -Isrc |> build/test/%B.o
+: build/test/*.o | $(MAIN_TARGET) |> !link |> $(TEST_TARGET)
