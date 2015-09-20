@@ -9,7 +9,9 @@ namespace Island {
     Prompt = 1<<0,
   };
 
-  QStringList InputToBuffer(const QString &);
+  typedef QStringList Buffer;
+
+  Buffer InputToBuffer(const QString &);
 };
 
 #endif

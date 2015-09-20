@@ -2,9 +2,9 @@
 
 #include <QRegularExpression>
 
-QStringList Island::InputToBuffer(const QString &input)
+Island::Buffer Island::InputToBuffer(const QString &input)
 {
-  QStringList output;
+  Buffer output;
 
   const QRegularExpression regex("(\\<[^\\>]+\\>|.)");
   auto matches = regex.globalMatch(input);

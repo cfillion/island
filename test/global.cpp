@@ -8,18 +8,18 @@ using namespace Island;
 
 TEST_CASE("input to buffer", M) {
   SECTION("single letter") {
-    REQUIRE(InputToBuffer("a") == QStringList() << "a");
+    REQUIRE(InputToBuffer("a") == Buffer() << "a");
   }
 
   SECTION("consecutive letters") {
-    REQUIRE(InputToBuffer("ab") == QStringList() << "a" << "b");
+    REQUIRE(InputToBuffer("ab") == Buffer() << "a" << "b");
   }
 
   SECTION("special char") {
-    REQUIRE(InputToBuffer("<Space>") == QStringList() << "<Space>");
+    REQUIRE(InputToBuffer("<Space>") == Buffer() << "<Space>");
   }
 
   SECTION("special char with letters") {
-    REQUIRE(InputToBuffer("a<CR>b") == QStringList() << "a" << "<CR>" << "b");
+    REQUIRE(InputToBuffer("a<CR>b") == Buffer() << "a" << "<CR>" << "b");
   }
 }

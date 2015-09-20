@@ -24,7 +24,7 @@ public:
   void setPage(Page *);
   void setPageCount(const int);
 
-  void setBuffer(const QStringList &);
+  void setBuffer(const Island::Buffer &);
 
   void setMode(const Island::Mode);
   void setPrompt(const PromptStyle);

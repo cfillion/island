@@ -31,7 +31,7 @@ public:
   bool handleKeyEvent(const QKeyEvent *);
 
 Q_SIGNALS:
-  void bufferChanged(const QStringList &);
+  void bufferChanged(const Island::Buffer &);
   void modeChanged(const Island::Mode);
 
 private:
@@ -47,7 +47,7 @@ private:
   TabBar *m_tabs;
   Page *m_current;
   StatusBar *m_status;
-  QStringList m_buffer;
+  Island::Buffer m_buffer;
 };
 
 #endif
