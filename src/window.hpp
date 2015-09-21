@@ -2,8 +2,10 @@
 #define ISLAND_WINDOW_HPP
 
 #include <QWidget>
+#include <array>
 
 #include "global.hpp"
+#include "mapping.hpp"
 
 class Mapping;
 class Page;
@@ -20,7 +22,7 @@ public:
     Split,
   };
 
-  Window(Mapping *mapping, QWidget *parent = 0);
+  explicit Window(const MappingArray &mappings, QWidget *parent = 0);
 
   int addPage(const QUrl &url, const OpenMode mode = NewTab);
   void setCurrentPage(Page *);
@@ -41,7 +43,7 @@ private:
   void execPrompt(const QString &);
 
   Island::Mode m_mode;
-  Mapping *m_mapping;
+  MappingArray m_mappings;
   QList<Page *> m_pages;
   QStackedLayout *m_stack;
   TabBar *m_tabs;

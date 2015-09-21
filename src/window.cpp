@@ -1,9 +1,9 @@
 #include "window.hpp"
 
 #include "page.hpp"
+#include "statusbar.hpp"
 #include "tabbar.hpp"
 #include "viewport.hpp"
-#include "statusbar.hpp"
 
 #include <QApplication>
 #include <QKeyEvent>
@@ -14,8 +14,8 @@
 
 using namespace Island;
 
-Window::Window(Mapping *mapping, QWidget *parent)
-  : QWidget(parent), m_mapping(mapping), m_current(0)
+Window::Window(const MappingArray &mappings, QWidget *parent)
+  : QWidget(parent), m_mappings(mappings), m_current(0)
 {
   m_tabs = new TabBar;
   m_stack = new QStackedLayout;
@@ -135,6 +135,7 @@ void Window::shiftPageIndexes(const int start)
     m_pages[i]->setIndex(i);
 }
 
+#include <QDebug>
 bool Window::handleKeyEvent(const QKeyEvent *e)
 {
   if(m_mode == Prompt)
@@ -164,6 +165,13 @@ bool Window::handleKeyEvent(const QKeyEvent *e)
     m_buffer << QString("<%1>").arg(parts.join("-"));
   else
     m_buffer << parts.join(QChar());
+
+  auto match = m_mappings[m_mode]->match(m_buffer);
+
+  if(!match.ambiguous)
+    m_buffer = m_buffer.mid(match.index+1);
+
+  qDebug() << match;
 
   Q_EMIT bufferChanged(m_buffer);
 

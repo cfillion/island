@@ -24,10 +24,15 @@ int main(int argc, char *argv[])
   EventFilter filter;
   app.installEventFilter(&filter);
 
-  Mapping mapping;
-  mapping.nmap("i", ":insert");
+  Mapping nmap;
+  nmap.set("g", ":insert");
+  nmap.set("gcc", ":insert");
 
-  Window win(&mapping);
+  Mapping imap;
+  imap.set("g", ":insert");
+  imap.set("gcc", ":insert");
+
+  Window win({{&nmap, &imap}});
   win.show();
 
   return app.exec();

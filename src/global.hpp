@@ -5,9 +5,11 @@
 
 namespace Island {
   enum Mode {
-    Normal = 0,
-    Prompt = 1<<0,
+    Normal,
+    Prompt,
   };
+
+  static constexpr int ModeCount = Prompt+1;
 
   typedef QStringList Buffer;
 
