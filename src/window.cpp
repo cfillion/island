@@ -15,7 +15,7 @@
 using namespace Island;
 
 Window::Window(const MappingArray &mappings, QWidget *parent)
-  : QWidget(parent), m_mappings(mappings), m_current(0)
+  : QWidget(parent), m_current(0), m_mappings(mappings)
 {
   m_tabs = new TabBar;
   m_stack = new QStackedLayout;
@@ -35,14 +35,17 @@ Window::Window(const MappingArray &mappings, QWidget *parent)
   connect(this, &Window::modeChanged, m_status, &StatusBar::setMode);
   connect(m_status, &StatusBar::promptFinished, this, &Window::execPrompt);
 
+  m_mappingTimer.setInterval(1000);
+  m_mappingTimer.setSingleShot(true);
+  connect(&m_mappingTimer, &QTimer::timeout, this, &Window::execDelayedMapping);
+
   addPage(QUrl("http://cfillion.tk"), NewTab);
   addPage(QUrl("http://files.cfillion.tk"));
   addPage(QUrl("data:text/html,<h1>test</h1>"), Split);
   addPage(QUrl("http://google.com/"));
   setCurrentTab(0);
 
-  m_status->setPrompt(StatusBar::Command);
-  setMode(Prompt);
+  setMode(Normal);
 }
 
 int Window::addPage(const QUrl &url, const Window::OpenMode mode)
@@ -166,12 +169,24 @@ bool Window::handleKeyEvent(const QKeyEvent *e)
   else
     m_buffer << parts.join(QChar());
 
+  m_mappingTimer.stop();
+
   auto match = m_mappings[m_mode]->match(m_buffer);
+  qDebug() << match;
+
+  if(match.mapping) {
+    if(match.ambiguous) {
+      m_delayedMapping = match.mapping;
+      m_mappingTimer.start();
+    }
+    else {
+      m_delayedMapping = 0;
+      execMapping(match.mapping);
+    }
+  }
 
   if(!match.ambiguous)
     m_buffer = m_buffer.mid(match.index+1);
-
-  qDebug() << match;
 
   Q_EMIT bufferChanged(m_buffer);
 
@@ -260,4 +275,18 @@ void Window::execPrompt(const QString &input)
 
   if(input.isEmpty())
     return;
+}
+
+void Window::execDelayedMapping()
+{
+  m_buffer.clear();
+  Q_EMIT bufferChanged(m_buffer);
+
+  execMapping(m_delayedMapping);
+  m_delayedMapping = 0;
+}
+
+void Window::execMapping(const Mapping *mapping)
+{
+  qDebug() << "executing" << mapping;
 }

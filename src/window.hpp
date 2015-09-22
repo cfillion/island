@@ -1,8 +1,9 @@
 #ifndef ISLAND_WINDOW_HPP
 #define ISLAND_WINDOW_HPP
 
-#include <QWidget>
 #include <array>
+#include <QTimer>
+#include <QWidget>
 
 #include "global.hpp"
 #include "mapping.hpp"
@@ -41,15 +42,20 @@ private:
   QString keyEventToString(const QKeyEvent *) const;
   void setMode(const Island::Mode);
   void execPrompt(const QString &);
+  void execDelayedMapping();
+  void execMapping(const Mapping *);
 
-  Island::Mode m_mode;
-  MappingArray m_mappings;
+  Page *m_current;
   QList<Page *> m_pages;
   QStackedLayout *m_stack;
   TabBar *m_tabs;
-  Page *m_current;
   StatusBar *m_status;
+
+  Island::Mode m_mode;
+  MappingArray m_mappings;
   Island::Buffer m_buffer;
+  Mapping *m_delayedMapping;
+  QTimer m_mappingTimer;
 };
 
 #endif

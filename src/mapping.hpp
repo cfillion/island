@@ -9,8 +9,8 @@
 class Window;
 class Mapping;
 
-typedef std::function<void(Window *, const int)> NativeCode;
 typedef std::array<Mapping *, Island::ModeCount> MappingArray;
+typedef std::function<void(Window *, const int)> NativeCode;
 
 struct MappingMatch {
   int index = -1;
