@@ -33,6 +33,8 @@ public:
 
   bool handleKeyEvent(const QKeyEvent *);
 
+  void setMode(const Island::Mode);
+
 Q_SIGNALS:
   void bufferChanged(const Island::Buffer &);
   void modeChanged(const Island::Mode);
@@ -40,7 +42,6 @@ Q_SIGNALS:
 private:
   void shiftPageIndexes(const int start = 0);
   QString keyEventToString(const QKeyEvent *) const;
-  void setMode(const Island::Mode);
   void execPrompt(const QString &);
   void execDelayedMapping();
   void execMapping(const Mapping *);

@@ -1,16 +1,20 @@
 #include <QApplication>
 #include <QKeyEvent>
 
+#include "commands.hpp"
 #include "mapping.hpp"
 #include "window.hpp"
 
 class EventFilter : public QObject {
 protected:
-  virtual bool eventFilter(QObject *, QEvent *e) override
+  virtual bool eventFilter(QObject *o, QEvent *e) override
   {
+    const bool isKeyPress = e->type() == QEvent::KeyPress;
+    const bool isToWindow = o->objectName() == "WindowClassWindow";
+
     Window *win = qobject_cast<Window *>(qApp->activeWindow());
 
-    if(e->type() == QEvent::KeyPress && win)
+    if(win && isKeyPress && isToWindow)
       return win->handleKeyEvent(static_cast<QKeyEvent *>(e));
 
     return false;
@@ -25,14 +29,16 @@ int main(int argc, char *argv[])
   app.installEventFilter(&filter);
 
   Mapping nmap;
-  nmap.set("g", ":insert");
-  nmap.set("gcc", ":insert");
+  nmap.set("i", &Commands::insert);
+  nmap.set(":", &Commands::prompt);
 
   Mapping imap;
-  imap.set("g", ":insert");
-  imap.set("gcc", ":insert");
+  imap.set("<Esc>", &Commands::normal);
 
-  Window win({{&nmap, &imap}});
+  Mapping pmap;
+  pmap.set("<Esc>", &Commands::normal);
+
+  Window win({{&nmap, &imap, &pmap}});
   win.show();
 
   return app.exec();

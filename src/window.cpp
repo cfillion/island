@@ -141,8 +141,7 @@ void Window::shiftPageIndexes(const int start)
 #include <QDebug>
 bool Window::handleKeyEvent(const QKeyEvent *e)
 {
-  if(m_mode == Prompt)
-    return false;
+  const bool eatKey = m_mode == Normal;
 
   const Qt::KeyboardModifiers mod = e->modifiers();
 
@@ -150,7 +149,7 @@ bool Window::handleKeyEvent(const QKeyEvent *e)
   const bool isSpecial = text.size() > 1 && text[0].isUpper();
 
   if(text.isEmpty())
-    return true;
+    return eatKey;
 
   QStringList parts;
   if(mod & Qt::ControlModifier)
@@ -174,21 +173,22 @@ bool Window::handleKeyEvent(const QKeyEvent *e)
   auto match = m_mappings[m_mode]->match(m_buffer);
   qDebug() << match;
 
-  if(match.mapping) {
-    if(match.ambiguous) {
-      m_delayedMapping = match.mapping;
-      m_mappingTimer.start();
-    }
-    else {
-      m_delayedMapping = 0;
-      execMapping(match.mapping);
-    }
-  }
-
   if(!match.ambiguous)
     m_buffer = m_buffer.mid(match.index+1);
 
   Q_EMIT bufferChanged(m_buffer);
+
+  if(!match.mapping)
+    return eatKey;
+
+  if(match.ambiguous) {
+    m_delayedMapping = match.mapping;
+    m_mappingTimer.start();
+  }
+  else {
+    m_delayedMapping = 0;
+    execMapping(match.mapping);
+  }
 
   return true;
 }
@@ -289,4 +289,6 @@ void Window::execDelayedMapping()
 void Window::execMapping(const Mapping *mapping)
 {
   qDebug() << "executing" << mapping;
+
+  (*mapping->binding())(this);
 }

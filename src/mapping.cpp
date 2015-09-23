@@ -22,16 +22,19 @@ Mapping::~Mapping()
   qDeleteAll(m_children);
 }
 
-void Mapping::set(const QString &sequence, const QString &command)
+void Mapping::set(const QString &sequence, const Command &command)
 {
   const Buffer sequenceBuf = InputToBuffer(sequence);
-  const Buffer commandBuf = InputToBuffer(command);
+  // const Buffer commandBuf = InputToBuffer(command);
 
   Mapping *seqMapping = resolve(sequenceBuf, true);
-  seqMapping->setCommand(true);
+  seqMapping->bindTo(command);
   Q_UNUSED(seqMapping);
+}
 
-  qDebug() << match(sequenceBuf);
+void Mapping::bindTo(const Command &cmd)
+{
+  m_binding = cmd;
 }
 
 Mapping *Mapping::resolve(const Island::Buffer &buf, const bool create)
@@ -66,7 +69,7 @@ MappingMatch Mapping::match(const Island::Buffer &buf)
   const int bufSize = buf.size();
   for(int i = 0; i < bufSize; i++) {
     const QString key = buf[i];
-    node = node->resolve(key);
+    node = node->resolve(key, false);
 
     match.index = i;
 
@@ -74,10 +77,10 @@ MappingMatch Mapping::match(const Island::Buffer &buf)
       return match;
   }
 
-  if(node->m_isCommand)
+  if(node->binding())
     match.mapping = node;
 
-  match.ambiguous = node->hasChildren();
+  match.ambiguous = !node->isLeaf();
 
   return match;
 }

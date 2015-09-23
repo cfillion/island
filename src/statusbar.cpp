@@ -97,32 +97,23 @@ void StatusBar::setMode(const Mode mode)
 {
   switch(mode) {
   case Normal:
+  case Insert:
+    m_status->setText(QString("-- %1 --")
+      .arg(mode == Normal ? "NORMAL" : "INSERT"));
+
     m_status->show();
     m_prompt->hide();
     break;
   case Prompt:
+  case Search:
+    m_prompt->setFocus();
+    m_prompt->setText(mode == Prompt ? ":" : "/");
+
     m_status->hide();
     m_prompt->show();
     break;
   }
 }
-
-void StatusBar::setPrompt(const PromptStyle style)
-{
-  setMode(Prompt);
-
-  m_prompt->setFocus();
-
-  switch(style) {
-  case Command:
-    m_prompt->setText(":");
-    break;
-  case Search:
-    m_prompt->setText("/");
-    break;
-  }
-}
-
 void StatusBar::checkPrompt()
 {
   if(m_prompt->text().isEmpty())

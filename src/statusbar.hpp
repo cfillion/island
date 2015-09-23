@@ -14,11 +14,6 @@ class StatusBar : public QWidget {
   Q_OBJECT
 
 public:
-  enum PromptStyle {
-    Command,
-    Search,
-  };
-
   StatusBar(QWidget *parent = 0);
 
   void setPage(Page *);
@@ -27,7 +22,6 @@ public:
   void setBuffer(const Island::Buffer &);
 
   void setMode(const Island::Mode);
-  void setPrompt(const PromptStyle);
 
 Q_SIGNALS:
   void promptFinished(const QString &);

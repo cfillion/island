@@ -6,7 +6,9 @@
 namespace Island {
   enum Mode {
     Normal,
+    Insert,
     Prompt,
+    Search,
   };
 
   static constexpr int ModeCount = Prompt+1;
