@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
   Mapping pmap;
   pmap.set("<Esc>", &Commands::normal);
 
-  Window win({{&nmap, &imap, &pmap}});
+  Window win({&nmap, &imap, &pmap});
   win.show();
 
   return app.exec();
