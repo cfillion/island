@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 
-#include "commands.hpp"
+#include "actions.hpp"
 #include "mapping.hpp"
 #include "window.hpp"
 
@@ -10,7 +10,8 @@ protected:
   virtual bool eventFilter(QObject *o, QEvent *e) override
   {
     const bool isKeyPress = e->type() == QEvent::KeyPress;
-    const bool isToWindow = o->objectName() == "WindowClassWindow";
+    const bool isToWindow =
+      o->objectName() == QStringLiteral("WindowClassWindow");
 
     Window *win = qobject_cast<Window *>(qApp->activeWindow());
 
@@ -29,14 +30,14 @@ int main(int argc, char *argv[])
   app.installEventFilter(&filter);
 
   Mapping nmap;
-  nmap.set("i", &Commands::insert);
-  nmap.set(":", &Commands::prompt);
+  nmap.set("i", &Actions::insert);
+  nmap.set(":", &Actions::prompt);
 
   Mapping imap;
-  imap.set("<Esc>", &Commands::normal);
+  imap.set("<Esc>", &Actions::normal);
 
   Mapping pmap;
-  pmap.set("<Esc>", &Commands::normal);
+  pmap.set("<Esc>", &Actions::normal);
 
   Window win({&nmap, &imap, &pmap});
   win.show();

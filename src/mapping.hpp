@@ -4,7 +4,7 @@
 #include <boost/optional.hpp>
 #include <QMap>
 
-#include "commands.hpp"
+#include "command.hpp"
 #include "global.hpp"
 
 class Mapping;
@@ -23,7 +23,7 @@ class Mapping {
 public:
   ~Mapping();
 
-  const boost::optional<Command> &binding() const { return m_binding; }
+  boost::optional<Command> command() const { return m_binding; }
 
   void set(const QString &sequence, const Command &command);
   MappingMatch match(const Island::Buffer &buf);

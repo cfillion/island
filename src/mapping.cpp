@@ -77,7 +77,7 @@ MappingMatch Mapping::match(const Island::Buffer &buf)
       return match;
   }
 
-  if(node->binding())
+  if(node->m_binding)
     match.mapping = node;
 
   match.ambiguous = !node->isLeaf();

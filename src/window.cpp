@@ -290,5 +290,5 @@ void Window::execMapping(const Mapping *mapping)
 {
   qDebug() << "executing" << mapping;
 
-  (*mapping->binding())(this);
+  mapping->command()->exec(this);
 }
