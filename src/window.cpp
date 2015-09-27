@@ -88,7 +88,7 @@ int Window::addPage(const QUrl &url, const Window::OpenMode mode)
 
 void Window::setCurrentTab(const int index)
 {
-  if(Page *page = m_pages.at(index))
+  if(Page *page = m_pages.value(index))
     setCurrentPage(page);
 }
 
@@ -116,14 +116,18 @@ void Window::setCurrentPage(Page *p)
 
 void Window::closeTab(const int index)
 {
-  Page *page = m_pages.at(index);
-  assert(page);
+  if(Page *page = m_pages.value(index))
+    closePage(page);
+}
 
-  const int count = m_pages.size();
-  if(count == 1) {
+void Window::closePage(Page *page)
+{
+  if(m_pages.size() == 1) {
     close();
     return;
   }
+
+  const int index = page->index();
 
   if(index == currentPageIndex()) {
     if(index == 0)

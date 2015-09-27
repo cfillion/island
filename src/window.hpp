@@ -31,6 +31,7 @@ public:
   Page *currentPage() const { return m_current; }
   int currentPageIndex() const;
   void closeTab(const int index);
+  void closePage(Page *page);
 
   bool handleKeyEvent(const QKeyEvent *);
 
