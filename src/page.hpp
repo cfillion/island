@@ -18,7 +18,7 @@ class Page : public QObject {
 
 public:
   Page(const QUrl &, Window *parent = 0);
-  Page *destroy();
+  void destroyComponents();
 
   void setViewport(Viewport *v) { m_viewport = v; }
   Viewport *viewport() const { return m_viewport; }

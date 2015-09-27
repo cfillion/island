@@ -35,6 +35,9 @@ void TabBar::mousePressEvent(QMouseEvent *e)
   case Qt::LeftButton:
     Q_EMIT triggered(label->index());
     break;
+  case Qt::RightButton:
+    Q_EMIT closeRequested(label->index());
+    break;
   default:
     break;
   }

@@ -37,15 +37,13 @@ Page::Page(const QUrl &url, Window *parent)
   connect(engine(), &Engine::urlChanged, this, &Page::displayUrlChanged);
 }
 
-Page *Page::destroy()
+void Page::destroyComponents()
 {
-  delete m_label;
-  delete m_engine;
+  m_label->deleteLater();
+  m_engine->deleteLater();
 
   if(m_viewport->count() < 1)
-    delete m_viewport;
-
-  return this;
+    m_viewport->deleteLater();
 }
 
 void Page::fetchIcon(const QUrl &url)

@@ -15,6 +15,7 @@ public:
 
 Q_SIGNALS:
   void triggered(const int index);
+  void closeRequested(const int index);
   void wheelMotion(const bool polarity, int);
 
 protected:

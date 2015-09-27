@@ -29,6 +29,7 @@ Window::Window(const MappingArray &mappings, QWidget *parent)
   main_layout->addWidget(m_status);
 
   connect(m_tabs, &TabBar::triggered, this, &Window::setCurrentTab);
+  connect(m_tabs, &TabBar::closeRequested, this, &Window::closeTab);
   connect(m_tabs, &TabBar::wheelMotion, this, &Window::currentTabMotion);
 
   connect(this, &Window::bufferChanged, m_status, &StatusBar::setBuffer);
@@ -123,13 +124,17 @@ void Window::closeTab(const int index)
     close();
     return;
   }
-  else if(index == 0)
-    setCurrentTab(index+1);
-  else
-    setCurrentTab(index-1);
 
+  if(index == currentPageIndex()) {
+    if(index == 0)
+      setCurrentTab(index+1);
+    else
+      setCurrentTab(index-1);
+  }
+
+  page->destroyComponents();
+  page->deleteLater();
   m_pages.removeAt(index);
-  delete page->destroy();
 
   shiftPageIndexes();
 }
