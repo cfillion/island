@@ -4,9 +4,9 @@
 #include "command.hpp"
 
 namespace Actions {
-  ISLAND_COMMAND(normal);
-  ISLAND_COMMAND(insert);
-  ISLAND_COMMAND(prompt);
+  CommandResult normal(const Command &);
+  CommandResult insert(const Command &);
+  CommandResult prompt(const Command &);
 };
 
 #endif

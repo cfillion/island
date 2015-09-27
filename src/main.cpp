@@ -3,6 +3,7 @@
 
 #include "actions.hpp"
 #include "mapping.hpp"
+#include "names.hpp"
 #include "window.hpp"
 
 class EventFilter : public QObject {
@@ -24,6 +25,8 @@ protected:
 
 int main(int argc, char *argv[])
 {
+  UseCommandRegistry reg(&Island::ActionNames);
+
   QApplication app(argc, argv);
 
   EventFilter filter;
