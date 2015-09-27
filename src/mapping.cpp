@@ -56,7 +56,7 @@ Mapping *Mapping::resolve(const QString &seq, const bool create)
 
   if(!node && create)
     node = m_children[seq] = new Mapping;
-  
+ 
   return node;
 }
 
