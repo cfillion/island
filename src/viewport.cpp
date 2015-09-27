@@ -18,3 +18,8 @@ void Viewport::addPage(Page *page)
   m_layout->addWidget(page->engine());
   page->setViewport(this);
 }
+
+int Viewport::count() const
+{
+  return m_layout->count();
+}

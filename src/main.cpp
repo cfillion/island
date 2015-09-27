@@ -33,14 +33,15 @@ int main(int argc, char *argv[])
   app.installEventFilter(&filter);
 
   Mapping nmap;
-  nmap.set("i", &Actions::insert);
-  nmap.set(":", &Actions::prompt);
+  nmap.set("i", &Actions::insert_mode);
+  nmap.set(":", &Actions::command_mode);
+  nmap.set("d", &Actions::close_tab);
 
   Mapping imap;
-  imap.set("<Esc>", &Actions::normal);
+  imap.set("<Esc>", &Actions::normal_mode);
 
   Mapping pmap;
-  pmap.set("<Esc>", &Actions::normal);
+  pmap.set("<Esc>", &Actions::normal_mode);
 
   Window win({&nmap, &imap, &pmap});
   win.show();

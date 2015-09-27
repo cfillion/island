@@ -113,6 +113,27 @@ void Window::setCurrentPage(Page *p)
   setWindowIcon(m_current->icon());
 }
 
+void Window::closeTab(const int index)
+{
+  Page *page = m_pages.at(index);
+  assert(page);
+
+  const int count = m_pages.size();
+  if(count == 1) {
+    close();
+    return;
+  }
+  else if(index == 0)
+    setCurrentTab(index+1);
+  else
+    setCurrentTab(index-1);
+
+  m_pages.removeAt(index);
+  delete page->destroy();
+
+  shiftPageIndexes();
+}
+
 void Window::currentTabMotion(const bool polarity, const int size)
 {
   int index = currentPageIndex();

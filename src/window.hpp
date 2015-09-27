@@ -28,8 +28,9 @@ public:
   int addPage(const QUrl &url, const OpenMode mode = NewTab);
   void setCurrentPage(Page *);
   void setCurrentTab(const int index);
-  void currentTabMotion(const bool polarity, const int size);
+  Page *currentPage() const { return m_current; }
   int currentPageIndex() const;
+  void closeTab(const int index);
 
   bool handleKeyEvent(const QKeyEvent *);
 
@@ -40,6 +41,7 @@ Q_SIGNALS:
   void modeChanged(const Island::Mode);
 
 private:
+  void currentTabMotion(const bool polarity, const int size);
   void shiftPageIndexes(const int start = 0);
   QString keyEventToString(const QKeyEvent *) const;
   void execPrompt(const QString &);

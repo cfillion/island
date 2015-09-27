@@ -2,6 +2,7 @@
 
 #include "engine.hpp"
 #include "tablabel.hpp"
+#include "viewport.hpp"
 #include "window.hpp"
 
 #include <QNetworkReply>
@@ -34,6 +35,17 @@ Page::Page(const QUrl &url, Window *parent)
   // proxy connections
   connect(label(), &TabLabel::textChanged, this, &Page::displayTitleChanged);
   connect(engine(), &Engine::urlChanged, this, &Page::displayUrlChanged);
+}
+
+Page *Page::destroy()
+{
+  delete m_label;
+  delete m_engine;
+
+  if(m_viewport->count() < 1)
+    delete m_viewport;
+
+  return this;
 }
 
 void Page::fetchIcon(const QUrl &url)

@@ -12,6 +12,7 @@ class Viewport : public QWidget {
 public:
   Viewport(QWidget *parent = 0);
   void addPage(Page *page);
+  int count() const;
 
 private:
   QHBoxLayout *m_layout;

@@ -5,7 +5,6 @@
 #define ACTION(x) {#x, Actions::x}
 
 const CommandRegistry Island::ActionNames{
-  ACTION(normal),
-  ACTION(insert),
-  ACTION(prompt),
+  {"insert", &Actions::insert_mode},
+  {"close", &Actions::close_tab},
 };

@@ -4,9 +4,10 @@
 #include "command.hpp"
 
 namespace Actions {
-  CommandResult normal(const Command &);
-  CommandResult insert(const Command &);
-  CommandResult prompt(const Command &);
+  CommandResult normal_mode(const Command &);
+  CommandResult insert_mode(const Command &);
+  CommandResult command_mode(const Command &);
+  CommandResult close_tab(const Command &);
 };
 
 #endif

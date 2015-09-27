@@ -7,20 +7,26 @@ using namespace Island;
 
 #define WIN cmd.ptr<Window *>()
 
-CommandResult Actions::normal(const Command &cmd)
+CommandResult Actions::normal_mode(const Command &cmd)
 {
   WIN->setMode(Normal);
   return CommandResult();
 }
 
-CommandResult Actions::insert(const Command &cmd)
+CommandResult Actions::insert_mode(const Command &cmd)
 {
   WIN->setMode(Insert);
   return CommandResult();
 }
 
-CommandResult Actions::prompt(const Command &cmd)
+CommandResult Actions::command_mode(const Command &cmd)
 {
   WIN->setMode(Prompt);
+  return CommandResult();
+}
+
+CommandResult Actions::close_tab(const Command &cmd)
+{
+  WIN->closeTab(WIN->currentPageIndex());
   return CommandResult();
 }
