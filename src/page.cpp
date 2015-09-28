@@ -42,7 +42,7 @@ void Page::destroyComponents()
   m_label->deleteLater();
   m_engine->deleteLater();
 
-  if(m_viewport->count() < 1)
+  if(m_viewport->count() == 1)
     m_viewport->deleteLater();
 }
 
