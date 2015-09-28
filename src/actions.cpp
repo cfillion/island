@@ -5,7 +5,7 @@
 
 using namespace Island;
 
-#define WIN cmd.ptr<Window *>()
+#define WIN cmd.data<Window *>()
 
 CommandResult Actions::normal_mode(const Command &cmd)
 {

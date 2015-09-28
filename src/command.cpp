@@ -14,12 +14,12 @@ UseCommandRegistry::~UseCommandRegistry()
 }
 
 Command::Command(const CommandFunc &func)
-  : m_isValid(true), m_ptr(0), m_func(func)
+  : m_isValid(true), m_data(0), m_func(func)
 {
 }
 
 Command::Command(const QString &input)
-  : m_isValid(false), m_ptr(0), m_func(0)
+  : m_isValid(false), m_data(0), m_func(0)
 {
   if(s_registry && s_registry->count(input)) {
     m_isValid = true;
@@ -27,11 +27,7 @@ Command::Command(const QString &input)
   }
 }
 
-CommandResult Command::exec(void *ptr, const int repeat)
+CommandResult Command::exec() const
 {
-  m_ptr = ptr;
-  const auto result = m_func(*this);
-  m_ptr = 0;
-
-  return result;
+  return m_func(*this);
 }

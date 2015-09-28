@@ -31,16 +31,18 @@ public:
 
   bool isValid() const { return m_isValid; }
   CommandFunc func() const { return m_func; }
-  template<class T> T ptr() const { return static_cast<T>(m_ptr); }
 
-  CommandResult exec(void *ptr, const int repeat = 1);
+  void setData(void *ptr) { m_data = ptr; }
+  template<class T> T data() const { return static_cast<T>(m_data); }
+
+  CommandResult exec() const;
 
 private:
   static CommandRegistry *s_registry;
   friend UseCommandRegistry;
 
   bool m_isValid;
-  void *m_ptr;
+  void *m_data;
   CommandFunc m_func;
 };
 

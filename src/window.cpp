@@ -320,5 +320,7 @@ void Window::execMapping(const Mapping *mapping)
 {
   qDebug() << "executing" << mapping;
 
-  mapping->command()->exec(this);
+  Command cmd = *mapping->command();
+  cmd.setData(this);
+  cmd.exec();
 }
