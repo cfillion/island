@@ -1,7 +1,9 @@
 #ifndef ISLAND_GLOBAL_HPP
 #define ISLAND_GLOBAL_HPP
 
-#include <QStringList>
+#include <QString>
+
+class QKeyEvent;
 
 namespace Island {
   enum Mode {
@@ -12,6 +14,9 @@ namespace Island {
   };
 
   static constexpr int ModeCount = Prompt+1;
+
+  QString KeyEventToSequence(const QKeyEvent *);
+  QString GetKeyEventCharacter(const QKeyEvent *);
 };
 
 #endif
