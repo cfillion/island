@@ -72,7 +72,9 @@ void StatusBar::updateLabels()
   if(!m_page)
     return;
 
-  m_url->setText(m_page->displayUrl());
+  const QFontMetrics metrics(m_url->font());
+  m_url->setText(metrics.elidedText(m_page->displayUrl(),
+    Qt::ElideMiddle, width() / 2));
 
   const int pageId = m_page->index() + 1;
   m_tabPosition->setText(QString("[%0/%2]").arg(pageId).arg(m_pageCount));
@@ -136,4 +138,6 @@ void StatusBar::resizeEvent(QResizeEvent *e)
   m_url->setVisible(width > 400);
   m_buffer->setVisible(showAll);
   m_tabPosition->setVisible(showAll);
+
+  updateLabels();
 }
