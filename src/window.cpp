@@ -137,7 +137,9 @@ void Window::closePage(Page *page)
 
   page->destroyComponents();
   page->deleteLater();
+
   m_pages.removeAt(index);
+  m_status->setPageCount(m_pages.size());
 
   shiftPageIndexes();
 }
