@@ -167,7 +167,6 @@ void Window::shiftPageIndexes(const int start)
     m_pages[i]->setIndex(i);
 }
 
-#include <QDebug>
 bool Window::handleKeyEvent(const QKeyEvent *e)
 {
   const bool eatKey = m_mode == Normal;
@@ -180,7 +179,6 @@ bool Window::handleKeyEvent(const QKeyEvent *e)
   m_buffer << seq;
 
   auto match = m_mappings[m_mode]->match(m_buffer);
-  qDebug() << match;
 
   if(!match.ambiguous)
     m_buffer.truncate(match.index+1);
@@ -228,8 +226,6 @@ void Window::execDelayedMapping()
 
 void Window::execMapping(const Mapping *mapping)
 {
-  qDebug() << "executing" << mapping;
-
   Command cmd = *mapping->command();
   cmd.setCounter(m_buffer.counter());
   cmd.setData(this);
