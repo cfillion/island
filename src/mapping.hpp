@@ -23,21 +23,19 @@ class Mapping {
 public:
   ~Mapping();
 
-  boost::optional<Command> command() const { return m_binding; }
+  const Command *command() const;
 
+  bool isLeaf() const { return m_children.isEmpty(); }
+  void bindTo(const Command &command);
   void set(const QString &sequence, const Command &command);
   MappingMatch match(const Island::Buffer &buf);
 
 private:
-  bool isLeaf() const { return m_children.isEmpty(); }
-
   Mapping *resolve(const Island::Buffer &buf, const bool create = true);
   Mapping *resolve(const QString &req, const bool create = true);
 
-  void bindTo(const Command &command);
-
   QMap<QString, Mapping *> m_children;
-  boost::optional<Command> m_binding;
+  boost::optional<Command> m_command;
 };
 
 #endif

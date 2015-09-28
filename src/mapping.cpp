@@ -34,7 +34,7 @@ void Mapping::set(const QString &sequence, const Command &command)
 
 void Mapping::bindTo(const Command &cmd)
 {
-  m_binding = cmd;
+  m_command = cmd;
 }
 
 Mapping *Mapping::resolve(const Island::Buffer &buf, const bool create)
@@ -77,10 +77,19 @@ MappingMatch Mapping::match(const Island::Buffer &buf)
       return match;
   }
 
-  if(node->m_binding)
+  if(node->command())
     match.mapping = node;
 
   match.ambiguous = !node->isLeaf();
 
   return match;
+}
+
+const Command *Mapping::command() const
+{
+  if(m_command == boost::none)
+    return 0;
+
+  const Command &cmd = *m_command;
+  return &cmd;
 }
