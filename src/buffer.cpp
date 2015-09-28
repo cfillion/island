@@ -2,10 +2,9 @@
 
 #include <QRegularExpression>
 
-static const QRegularExpression InputPattern("(\\<[^\\>]+\\>|.)");
-
 void Buffer::importString(const QString &input)
 {
+  static const QRegularExpression InputPattern("(\\<[^\\>]+\\>|.)");
   auto matches = InputPattern.globalMatch(input);
 
   while(matches.hasNext()) {
