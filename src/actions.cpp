@@ -27,6 +27,10 @@ CommandResult Actions::command_mode(const Command &cmd)
 
 CommandResult Actions::close_tab(const Command &cmd)
 {
-  WIN->closePage(WIN->currentPage());
+  if(cmd.counter() == -1)
+    WIN->closePage(WIN->currentPage());
+  else
+    WIN->closeTab(cmd.counter()-1);
+
   return CommandResult();
 }
