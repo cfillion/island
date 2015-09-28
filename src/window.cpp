@@ -176,15 +176,14 @@ bool Window::handleKeyEvent(const QKeyEvent *e)
   if(seq.isEmpty())
     return eatKey;
 
-  m_buffer << seq;
-
   m_mappingTimer.stop();
+  m_buffer << seq;
 
   auto match = m_mappings[m_mode]->match(m_buffer);
   qDebug() << match;
 
   if(!match.ambiguous)
-    m_buffer = m_buffer.mid(match.index+1);
+    m_buffer.truncate(match.index+1);
 
   Q_EMIT bufferChanged(m_buffer);
 
@@ -232,6 +231,10 @@ void Window::execMapping(const Mapping *mapping)
   qDebug() << "executing" << mapping;
 
   Command cmd = *mapping->command();
+  cmd.setCounter(m_buffer.counter());
   cmd.setData(this);
   cmd.exec();
+
+  m_buffer.clear();
+  Q_EMIT bufferChanged(m_buffer);
 }

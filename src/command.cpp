@@ -14,12 +14,12 @@ UseCommandRegistry::~UseCommandRegistry()
 }
 
 Command::Command(const CommandFunc &func)
-  : m_isValid(true), m_data(0), m_func(func)
+  : m_isValid(true), m_data(0), m_counter(-1), m_func(func)
 {
 }
 
 Command::Command(const QString &input)
-  : m_isValid(false), m_data(0), m_func(0)
+  : m_isValid(false), m_data(0), m_counter(-1), m_func(0)
 {
   if(s_registry && s_registry->count(input)) {
     m_isValid = true;

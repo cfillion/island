@@ -41,7 +41,7 @@ Mapping *Mapping::resolve(const Buffer &buf, const bool create)
   Mapping *node = resolve(seq, create);
 
   if(bufSize > 1 && node)
-    return node->resolve(buf.mid(1), create);
+    return node->resolve(buf.truncateCopy(1), create);
 
   return node;
 }

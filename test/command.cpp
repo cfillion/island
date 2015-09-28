@@ -50,6 +50,19 @@ TEST_CASE("set data pointer", M) {
   REQUIRE(ptr.data<void*>() == (void*)0x42);
 }
 
+TEST_CASE("set counter", M) {
+  const UseCommandRegistry reg(&TestReg);
+
+  Command ptr(&test_cmd);
+  Command str("test_cmd");
+
+  CHECK(ptr.counter() == -1);
+  CHECK(str.counter() == -1);
+
+  ptr.setCounter(42);
+  REQUIRE(ptr.counter() == 42);
+}
+
 TEST_CASE("execute", M) {
   g_ptr = 0;
 

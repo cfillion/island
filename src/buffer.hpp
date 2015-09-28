@@ -9,10 +9,14 @@ public:
   Buffer(const QString &in) { importString(in); }
   Buffer(const char *in) { importString(in); }
 
+  int counter() const;
+  QString toString() const;
+  void truncate(const int i);
+  Buffer truncateCopy(const int i) const;
+
   int size() const { return m_list.size(); }
-  Buffer mid(const int i) const { return m_list.mid(i); }
-  QString toString() const { return m_list.join(QChar()); }
-  void clear() { m_list.clear(); }
+  void clear();
+  void push(const QString &);
 
   const QString &operator[](const int i) const { return m_list[i]; }
   Buffer &operator<<(const QString &str);
@@ -22,6 +26,7 @@ public:
 private:
   void importString(const QString &input);
 
+  QString m_counter;
   QStringList m_list;
 };
 

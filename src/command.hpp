@@ -32,6 +32,9 @@ public:
   bool isValid() const { return m_isValid; }
   CommandFunc func() const { return m_func; }
 
+  void setCounter(const int n) { m_counter = n; }
+  int counter() const { return m_counter; }
+
   void setData(void *ptr) { m_data = ptr; }
   template<class T> T data() const { return static_cast<T>(m_data); }
 
@@ -43,6 +46,7 @@ private:
 
   bool m_isValid;
   void *m_data;
+  int m_counter;
   CommandFunc m_func;
 };
 
