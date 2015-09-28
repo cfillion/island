@@ -27,7 +27,7 @@ QString Island::KeyEventToSequence(const QKeyEvent *e)
   if(parts.size() > 1 || charStr.size() > 1)
     return QString("<%1>").arg(parts.join("-"));
   else
-    return parts.join(QString());
+    return parts[0];
 }
 
 QString Island::GetKeyEventCharacter(const QKeyEvent *e)
