@@ -87,9 +87,9 @@ void StatusBar::setPageCount(const int pageCount)
   updateLabels();
 }
 
-void StatusBar::setBuffer(const Island::Buffer &buffer)
+void StatusBar::setBuffer(const Buffer &buffer)
 {
-  const QString text = buffer.join(QChar());
+  const QString text = buffer.toString();
   m_buffer->setText(text.right(16));
 }
 

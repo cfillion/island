@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QWidget>
 
+#include "buffer.hpp"
 #include "global.hpp"
 #include "mapping.hpp"
 
@@ -38,7 +39,7 @@ public:
   void setMode(const Island::Mode);
 
 Q_SIGNALS:
-  void bufferChanged(const Island::Buffer &);
+  void bufferChanged(const Buffer &);
   void modeChanged(const Island::Mode);
 
 private:
@@ -57,7 +58,7 @@ private:
 
   Island::Mode m_mode;
   MappingArray m_mappings;
-  Island::Buffer m_buffer;
+  Buffer m_buffer;
   Mapping *m_delayedMapping;
   QTimer m_mappingTimer;
 };

@@ -22,14 +22,10 @@ Mapping::~Mapping()
   qDeleteAll(m_children);
 }
 
-void Mapping::set(const QString &sequence, const Command &command)
+void Mapping::set(const Buffer &sequence, const Command &command)
 {
-  const Buffer sequenceBuf = InputToBuffer(sequence);
-  // const Buffer commandBuf = InputToBuffer(command);
-
-  Mapping *seqMapping = resolve(sequenceBuf, true);
-  seqMapping->bindTo(command);
-  Q_UNUSED(seqMapping);
+  Mapping *map = resolve(sequence, true);
+  map->bindTo(command);
 }
 
 void Mapping::bindTo(const Command &cmd)
@@ -37,7 +33,7 @@ void Mapping::bindTo(const Command &cmd)
   m_command = cmd;
 }
 
-Mapping *Mapping::resolve(const Island::Buffer &buf, const bool create)
+Mapping *Mapping::resolve(const Buffer &buf, const bool create)
 {
   const int bufSize = buf.size();
   const QString seq = buf[0];
@@ -60,7 +56,7 @@ Mapping *Mapping::resolve(const QString &seq, const bool create)
   return node;
 }
 
-MappingMatch Mapping::match(const Island::Buffer &buf)
+MappingMatch Mapping::match(const Buffer &buf)
 {
   MappingMatch match;
 

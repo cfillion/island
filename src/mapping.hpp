@@ -4,6 +4,7 @@
 #include <boost/optional.hpp>
 #include <QMap>
 
+#include "buffer.hpp"
 #include "command.hpp"
 #include "global.hpp"
 
@@ -27,11 +28,11 @@ public:
 
   bool isLeaf() const { return m_children.isEmpty(); }
   void bindTo(const Command &command);
-  void set(const QString &sequence, const Command &command);
-  MappingMatch match(const Island::Buffer &buf);
+  void set(const Buffer &sequence, const Command &command);
+  MappingMatch match(const Buffer &buf);
 
 private:
-  Mapping *resolve(const Island::Buffer &buf, const bool create = true);
+  Mapping *resolve(const Buffer &buf, const bool create = true);
   Mapping *resolve(const QString &req, const bool create = true);
 
   QMap<QString, Mapping *> m_children;

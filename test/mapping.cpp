@@ -20,7 +20,7 @@ TEST_CASE("match buffer", M) {
   REQUIRE(map.isLeaf());
 
   SECTION("unmapped") {
-    const auto m = map.match(InputToBuffer("a"));
+    const auto m = map.match("a");
     REQUIRE(m.index == 0);
     REQUIRE(m.ambiguous == false);
     REQUIRE(m.mapping == 0);
@@ -30,14 +30,14 @@ TEST_CASE("match buffer", M) {
   REQUIRE_FALSE(map.isLeaf());
 
   SECTION("ambiguous match") {
-    const auto m = map.match(InputToBuffer("a"));
+    const auto m = map.match("a");
     REQUIRE(m.index == 0);
     REQUIRE(m.ambiguous == true);
     REQUIRE(m.mapping == 0);
   }
 
   SECTION("perfect match") {
-    const auto m = map.match(InputToBuffer("aa"));
+    const auto m = map.match("aa");
     REQUIRE(m.index == 1);
     REQUIRE(m.ambiguous == false);
     REQUIRE_FALSE(m.mapping == 0);

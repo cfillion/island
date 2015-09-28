@@ -12,10 +12,6 @@ namespace Island {
   };
 
   static constexpr int ModeCount = Prompt+1;
-
-  typedef QStringList Buffer;
-
-  Buffer InputToBuffer(const QString &);
 };
 
 #endif

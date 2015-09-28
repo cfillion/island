@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "buffer.hpp"
 #include "global.hpp"
 
 class Page;
@@ -19,7 +20,7 @@ public:
   void setPage(Page *);
   void setPageCount(const int);
 
-  void setBuffer(const Island::Buffer &);
+  void setBuffer(const Buffer &);
 
   void setMode(const Island::Mode);
 
