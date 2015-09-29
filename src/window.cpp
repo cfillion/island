@@ -182,7 +182,9 @@ bool Window::handleKeyEvent(const QKeyEvent *e)
 
   auto match = m_mappings[m_mode]->match(m_buffer);
 
-  if(!match.ambiguous)
+  if(!eatKey && match.index == -1)
+    m_buffer.clear(); // clears the counter in insert and prompt modes
+  else if(!match.ambiguous)
     m_buffer.truncate(match.index+1);
 
   Q_EMIT bufferChanged(m_buffer);
