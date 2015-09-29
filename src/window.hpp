@@ -49,6 +49,7 @@ private:
   void execPrompt(const QString &);
   void execDelayedMapping();
   void execMapping(const Mapping *);
+  void execCommand(Command &);
 
   Page *m_current;
   QList<Page *> m_pages;

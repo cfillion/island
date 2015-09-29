@@ -215,6 +215,9 @@ void Window::execPrompt(const QString &input)
 
   if(input.isEmpty())
     return;
+
+  Command cmd(input);
+  execCommand(cmd);
 }
 
 void Window::execDelayedMapping()
@@ -230,9 +233,14 @@ void Window::execMapping(const Mapping *mapping)
 {
   Command cmd = *mapping->command();
   cmd.setCounter(m_buffer.counter());
-  cmd.setData(this);
-  cmd.exec();
+  execCommand(cmd);
 
   m_buffer.clear();
   Q_EMIT bufferChanged(m_buffer);
+}
+
+void Window::execCommand(Command &cmd)
+{
+  cmd.setData(this);
+  cmd.exec();
 }
