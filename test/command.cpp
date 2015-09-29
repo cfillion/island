@@ -26,15 +26,24 @@ TEST_CASE("callback from string") {
   const UseCommandRegistry reg(&TestReg);
 
   SECTION("valid") {
-    Command cmd("test_cmd");
+    const Command cmd("test_cmd");
     CHECK(cmd.isValid());
     REQUIRE(cmd.func() == &test_cmd);
   }
 
   SECTION("invalid") {
-    Command cmd("helloworld");
+    const Command cmd("helloworld");
     CHECK_FALSE(cmd.isValid());
   }
+}
+
+TEST_CASE("counter from string") {
+  const UseCommandRegistry reg(&TestReg);
+
+  const Command cmd("42test_cmd");
+  CHECK(cmd.isValid());
+  CHECK(cmd.func() == &test_cmd);
+  REQUIRE(cmd.counter() == 42);
 }
 
 TEST_CASE("set data pointer", M) {

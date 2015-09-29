@@ -1,5 +1,7 @@
 #include "command.hpp"
 
+#include <QRegularExpression>
+
 CommandRegistry *Command::s_registry = 0;
 
 UseCommandRegistry::UseCommandRegistry(const CommandRegistry *reg)
@@ -21,9 +23,17 @@ Command::Command(const CommandFunc &func)
 Command::Command(const QString &input)
   : m_isValid(false), m_data(0), m_counter(-1), m_func(0)
 {
-  if(s_registry && s_registry->count(input)) {
+  static const QRegularExpression pattern("\\A(\\d*)(\\S+)\\z");
+  const auto match = pattern.match(input);
+
+  const QString counter = match.captured(1);
+  if(!counter.isEmpty())
+    m_counter = counter.toInt();
+
+  const QString name = match.captured(2);
+  if(s_registry && s_registry->count(name)) {
     m_isValid = true;
-    m_func = s_registry->at(input);
+    m_func = s_registry->at(name);
   }
 }
 
