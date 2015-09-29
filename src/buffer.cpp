@@ -4,8 +4,8 @@
 
 void Buffer::importString(const QString &input)
 {
-  static const QRegularExpression InputPattern("(\\<[^\\>]+\\>|.)");
-  auto matches = InputPattern.globalMatch(input);
+  static const QRegularExpression pattern("(\\<[^\\>]+\\>|.)");
+  auto matches = pattern.globalMatch(input);
 
   while(matches.hasNext()) {
     auto match = matches.next();
