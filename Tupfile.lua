@@ -43,7 +43,10 @@ tup.foreach_rule(
 tup.rule('build/*.o', join{CXX, LDFLAGS}, MAIN_TARGET)
 
 -- build the test suite
-tup.foreach_rule('test/*.cpp', join{CXX, '-Isrc', CCFLAGS}, 'build/test/%B.o')
+tup.foreach_rule(
+  {'test/*.cpp', 'test/helper/*.cpp'},
+  join{CXX, '-Isrc', CCFLAGS}, 'build/test/%B.o'
+)
 
 local objects = tup.glob('build/*.o')
 objects += tup.glob('build/test/*.o')
