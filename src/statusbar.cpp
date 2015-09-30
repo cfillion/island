@@ -17,10 +17,11 @@ StatusBar::StatusBar(QWidget *parent)
   setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
   setFixedHeight(16);
 
+  m_mode = new QLabel;
   m_status = new QLabel;
   m_buffer = new QLabel;
 
-  m_status->setText("-- NORMAL -- ");
+  m_mode->setText("-- NORMAL -- ");
 
   m_prompt = new QLineEdit;
   m_prompt->setFrame(false);
@@ -43,15 +44,16 @@ StatusBar::StatusBar(QWidget *parent)
   QHBoxLayout *layout = new QHBoxLayout(this);
   layout->setSpacing(5);
   layout->setContentsMargins(5, 0, 2, 0);
+  layout->addWidget(m_mode);
   layout->addWidget(m_status);
   layout->addWidget(m_prompt);
   layout->addWidget(m_buffer);
   layout->addWidget(m_url);
   layout->addWidget(m_tabPosition);
   layout->addWidget(m_progress);
-  layout->setStretch(0, 20);
   layout->setStretch(1, 20);
-  layout->setStretch(2, 2);
+  layout->setStretch(2, 20);
+  layout->setStretch(3, 2);
 }
 
 void StatusBar::setPage(Page *p)
@@ -103,9 +105,10 @@ void StatusBar::setMode(const Mode mode)
   switch(mode) {
   case Normal:
   case Insert:
-    m_status->setText(QString("-- %1 --")
+    m_mode->setText(QString("-- %1 --")
       .arg(mode == Normal ? "NORMAL" : "INSERT"));
 
+    m_mode->show();
     m_status->show();
     m_prompt->hide();
     break;
@@ -114,6 +117,7 @@ void StatusBar::setMode(const Mode mode)
     m_prompt->setFocus();
     m_prompt->setText(mode == Prompt ? ":" : "/");
 
+    m_mode->hide();
     m_status->hide();
     m_prompt->show();
     break;
@@ -121,6 +125,7 @@ void StatusBar::setMode(const Mode mode)
 
   m_prompt->blockSignals(false);
 }
+
 void StatusBar::checkPrompt()
 {
   if(m_prompt->text().isEmpty())
@@ -133,6 +138,11 @@ void StatusBar::sendPrompt()
     Q_EMIT promptFinished(m_prompt->text().remove(0, 1));
   else
     Q_EMIT promptFinished(QString());
+}
+
+void StatusBar::setStatus(const QString &text)
+{
+  m_status->setText(text);
 }
 
 void StatusBar::resizeEvent(QResizeEvent *e)

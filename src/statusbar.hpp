@@ -21,8 +21,8 @@ public:
   void setPageCount(const int);
 
   void setBuffer(const Buffer &);
-
   void setMode(const Island::Mode);
+  void setStatus(const QString &);
 
 Q_SIGNALS:
   void promptFinished(const QString &);
@@ -38,6 +38,7 @@ private:
   Page *m_page;
   int m_pageCount;
 
+  QLabel *m_mode;
   QLabel *m_status;
   QLineEdit *m_prompt;
   QLabel *m_buffer;

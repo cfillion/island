@@ -246,5 +246,6 @@ void Window::execMapping(const Mapping *mapping)
 void Window::execCommand(Command &cmd)
 {
   cmd.setData(this);
-  cmd.exec();
+  const CommandResult res = cmd.exec();
+  m_status->setStatus(res.message);
 }

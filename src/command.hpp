@@ -8,8 +8,11 @@ class Command;
 class Window;
 
 struct CommandResult {
-  bool ok = true;
-  QString message = QString();
+  CommandResult(const bool _ok = true, const QString &msg = QString())
+    : ok(_ok), message(msg) {}
+
+  bool ok;
+  QString message;
 };
 
 typedef CommandResult (*CommandFunc)(const Command &);
@@ -48,6 +51,7 @@ private:
   void *m_data;
   int m_counter;
   CommandFunc m_func;
+  QString m_input;
 };
 
 #endif

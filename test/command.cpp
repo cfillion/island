@@ -1,4 +1,5 @@
 #include "vendor/catch.hpp"
+#include "helper/io.hpp"
 
 #include <command.hpp>
 
@@ -101,4 +102,13 @@ TEST_CASE("partial command matching", M) {
     REQUIRE(cmd.isValid());
     REQUIRE(cmd.func() == &alt_cmd);
   }
+}
+
+TEST_CASE("execute invalid command", M) {
+  const UseCommandRegistry reg(&TestReg);
+
+  const Command cmd("hello world");
+  const CommandResult res = cmd.exec();
+  REQUIRE(res.ok == false);
+  REQUIRE(res.message == "Not a command: hello world");
 }

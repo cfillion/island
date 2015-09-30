@@ -22,7 +22,7 @@ Command::Command(const CommandFunc &func)
 }
 
 Command::Command(const QString &input)
-  : m_isValid(false), m_data(0), m_counter(-1), m_func(0)
+  : m_isValid(false), m_data(0), m_counter(-1), m_func(0), m_input(input)
 {
   assert(s_registry);
 
@@ -35,8 +35,10 @@ Command::Command(const QString &input)
 
   const QString name = match.captured(2);
   const auto lower = s_registry->lower_bound(name);
+  const bool partialMatch = lower != s_registry->end()
+    && lower->first.startsWith(name);
 
-  if(lower != s_registry->end() && lower->first.startsWith(name)) {
+  if(!name.isEmpty() && partialMatch) {
     m_isValid = true;
     m_func = lower->second;
   }
@@ -44,5 +46,8 @@ Command::Command(const QString &input)
 
 CommandResult Command::exec() const
 {
-  return m_func(*this);
+  if(m_isValid)
+    return m_func(*this);
+  else
+    return CommandResult{false, "Not a command: " + m_input};
 }
