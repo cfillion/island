@@ -38,7 +38,7 @@ Command::Command(const QString &input)
   const bool partialMatch = lower != s_registry->end()
     && lower->first.startsWith(name);
 
-  if(!name.isEmpty() && partialMatch) {
+  if(match.hasMatch() && partialMatch) {
     m_isValid = true;
     m_func = lower->second;
   }

@@ -115,8 +115,15 @@ TEST_CASE("partial command matching", M) {
 TEST_CASE("execute invalid command", M) {
   const UseCommandRegistry reg(&TestReg);
 
-  const Command cmd("hello world");
+  const Command cmd("hello_world");
   const CommandResult res = cmd.exec();
   REQUIRE(res.ok == false);
-  REQUIRE(res.message == "Not a command: hello world");
+  REQUIRE(res.message == "Not a command: hello_world");
+}
+
+TEST_CASE("ill-formed commands are invalid", M) {
+  const UseCommandRegistry reg(&TestReg);
+
+  const Command cmd("  : ");
+  REQUIRE_FALSE(cmd.isValid());
 }
