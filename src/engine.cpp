@@ -58,12 +58,11 @@ bool Engine::historyMotion(const int movement)
   if(movement == 0)
     return true;
 
-  const int nativeIndex = history()->currentItemIndex() + movement;
+  const int size = history()->count();
+  const int index = history()->currentItemIndex() + movement;
+  const int bounded = std::max(0, std::min(index, size-1));
 
-  if(nativeIndex < 0 || nativeIndex == history()->count())
-    return false;
+  history()->goToItem(history()->itemAt(bounded));
 
-  history()->goToItem(history()->itemAt(nativeIndex));
-
-  return true;
+  return index >= 0 && index < size;
 }
