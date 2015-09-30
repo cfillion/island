@@ -48,6 +48,9 @@ void Buffer::clear()
 
 void Buffer::truncate(const int i)
 {
+  if(i == m_list.size())
+    return clear();
+
   m_list = m_list.mid(i);
 }
 

@@ -45,6 +45,7 @@ TEST_CASE("counter", M) {
   REQUIRE(b.toString() == "42a3");
 
   REQUIRE(b.truncateCopy(0).counter() == 42);
+  REQUIRE(b.truncateCopy(b.size()).counter() == -1);
 
   b.clear();
   REQUIRE(b.counter() == -1);

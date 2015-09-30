@@ -184,7 +184,7 @@ bool Window::handleKeyEvent(const QKeyEvent *e)
 
   if(!eatKey && match.index == -1)
     m_buffer.clear(); // clears the counter in insert and prompt modes
-  else if(!match.ambiguous)
+  else if(!match.ambiguous && !match.mapping)
     m_buffer.truncate(match.index+1);
 
   Q_EMIT bufferChanged(m_buffer);
@@ -226,9 +226,6 @@ void Window::execPrompt(const QString &input)
 
 void Window::execDelayedMapping()
 {
-  m_buffer.clear();
-  Q_EMIT bufferChanged(m_buffer);
-
   execMapping(m_delayedMapping);
   m_delayedMapping = 0;
 }
