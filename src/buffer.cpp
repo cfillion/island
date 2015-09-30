@@ -21,8 +21,10 @@ Buffer &Buffer::operator<<(const QString &str)
 
 void Buffer::push(const QString &str)
 {
-  if(m_list.isEmpty() && str.size() == 1 && str[0].isNumber())
-    m_counter += str;
+  if(m_list.isEmpty() && str.size() == 1 && str[0].isNumber()) {
+    if(m_counter.size() > 0 || str != "0")
+      m_counter += str;
+  }
   else
     m_list << str;
 }
