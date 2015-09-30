@@ -7,8 +7,8 @@
 #include "global.hpp"
 
 class Page;
+class Prompt;
 class QLabel;
-class QLineEdit;
 class QProgressBar;
 
 class StatusBar : public QWidget {
@@ -32,15 +32,13 @@ protected:
 
 private:
   void updateLabels();
-  void checkPrompt();
-  void sendPrompt();
 
   Page *m_page;
   int m_pageCount;
 
   QLabel *m_mode;
   QLabel *m_status;
-  QLineEdit *m_prompt;
+  Prompt *m_prompt;
   QLabel *m_buffer;
   QLabel *m_url;
   QProgressBar *m_progress;

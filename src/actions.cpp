@@ -10,19 +10,19 @@ using namespace Island;
 
 CommandResult Actions::normal_mode(const Command &cmd)
 {
-  WIN->setMode(Normal);
+  WIN->setMode(NormalMode);
   return {};
 }
 
 CommandResult Actions::insert_mode(const Command &cmd)
 {
-  WIN->setMode(Insert);
+  WIN->setMode(InsertMode);
   return {};
 }
 
 CommandResult Actions::command_mode(const Command &cmd)
 {
-  WIN->setMode(Prompt);
+  WIN->setMode(CommandMode);
   return {};
 }
 

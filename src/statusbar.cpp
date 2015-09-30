@@ -1,10 +1,10 @@
 #include "statusbar.hpp"
 
 #include "page.hpp"
+#include "prompt.hpp"
 
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QLineEdit>
 #include <QProgressBar>
 #include <QResizeEvent>
 #include <QUrl>
@@ -20,11 +20,9 @@ StatusBar::StatusBar(QWidget *parent)
   m_mode = new QLabel;
   m_status = new QLabel;
   m_status->setTextFormat(Qt::PlainText);
-  m_buffer = new QLabel;
 
-  m_prompt = new QLineEdit;
-  m_prompt->setFrame(false);
-  m_prompt->setAttribute(Qt::WA_MacShowFocusRect, false);
+  m_buffer = new QLabel;
+  m_prompt = new Prompt;
 
   m_url = new QLabel;
   m_url->setAlignment(Qt::AlignRight);
@@ -37,8 +35,7 @@ StatusBar::StatusBar(QWidget *parent)
   m_progress->setMaximumHeight(8);
   m_progress->hide();
 
-  connect(m_prompt, &QLineEdit::textChanged, this, &StatusBar::checkPrompt);
-  connect(m_prompt, &QLineEdit::editingFinished, this, &StatusBar::sendPrompt);
+  connect(m_prompt, &Prompt::editingFinished, this, &StatusBar::promptFinished);
 
   QHBoxLayout *layout = new QHBoxLayout(this);
   layout->setSpacing(5);
@@ -102,19 +99,19 @@ void StatusBar::setMode(const Mode mode)
   m_prompt->blockSignals(true);
 
   switch(mode) {
-  case Normal:
-  case Insert:
+  case NormalMode:
+  case InsertMode:
     m_mode->setText(QString("-- %1 --")
-      .arg(mode == Normal ? "NORMAL" : "INSERT"));
+      .arg(mode == NormalMode ? "NORMAL" : "INSERT"));
 
     m_mode->show();
     m_status->show();
     m_prompt->hide();
     break;
-  case Prompt:
-  case Search:
+  case CommandMode:
+  case SearchMode:
     m_prompt->setFocus();
-    m_prompt->setText(mode == Prompt ? ":" : "/");
+    m_prompt->setPrompt(mode == CommandMode ? ":" : "/");
 
     m_mode->hide();
     m_status->hide();
@@ -123,20 +120,6 @@ void StatusBar::setMode(const Mode mode)
   }
 
   m_prompt->blockSignals(false);
-}
-
-void StatusBar::checkPrompt()
-{
-  if(m_prompt->text().isEmpty())
-    sendPrompt();
-}
-
-void StatusBar::sendPrompt()
-{
-  if(m_prompt->hasFocus())
-    Q_EMIT promptFinished(m_prompt->text().remove(0, 1));
-  else
-    Q_EMIT promptFinished(QString());
 }
 
 void StatusBar::setStatus(const QString &text)

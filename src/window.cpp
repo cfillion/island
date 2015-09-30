@@ -45,7 +45,7 @@ Window::Window(const MappingArray &mappings, QWidget *parent)
   addPage(QUrl("http://google.com/"));
   setCurrentTab(0);
 
-  setMode(Normal);
+  setMode(NormalMode);
 }
 
 int Window::addPage(const QUrl &url, const Window::OpenMode mode)
@@ -171,7 +171,7 @@ void Window::shiftPageIndexes(const int start)
 
 bool Window::handleKeyEvent(const QKeyEvent *e)
 {
-  const bool eatKey = m_mode == Normal;
+  const bool eatKey = m_mode == NormalMode;
   const QString seq = KeyEventToSequence(e);
 
   if(seq.isEmpty())
@@ -214,7 +214,7 @@ void Window::execPrompt(const QString &input)
 {
   // executing this later prevents <CR> from being added to the input buffer
   QTimer::singleShot(0, this, [=] {
-    setMode(Normal);
+    setMode(NormalMode);
 
     if(input.isEmpty())
       return;

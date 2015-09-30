@@ -7,13 +7,13 @@ class QKeyEvent;
 
 namespace Island {
   enum Mode {
-    Normal,
-    Insert,
-    Prompt,
-    Search,
+    NormalMode,
+    InsertMode,
+    CommandMode,
+    SearchMode,
   };
 
-  static constexpr int ModeCount = Prompt+1;
+  static constexpr int ModeCount = SearchMode+1;
 
   QString KeyEventToSequence(const QKeyEvent *);
   QString GetKeyEventCharacter(const QKeyEvent *);
