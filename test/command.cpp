@@ -10,8 +10,14 @@ static CommandResult test_cmd(const Command &cmd)
   return CommandResult();
 }
 
+static CommandResult alt_cmd(const Command &cmd)
+{
+  return CommandResult();
+}
+
 static const CommandRegistry TestReg{
   {"test_cmd", &test_cmd},
+  {"tester", &alt_cmd},
 };
 
 static const char *M = "[command]";
@@ -79,4 +85,20 @@ TEST_CASE("execute", M) {
   cmd.exec();
 
   REQUIRE(g_ptr == &cmd);
+}
+
+TEST_CASE("partial command matching", M) {
+  const UseCommandRegistry reg(&TestReg);
+
+  SECTION("ambiguous") {
+    const Command cmd("test");
+    REQUIRE(cmd.isValid());
+    REQUIRE(cmd.func() == &test_cmd);
+  }
+
+  SECTION("unambiguous") {
+    const Command cmd("teste");
+    REQUIRE(cmd.isValid());
+    REQUIRE(cmd.func() == &alt_cmd);
+  }
 }
