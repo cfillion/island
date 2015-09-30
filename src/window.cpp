@@ -212,14 +212,16 @@ void Window::setMode(const Mode mode)
 
 void Window::execPrompt(const QString &input)
 {
-  // prevents <CR> from being added to the input buffer
-  QTimer::singleShot(0, this, [=] { setMode(Normal); });
+  // executing this later prevents <CR> from being added to the input buffer
+  QTimer::singleShot(0, this, [=] {
+    setMode(Normal);
 
-  if(input.isEmpty())
-    return;
+    if(input.isEmpty())
+      return;
 
-  Command cmd(input);
-  execCommand(cmd);
+    Command cmd(input);
+    execCommand(cmd);
+  });
 }
 
 void Window::execDelayedMapping()

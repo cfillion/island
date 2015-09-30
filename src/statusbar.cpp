@@ -97,6 +97,9 @@ void StatusBar::setBuffer(const Buffer &buffer)
 
 void StatusBar::setMode(const Mode mode)
 {
+  // this prevents issue with mode-changing commands from user input
+  m_prompt->blockSignals(true);
+
   switch(mode) {
   case Normal:
   case Insert:
@@ -115,6 +118,8 @@ void StatusBar::setMode(const Mode mode)
     m_prompt->show();
     break;
   }
+
+  m_prompt->blockSignals(false);
 }
 void StatusBar::checkPrompt()
 {
