@@ -37,6 +37,8 @@ public:
   bool isLoading() const;
   int loadProgress() const;
 
+  bool historyMotion(const int);
+
 Q_SIGNALS:
   void displayTitleChanged(const QString &);
   void iconChanged(const QIcon &);

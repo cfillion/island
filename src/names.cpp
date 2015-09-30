@@ -6,5 +6,7 @@
 
 const CommandRegistry Island::ActionNames{
   {"insert", &Actions::insert_mode},
-  {"close", &Actions::close_tab},
+  {"close", &Actions::tab_close},
+  {"back", &Actions::history_back},
+  {"forward", &Actions::history_forward},
 };

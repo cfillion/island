@@ -35,7 +35,9 @@ int main(int argc, char *argv[])
   Mapping nmap;
   nmap.set("i", &Actions::insert_mode);
   nmap.set(":", &Actions::command_mode);
-  nmap.set("d", &Actions::close_tab);
+  nmap.set("d", &Actions::tab_close);
+  nmap.set("H", &Actions::history_back);
+  nmap.set("L", &Actions::history_forward);
 
   Mapping imap;
   imap.set("<Esc>", &Actions::normal_mode);

@@ -1,6 +1,7 @@
 #include "actions.hpp"
 
 #include "global.hpp"
+#include "page.hpp"
 #include "window.hpp"
 
 using namespace Island;
@@ -25,12 +26,24 @@ CommandResult Actions::command_mode(const Command &cmd)
   return CommandResult();
 }
 
-CommandResult Actions::close_tab(const Command &cmd)
+CommandResult Actions::tab_close(const Command &cmd)
 {
   if(cmd.counter() == -1)
     WIN->closePage(WIN->currentPage());
   else
     WIN->closeTab(cmd.counter()-1);
 
+  return CommandResult();
+}
+
+CommandResult Actions::history_back(const Command &cmd)
+{
+  WIN->currentPage()->historyMotion(-1);
+  return CommandResult();
+}
+
+CommandResult Actions::history_forward(const Command &cmd)
+{
+  WIN->currentPage()->historyMotion(1);
   return CommandResult();
 }

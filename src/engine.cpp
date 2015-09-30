@@ -1,6 +1,7 @@
 #include "engine.hpp"
 
 #include <QChildEvent>
+#include <QWebEngineHistory>
 
 Engine::Engine(const QUrl &url, QWidget *parent)
   : QWebEngineView(parent), m_deferredUrl(url)
@@ -47,4 +48,19 @@ QUrl Engine::url() const
     return page()->requestedUrl();
 
   return url;
+}
+
+bool Engine::historyMotion(const int movement)
+{
+  if(movement == 0)
+    return true;
+
+  const int nativeIndex = history()->currentItemIndex() + movement;
+
+  if(nativeIndex < 0 || nativeIndex == history()->count())
+    return false;
+
+  history()->goToItem(history()->itemAt(nativeIndex));
+
+  return true;
 }

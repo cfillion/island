@@ -11,6 +11,8 @@ public:
   Engine(const QUrl &url, QWidget *parent = 0);
   QUrl url() const;
 
+  bool historyMotion(const int);
+
 Q_SIGNALS:
   void triggered();
   void linkHovered(const QString &);

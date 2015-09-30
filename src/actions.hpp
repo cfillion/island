@@ -7,7 +7,9 @@ namespace Actions {
   CommandResult normal_mode(const Command &);
   CommandResult insert_mode(const Command &);
   CommandResult command_mode(const Command &);
-  CommandResult close_tab(const Command &);
+  CommandResult tab_close(const Command &);
+  CommandResult history_back(const Command &);
+  CommandResult history_forward(const Command &);
 };
 
 #endif

@@ -127,3 +127,8 @@ void Page::setHoveredLink(const QString &url)
   m_hoveredLink = url;
   Q_EMIT displayUrlChanged();
 }
+
+bool Page::historyMotion(const int motion)
+{
+  return m_engine->historyMotion(motion);
+}
