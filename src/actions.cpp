@@ -28,10 +28,14 @@ CommandResult Actions::command_mode(const Command &cmd)
 
 CommandResult Actions::tab_close(const Command &cmd)
 {
-  if(cmd.counter() == -1)
+  if(!cmd.hasCounter())
     WIN->closePage(WIN->currentPage());
-  else
+  else if(cmd.counter() <= WIN->pageCount())
     WIN->closeTab(cmd.counter()-1);
+  else {
+    return CommandResult{false, "Invalid tab identifier: "
+      + QString::number(cmd.counter())};
+  }
 
   return CommandResult();
 }

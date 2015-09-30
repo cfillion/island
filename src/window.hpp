@@ -31,6 +31,7 @@ public:
   void setCurrentTab(const int index);
   Page *currentPage() const { return m_current; }
   int currentPageIndex() const;
+  int pageCount() const { return m_pages.size(); }
   void closeTab(const int index);
   void closePage(Page *page);
 

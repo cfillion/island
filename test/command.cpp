@@ -74,9 +74,17 @@ TEST_CASE("set counter", M) {
 
   CHECK(ptr.counter() == -1);
   CHECK(str.counter() == -1);
+  CHECK_FALSE(ptr.hasCounter());
 
   ptr.setCounter(42);
   REQUIRE(ptr.counter() == 42);
+  REQUIRE(ptr.hasCounter());
+}
+
+TEST_CASE("zero counter is invalid", M) {
+  Command cmd(&test_cmd);
+  cmd.setCounter(0);
+  REQUIRE_FALSE(cmd.hasCounter());
 }
 
 TEST_CASE("execute", M) {
