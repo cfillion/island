@@ -19,9 +19,8 @@ StatusBar::StatusBar(QWidget *parent)
 
   m_mode = new QLabel;
   m_status = new QLabel;
+  m_status->setTextFormat(Qt::PlainText);
   m_buffer = new QLabel;
-
-  m_mode->setText("-- NORMAL -- ");
 
   m_prompt = new QLineEdit;
   m_prompt->setFrame(false);
