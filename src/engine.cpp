@@ -2,11 +2,14 @@
 
 #include <QChildEvent>
 #include <QWebEngineHistory>
+#include <QWebEngineSettings>
 
 Engine::Engine(const QUrl &url, QWidget *parent)
   : QWebEngineView(parent), m_deferredUrl(url)
 {
   connect(page(), &QWebEnginePage::linkHovered, this, &Engine::linkHovered);
+
+  settings()->setAttribute(QWebEngineSettings::LinksIncludedInFocusChain, false);
 
   // TODO: optional load on focus setting
 }
