@@ -10,7 +10,7 @@ static CommandResult test_cmd(const Command &cmd)
   return CommandResult();
 }
 
-static CommandResult alt_cmd(const Command &cmd)
+static CommandResult alt_cmd(const Command &)
 {
   return CommandResult();
 }
