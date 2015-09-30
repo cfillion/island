@@ -11,19 +11,19 @@ using namespace Island;
 CommandResult Actions::normal_mode(const Command &cmd)
 {
   WIN->setMode(Normal);
-  return CommandResult();
+  return {};
 }
 
 CommandResult Actions::insert_mode(const Command &cmd)
 {
   WIN->setMode(Insert);
-  return CommandResult();
+  return {};
 }
 
 CommandResult Actions::command_mode(const Command &cmd)
 {
   WIN->setMode(Prompt);
-  return CommandResult();
+  return {};
 }
 
 CommandResult Actions::tab_close(const Command &cmd)
@@ -33,21 +33,25 @@ CommandResult Actions::tab_close(const Command &cmd)
   else if(cmd.counter() <= WIN->pageCount())
     WIN->closeTab(cmd.counter()-1);
   else {
-    return CommandResult{false, "Invalid tab identifier: "
+    return {false, "Invalid tab identifier: "
       + QString::number(cmd.counter())};
   }
 
-  return CommandResult();
+  return {};
 }
 
 CommandResult Actions::history_back(const Command &cmd)
 {
-  WIN->currentPage()->historyMotion(-1);
-  return CommandResult();
+  if(WIN->currentPage()->historyMotion(-1))
+    return{};
+  else
+    return {false, "End of history"};
 }
 
 CommandResult Actions::history_forward(const Command &cmd)
 {
-  WIN->currentPage()->historyMotion(1);
-  return CommandResult();
+  if(WIN->currentPage()->historyMotion(1))
+    return {};
+  else
+    return {false, "Start of history"};
 }
