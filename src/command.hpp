@@ -52,7 +52,7 @@ private:
   void *m_data;
   int m_counter;
   CommandFunc m_func;
-  QString m_input;
+  QString m_error;
 };
 
 #endif

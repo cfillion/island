@@ -22,7 +22,7 @@ Command::Command(const CommandFunc &func)
 }
 
 Command::Command(const QString &input)
-  : m_isValid(false), m_data(0), m_counter(-1), m_func(0), m_input(input)
+  : m_isValid(false), m_data(0), m_counter(-1), m_func(0)
 {
   assert(s_registry);
 
@@ -42,6 +42,8 @@ Command::Command(const QString &input)
     m_isValid = true;
     m_func = lower->second;
   }
+  else
+    m_error = "Not a command: " + input;
 }
 
 CommandResult Command::exec() const
@@ -49,5 +51,5 @@ CommandResult Command::exec() const
   if(m_isValid)
     return m_func(*this);
   else
-    return CommandResult{false, "Not a command: " + m_input};
+    return CommandResult{false, m_error};
 }
