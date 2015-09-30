@@ -42,7 +42,9 @@ CommandResult Actions::tab_close(const Command &cmd)
 
 CommandResult Actions::history_back(const Command &cmd)
 {
-  if(WIN->currentPage()->historyMotion(-1))
+  const int motionSize = std::max(1, cmd.counter());
+
+  if(WIN->currentPage()->historyMotion(motionSize * -1))
     return{};
   else
     return {false, "End of history"};
@@ -50,7 +52,9 @@ CommandResult Actions::history_back(const Command &cmd)
 
 CommandResult Actions::history_forward(const Command &cmd)
 {
-  if(WIN->currentPage()->historyMotion(1))
+  const int motionSize = std::max(1, cmd.counter());
+
+  if(WIN->currentPage()->historyMotion(motionSize))
     return {};
   else
     return {false, "Start of history"};
