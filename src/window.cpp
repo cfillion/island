@@ -244,5 +244,10 @@ void Window::execCommand(Command &cmd)
 {
   cmd.setData(this);
   const CommandResult res = cmd.exec();
-  m_status->setStatus(res.message);
+
+  QString message = res.message;
+  if(!res.ok)
+    message.prepend("Error: ");
+
+  m_status->setStatus(message);
 }
