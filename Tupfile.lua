@@ -21,7 +21,7 @@ MOC = join {
 CXX = join {
   'c++',
   '-Wall -Wextra -Wno-missing-braces',
-  '-pipe -std=c++11 -O2 -g',
+  '-pipe -std=c++14 -O2 -g',
   '-fPIC -fdiagnostics-color',
   '`pkg-config --cflags Qt5WebEngineWidgets`',
 }
