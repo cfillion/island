@@ -17,7 +17,7 @@ static CommandResult alt_cmd(const Command &)
 }
 
 static const CommandRegistry TestReg{
-  {"test_cmd", &test_cmd, true},
+  {"test", &test_cmd, true},
   {"tester", &alt_cmd, true},
   {"noarg", &test_cmd, false},
 };
@@ -34,7 +34,7 @@ TEST_CASE("callback from string") {
   const UseCommandRegistry reg(&TestReg);
 
   SECTION("valid") {
-    const Command cmd("test_cmd");
+    const Command cmd("test");
     CHECK(cmd.isValid());
     REQUIRE(cmd.func() == &test_cmd);
   }
@@ -48,7 +48,7 @@ TEST_CASE("callback from string") {
 TEST_CASE("counter from string") {
   const UseCommandRegistry reg(&TestReg);
 
-  const Command cmd("42test_cmd");
+  const Command cmd("42test");
   CHECK(cmd.isValid());
   CHECK(cmd.func() == &test_cmd);
   REQUIRE(cmd.counter() == 42);
@@ -58,7 +58,7 @@ TEST_CASE("set data pointer", M) {
   const UseCommandRegistry reg(&TestReg);
 
   Command ptr(&test_cmd);
-  Command str("test_cmd");
+  Command str("test");
 
   CHECK(ptr.data<void*>() == 0);
   CHECK(str.data<void*>() == 0);
@@ -71,7 +71,7 @@ TEST_CASE("set counter", M) {
   const UseCommandRegistry reg(&TestReg);
 
   Command ptr(&test_cmd);
-  Command str("test_cmd");
+  Command str("test");
 
   CHECK(ptr.counter() == -1);
   CHECK(str.counter() == -1);
@@ -106,6 +106,11 @@ TEST_CASE("partial command matching", M) {
   const UseCommandRegistry reg(&TestReg);
 
   SECTION("ambiguous") {
+    const Command cmd("tes");
+    REQUIRE(!cmd.isValid());
+  }
+
+  SECTION("exact match") {
     const Command cmd("test");
     REQUIRE(cmd.isValid());
     REQUIRE(cmd.func() == &test_cmd);
@@ -143,7 +148,7 @@ TEST_CASE("direct argument", M) {
 TEST_CASE("argument from string", M) {
   const UseCommandRegistry reg(&TestReg);
 
-  const Command cmd("test_cmd hello world");
+  const Command cmd("test hello world");
   CHECK(cmd.isValid());
   CHECK(cmd.func() == &test_cmd);
 
@@ -161,7 +166,7 @@ TEST_CASE("unexpected argument", M) {
 TEST_CASE("ignore space padding", M) {
   const UseCommandRegistry reg(&TestReg);
 
-  const Command cmd("  4  test_cmd     hello  world  ");
+  const Command cmd("  4  test     hello  world  ");
   CHECK(cmd.counter() == 4);
   CHECK(cmd.func() == &test_cmd);
   CHECK(cmd.arg() == "hello\x20world");

@@ -39,10 +39,18 @@ Command::Command(const QString &input)
   const QString args = match.captured(3);
 
   const auto lower = s_registry->lower_bound({name});
+  const auto next = std::next(lower);
+
   const bool partialMatch = lower != s_registry->end()
     && std::get<QString>(*lower).startsWith(name);
 
-  if(!match.hasMatch() || !partialMatch) {
+  const bool nextMatch = next != s_registry->end()
+    && std::get<QString>(*next).startsWith(name);
+
+  const bool uniqueMatch = partialMatch
+    && (!nextMatch || std::get<QString>(*lower) == name);
+
+  if(!match.hasMatch() || !uniqueMatch) {
     m_error = "Not a command: " + cleanInput;
     return;
   }
