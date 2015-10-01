@@ -155,6 +155,6 @@ TEST_CASE("ignore space padding", M) {
   const Command cmd("  4  test_cmd     hello  world  ");
   CHECK(cmd.counter() == 4);
   CHECK(cmd.func() == &test_cmd);
-  CHECK(cmd.arg() == "hello\x20\x20world");
+  CHECK(cmd.arg() == "hello\x20world");
   REQUIRE(cmd.isValid());
 }
