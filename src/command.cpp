@@ -24,8 +24,6 @@ Command::Command(const CommandFunc &func, const QString &arg, const int counter)
 Command::Command(const QString &input)
   : m_isValid(false), m_data(0), m_counter(-1), m_func(0)
 {
-  assert(s_registry);
-
   const QString cleanInput = input.simplified();
 
   static const QRegularExpression pattern(
@@ -38,23 +36,13 @@ Command::Command(const QString &input)
   const QString name = match.captured(2);
   const QString args = match.captured(3);
 
-  const auto lower = s_registry->lower_bound({name});
-  const auto next = std::next(lower);
+  CommandEntry entry;
 
-  const bool partialMatch = lower != s_registry->end()
-    && std::get<QString>(*lower).startsWith(name);
-
-  const bool nextMatch = next != s_registry->end()
-    && std::get<QString>(*next).startsWith(name);
-
-  const bool uniqueMatch = partialMatch
-    && (!nextMatch || std::get<QString>(*lower) == name);
-
-  if(!match.hasMatch() || !uniqueMatch) {
+  if(!match.hasMatch() || !matchCommand(name, entry)) {
     m_error = "Not a command: " + cleanInput;
     return;
   }
-  else if(!args.isEmpty() && !std::get<bool>(*lower)) {
+  else if(!args.isEmpty() && !std::get<bool>(entry)) {
     m_error = "Trailing characters";
     return;
   }
@@ -63,9 +51,39 @@ Command::Command(const QString &input)
     m_counter = counter.toInt();
 
   m_isValid = true;
-  m_func = std::get<CommandFunc>(*lower);
+  m_func = std::get<CommandFunc>(entry);
   m_arg = args;
 }
+
+bool Command::matchCommand(const QString &name, CommandEntry &entry)
+{
+  assert(s_registry);
+
+  const auto match = s_registry->lower_bound({name});
+
+  // no match
+  if(match == s_registry->end())
+    return false;
+
+  // exact match
+  if(std::get<QString>(*match) == name) {
+    entry = *match;
+    return true;
+  }
+
+  // ambiguous match
+  const auto next = std::next(match);
+  if(next != s_registry->end() && std::get<QString>(*next).startsWith(name))
+    return false;
+
+  // partial match
+  if(std::get<QString>(*match).startsWith(name)) {
+    entry = *match;
+    return true;
+  }
+
+  return false;
+};
 
 CommandResult Command::exec() const
 {
