@@ -53,6 +53,8 @@ private:
   static CommandRegistry *s_registry;
   friend UseCommandRegistry;
 
+  void parseArguments(const QString &input);
+
   bool m_isValid;
   void *m_data;
   int m_counter;

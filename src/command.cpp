@@ -51,16 +51,46 @@ Command::Command(const QString &input)
     m_error = "Not a command: " + input;
 
   const QString args = match.captured(3);
-  if(!args.isEmpty()) {
-    static const QRegularExpression argp(
-      "[^\x20]+",
-      QRegularExpression::OptimizeOnFirstUsageOption);
+  if(!args.isEmpty())
+    parseArguments(args);
+}
 
-    auto it = argp.globalMatch(args);
+void Command::parseArguments(const QString &input)
+{
+  const int size = input.size();
 
-    while(it.hasNext())
-      m_argv.push_back(it.next().captured(0));
+  enum { Normal, Escape };
+  auto mode = Normal;
+  bool ignoreSpace = false;
+  QString arg;
+
+  for(int i = 0; i < size; i++) {
+    const QChar c = input[i];
+
+    switch(mode) {
+    case Normal:
+      if(c == '\x20' && !ignoreSpace) {
+        m_argv.push_back(arg);
+        arg.clear();
+      }
+      else if(c == '\\' && i+1 < size &&
+          (input[i+1] == '"' || input[i+1] == '\x20' || input[i+1] == '\\'))
+        mode = Escape;
+      else if(c == '"' && (ignoreSpace || input.indexOf('"', i+1) > -1))
+        ignoreSpace = !ignoreSpace;
+      else
+        arg += c;
+
+      break;
+    case Escape:
+      mode = Normal;
+      arg += c;
+      break;
+    }
   }
+
+  if(!arg.isEmpty())
+    m_argv.push_back(arg);
 }
 
 CommandResult Command::exec() const

@@ -135,7 +135,8 @@ TEST_CASE("ill-formed commands are invalid", M) {
 
 TEST_CASE("direct arguments", M) {
   const Command cmd(&test_cmd, {"hello", "world"});
-  REQUIRE(cmd.argc() == 2);
+
+  CHECK(cmd.argc() == 2);
   REQUIRE(cmd.arg(0) == "hello");
   REQUIRE(cmd.arg(1) == "world");
 }
@@ -148,8 +149,54 @@ TEST_CASE("arguments from string", M) {
     CHECK(cmd.isValid());
     CHECK(cmd.func() == &test_cmd);
 
-    REQUIRE(cmd.argc() == 2);
+    CHECK(cmd.argc() == 2);
     REQUIRE(cmd.arg(0) == "hello");
     REQUIRE(cmd.arg(1) == "world");
+  }
+
+  SECTION("escaped spaces") {
+    const Command cmd("test_cmd hello\\ world");
+
+    CHECK(cmd.argc() == 1);
+    REQUIRE(cmd.arg(0) == "hello world");
+  }
+
+  SECTION("escaped backslash") {
+    const Command cmd("test_cmd hello\\\\ world");
+
+    CHECK(cmd.argc() == 2);
+    REQUIRE(cmd.arg(0) == "hello\\");
+    REQUIRE(cmd.arg(1) == "world");
+  }
+
+  SECTION("quoted spaces") {
+    const Command cmd("test_cmd \"hello world\" test");
+
+    CHECK(cmd.argc() == 2);
+    REQUIRE(cmd.arg(0) == "hello world");
+    REQUIRE(cmd.arg(1) == "test");
+  }
+
+  SECTION("escaped quotes") {
+    const Command cmd("test_cmd \\\"hello world\\\"");
+
+    CHECK(cmd.argc() == 2);
+    REQUIRE(cmd.arg(0) == "\"hello");
+    REQUIRE(cmd.arg(1) == "world\"");
+  }
+
+  SECTION("unbalanced quotes") {
+    const Command cmd("test_cmd hello\" world");
+
+    CHECK(cmd.argc() == 2);
+    REQUIRE(cmd.arg(0) == "hello\"");
+    REQUIRE(cmd.arg(1) == "world");
+  }
+
+  SECTION("escaped letter") {
+    const Command cmd("test_cmd te\\st");
+
+    CHECK(cmd.argc() == 1);
+    REQUIRE(cmd.arg(0) == "te\\st");
   }
 }
