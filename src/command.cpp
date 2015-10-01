@@ -35,25 +35,28 @@ Command::Command(const QString &input)
   const auto match = pattern.match(cleanInput);
 
   const QString counter = match.captured(1);
+  const QString name = match.captured(2);
+  const QString args = match.captured(3);
+
+  const auto lower = s_registry->lower_bound({name});
+  const bool partialMatch = lower != s_registry->end()
+    && std::get<QString>(*lower).startsWith(name);
+
+  if(!match.hasMatch() || !partialMatch) {
+    m_error = "Not a command: " + cleanInput;
+    return;
+  }
+  else if(!args.isEmpty() && !std::get<bool>(*lower)) {
+    m_error = "Trailing characters";
+    return;
+  }
+
   if(!counter.isEmpty())
     m_counter = counter.toInt();
 
-  const QString name = match.captured(2);
-
-  const auto lower = s_registry->lower_bound(name);
-  const bool partialMatch = lower != s_registry->end()
-    && lower->first.startsWith(name);
-
-  if(match.hasMatch() && partialMatch) {
-    m_isValid = true;
-    m_func = lower->second;
-  }
-  else
-    m_error = "Not a command: " + cleanInput;
-
-  const QString arg = match.captured(3);
-  if(!arg.isEmpty())
-    m_arg = arg;
+  m_isValid = true;
+  m_func = std::get<CommandFunc>(*lower);
+  m_arg = args;
 }
 
 CommandResult Command::exec() const

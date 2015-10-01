@@ -17,8 +17,9 @@ static CommandResult alt_cmd(const Command &)
 }
 
 static const CommandRegistry TestReg{
-  {"test_cmd", &test_cmd},
-  {"tester", &alt_cmd},
+  {"test_cmd", &test_cmd, true},
+  {"tester", &alt_cmd, true},
+  {"noarg", &test_cmd, false},
 };
 
 static const char *M = "[command]";
@@ -147,6 +148,14 @@ TEST_CASE("argument from string", M) {
   CHECK(cmd.func() == &test_cmd);
 
   REQUIRE(cmd.arg() == "hello world");
+}
+
+TEST_CASE("unexpected argument", M) {
+  const UseCommandRegistry reg(&TestReg);
+
+  const Command cmd("noarg test");
+  CHECK_FALSE(cmd.isValid());
+  REQUIRE(cmd.exec().message == "Trailing characters");
 }
 
 TEST_CASE("ignore space padding", M) {

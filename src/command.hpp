@@ -1,9 +1,9 @@
 #ifndef ISLAND_COMMAND_HPP
 #define ISLAND_COMMAND_HPP
 
-#include <map>
 #include <QString>
-#include <vector>
+#include <set>
+#include <tuple>
 
 class Command;
 class Window;
@@ -17,7 +17,8 @@ struct CommandResult {
 };
 
 typedef CommandResult (*CommandFunc)(const Command &);
-typedef std::map<QString, CommandFunc> CommandRegistry;
+typedef std::tuple<QString, CommandFunc, bool> CommandEntry;
+typedef std::set<CommandEntry> CommandRegistry;
 
 class UseCommandRegistry {
 public:

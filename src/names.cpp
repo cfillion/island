@@ -5,8 +5,8 @@
 #define ACTION(x) {#x, Actions::x}
 
 const CommandRegistry Island::ActionNames{
-  {"insert", &Actions::insert_mode},
-  {"close", &Actions::tab_close},
-  {"back", &Actions::history_back},
-  {"forward", &Actions::history_forward},
+  {"insert", &Actions::insert_mode, false},
+  {"close", &Actions::tab_close, false},
+  {"back", &Actions::history_back, false},
+  {"forward", &Actions::history_forward, false},
 };
