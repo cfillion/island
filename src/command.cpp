@@ -16,9 +16,8 @@ UseCommandRegistry::~UseCommandRegistry()
   Command::s_registry = m_backup;
 }
 
-Command::Command(const CommandFunc &func,
-  const std::vector<QString> &argv, const int counter)
-  : m_isValid(true), m_data(0), m_counter(counter), m_func(func), m_argv(argv)
+Command::Command(const CommandFunc &func, const QString &arg, const int counter)
+  : m_isValid(true), m_data(0), m_counter(counter), m_func(func), m_arg(arg)
 {
 }
 
@@ -28,7 +27,7 @@ Command::Command(const QString &input)
   assert(s_registry);
 
   static const QRegularExpression pattern(
-    "\\A(\\d*)([^\x20]+)(?:\x20(.+))?\\z",
+    "\\A\\s*(\\d*)\\s*(\\S+)(?:\\s+(.+?))?\\s*\\z",
     QRegularExpression::OptimizeOnFirstUsageOption);
 
   const auto match = pattern.match(input);
@@ -50,47 +49,9 @@ Command::Command(const QString &input)
   else
     m_error = "Not a command: " + input;
 
-  const QString args = match.captured(3);
-  if(!args.isEmpty())
-    parseArguments(args);
-}
-
-void Command::parseArguments(const QString &input)
-{
-  const int size = input.size();
-
-  enum { Normal, Escape };
-  auto mode = Normal;
-  bool ignoreSpace = false;
-  QString arg;
-
-  for(int i = 0; i < size; i++) {
-    const QChar c = input[i];
-
-    switch(mode) {
-    case Normal:
-      if(c == '\x20' && !ignoreSpace) {
-        m_argv.push_back(arg);
-        arg.clear();
-      }
-      else if(c == '\\' && i+1 < size &&
-          (input[i+1] == '"' || input[i+1] == '\x20' || input[i+1] == '\\'))
-        mode = Escape;
-      else if(c == '"' && (ignoreSpace || input.indexOf('"', i+1) > -1))
-        ignoreSpace = !ignoreSpace;
-      else
-        arg += c;
-
-      break;
-    case Escape:
-      mode = Normal;
-      arg += c;
-      break;
-    }
-  }
-
+  const QString arg = match.captured(3);
   if(!arg.isEmpty())
-    m_argv.push_back(arg);
+    m_arg = arg;
 }
 
 CommandResult Command::exec() const

@@ -133,70 +133,28 @@ TEST_CASE("ill-formed commands are invalid", M) {
   REQUIRE_FALSE(cmd.isValid());
 }
 
-TEST_CASE("direct arguments", M) {
-  const Command cmd(&test_cmd, {"hello", "world"});
+TEST_CASE("direct argument", M) {
+  const Command cmd(&test_cmd, "hello world");
 
-  CHECK(cmd.argc() == 2);
-  REQUIRE(cmd.arg(0) == "hello");
-  REQUIRE(cmd.arg(1) == "world");
+  REQUIRE(cmd.arg() == "hello world");
 }
 
-TEST_CASE("arguments from string", M) {
+TEST_CASE("argument from string", M) {
   const UseCommandRegistry reg(&TestReg);
 
-  SECTION("separated by space") {
-    const Command cmd("test_cmd hello world");
-    CHECK(cmd.isValid());
-    CHECK(cmd.func() == &test_cmd);
+  const Command cmd("test_cmd hello world");
+  CHECK(cmd.isValid());
+  CHECK(cmd.func() == &test_cmd);
 
-    CHECK(cmd.argc() == 2);
-    REQUIRE(cmd.arg(0) == "hello");
-    REQUIRE(cmd.arg(1) == "world");
-  }
+  REQUIRE(cmd.arg() == "hello world");
+}
 
-  SECTION("escaped spaces") {
-    const Command cmd("test_cmd hello\\ world");
+TEST_CASE("ignore space padding", M) {
+  const UseCommandRegistry reg(&TestReg);
 
-    CHECK(cmd.argc() == 1);
-    REQUIRE(cmd.arg(0) == "hello world");
-  }
-
-  SECTION("escaped backslash") {
-    const Command cmd("test_cmd hello\\\\ world");
-
-    CHECK(cmd.argc() == 2);
-    REQUIRE(cmd.arg(0) == "hello\\");
-    REQUIRE(cmd.arg(1) == "world");
-  }
-
-  SECTION("quoted spaces") {
-    const Command cmd("test_cmd \"hello world\" test");
-
-    CHECK(cmd.argc() == 2);
-    REQUIRE(cmd.arg(0) == "hello world");
-    REQUIRE(cmd.arg(1) == "test");
-  }
-
-  SECTION("escaped quotes") {
-    const Command cmd("test_cmd \\\"hello world\\\"");
-
-    CHECK(cmd.argc() == 2);
-    REQUIRE(cmd.arg(0) == "\"hello");
-    REQUIRE(cmd.arg(1) == "world\"");
-  }
-
-  SECTION("unbalanced quotes") {
-    const Command cmd("test_cmd hello\" world");
-
-    CHECK(cmd.argc() == 2);
-    REQUIRE(cmd.arg(0) == "hello\"");
-    REQUIRE(cmd.arg(1) == "world");
-  }
-
-  SECTION("escaped letter") {
-    const Command cmd("test_cmd te\\st");
-
-    CHECK(cmd.argc() == 1);
-    REQUIRE(cmd.arg(0) == "te\\st");
-  }
+  const Command cmd("  4  test_cmd     hello  world  ");
+  CHECK(cmd.counter() == 4);
+  CHECK(cmd.func() == &test_cmd);
+  CHECK(cmd.arg() == "hello\x20\x20world");
+  REQUIRE(cmd.isValid());
 }

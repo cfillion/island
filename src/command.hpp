@@ -31,17 +31,14 @@ private:
 class Command {
 public:
   Command(const CommandFunc &func,
-    const std::vector<QString> &argv = {}, const int counter = -1);
+    const QString &arg = QString(), const int counter = -1);
   Command(const QString &cmd);
 
   bool isValid() const { return m_isValid; }
   CommandFunc func() const { return m_func; }
-
-  int argc() const { return m_argv.size(); }
-  const QString &arg(const int i) const { return m_argv[i]; }
-
-  void setCounter(const int n) { m_counter = n; }
+  const QString &arg() const { return m_arg; }
   int counter() const { return m_counter; }
+  void setCounter(const int n) { m_counter = n; }
   bool hasCounter() const { return m_counter > 0; }
 
   void setData(void *ptr) { m_data = ptr; }
@@ -53,13 +50,11 @@ private:
   static CommandRegistry *s_registry;
   friend UseCommandRegistry;
 
-  void parseArguments(const QString &input);
-
   bool m_isValid;
   void *m_data;
   int m_counter;
   CommandFunc m_func;
-  std::vector<QString> m_argv;
+  QString m_arg;
   QString m_error;
 };
 
