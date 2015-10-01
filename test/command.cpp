@@ -81,6 +81,11 @@ TEST_CASE("set counter", M) {
   REQUIRE(ptr.hasCounter());
 }
 
+TEST_CASE("counter from constructor", M) {
+  Command ptr(&test_cmd, {}, 5);
+  REQUIRE(ptr.counter() == 5);
+}
+
 TEST_CASE("zero counter is invalid", M) {
   Command cmd(&test_cmd);
   cmd.setCounter(0);
@@ -126,4 +131,25 @@ TEST_CASE("ill-formed commands are invalid", M) {
 
   const Command cmd("  : ");
   REQUIRE_FALSE(cmd.isValid());
+}
+
+TEST_CASE("direct arguments", M) {
+  const Command cmd(&test_cmd, {"hello", "world"});
+  REQUIRE(cmd.argc() == 2);
+  REQUIRE(cmd.arg(0) == "hello");
+  REQUIRE(cmd.arg(1) == "world");
+}
+
+TEST_CASE("arguments from string", M) {
+  const UseCommandRegistry reg(&TestReg);
+
+  SECTION("separated by space") {
+    const Command cmd("test_cmd hello world");
+    CHECK(cmd.isValid());
+    CHECK(cmd.func() == &test_cmd);
+
+    REQUIRE(cmd.argc() == 2);
+    REQUIRE(cmd.arg(0) == "hello");
+    REQUIRE(cmd.arg(1) == "world");
+  }
 }

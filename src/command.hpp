@@ -3,6 +3,7 @@
 
 #include <map>
 #include <QString>
+#include <vector>
 
 class Command;
 class Window;
@@ -29,11 +30,15 @@ private:
 
 class Command {
 public:
-  Command(const CommandFunc &cmd);
+  Command(const CommandFunc &func,
+    const std::vector<QString> &argv = {}, const int counter = -1);
   Command(const QString &cmd);
 
   bool isValid() const { return m_isValid; }
   CommandFunc func() const { return m_func; }
+
+  int argc() const { return m_argv.size(); }
+  const QString &arg(const int i) const { return m_argv[i]; }
 
   void setCounter(const int n) { m_counter = n; }
   int counter() const { return m_counter; }
@@ -52,6 +57,7 @@ private:
   void *m_data;
   int m_counter;
   CommandFunc m_func;
+  std::vector<QString> m_argv;
   QString m_error;
 };
 
