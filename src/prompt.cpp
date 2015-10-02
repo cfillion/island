@@ -28,7 +28,7 @@ void Prompt::check()
 void Prompt::send()
 {
   if(hasFocus())
-    Q_EMIT editingFinished(text().remove(0, m_promptSize));
+    Q_EMIT editingFinished(text().remove(0, m_promptSize).simplified());
   else
     Q_EMIT editingFinished(QString());
 }

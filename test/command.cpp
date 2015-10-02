@@ -166,9 +166,9 @@ TEST_CASE("unexpected argument", M) {
 TEST_CASE("ignore space padding", M) {
   const UseCommandRegistry reg(&TestReg);
 
-  const Command cmd("  4  test     hello  world  ");
+  const Command cmd("4  test     hello");
   CHECK(cmd.counter() == 4);
   CHECK(cmd.func() == &test_cmd);
-  CHECK(cmd.arg() == "hello\x20world");
+  CHECK(cmd.arg() == "hello");
   REQUIRE(cmd.isValid());
 }

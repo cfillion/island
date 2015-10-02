@@ -24,13 +24,11 @@ Command::Command(const CommandFunc &func, const QString &arg, const int counter)
 Command::Command(const QString &input)
   : m_isValid(false), m_data(0), m_counter(-1), m_func(0)
 {
-  const QString cleanInput = input.simplified();
-
   static const QRegularExpression pattern(
     "\\A(\\d*)\\s*(\\S+)(?:\\s+(.+))?\\z",
     QRegularExpression::OptimizeOnFirstUsageOption);
 
-  const auto match = pattern.match(cleanInput);
+  const auto match = pattern.match(input);
 
   const QString counter = match.captured(1);
   const QString name = match.captured(2);
@@ -39,7 +37,7 @@ Command::Command(const QString &input)
   CommandEntry entry;
 
   if(!match.hasMatch() || !matchCommand(name, entry)) {
-    m_error = "Not a command: " + cleanInput;
+    m_error = "Not a command: " + input;
     return;
   }
   else if(!args.isEmpty() && !std::get<bool>(entry)) {
