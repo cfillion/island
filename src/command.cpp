@@ -34,13 +34,13 @@ Command::Command(const QString &input)
   const QString name = match.captured(2);
   const QString args = match.captured(3);
 
-  CommandEntry entry;
+  CommandEntry entry{QString()};
 
   if(!match.hasMatch() || !matchCommand(name, entry)) {
     m_error = "Not a command: " + input;
     return;
   }
-  else if(!args.isEmpty() && !std::get<bool>(entry)) {
+  else if(!args.isEmpty() && !entry.acceptArgument) {
     m_error = "Trailing characters";
     return;
   }
@@ -49,7 +49,7 @@ Command::Command(const QString &input)
     m_counter = counter.toInt();
 
   m_isValid = true;
-  m_func = std::get<CommandFunc>(entry);
+  m_func = entry.func;
   m_arg = args;
 }
 
@@ -64,18 +64,18 @@ bool Command::matchCommand(const QString &name, CommandEntry &entry)
     return false;
 
   // exact match
-  if(std::get<QString>(*match) == name) {
+  if(match->name == name) {
     entry = *match;
     return true;
   }
 
   // ambiguous match
   const auto next = std::next(match);
-  if(next != s_registry->end() && std::get<QString>(*next).startsWith(name))
+  if(next != s_registry->end() && next->name.startsWith(name))
     return false;
 
   // partial match
-  if(std::get<QString>(*match).startsWith(name)) {
+  if(match->name.startsWith(name)) {
     entry = *match;
     return true;
   }

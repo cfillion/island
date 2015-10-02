@@ -3,7 +3,6 @@
 
 #include <QString>
 #include <set>
-#include <tuple>
 
 class Command;
 class Window;
@@ -17,7 +16,21 @@ struct CommandResult {
 };
 
 typedef CommandResult (*CommandFunc)(const Command &);
-typedef std::tuple<QString, CommandFunc, bool> CommandEntry;
+
+struct CommandEntry {
+  CommandEntry(const QString &n, const CommandFunc f = 0, bool arg = false)
+    : name(n), func(f), acceptArgument(arg) {}
+
+  QString name;
+  CommandFunc func;
+  bool acceptArgument;
+
+  bool operator<(const CommandEntry &o) const
+  {
+    return name < o.name;
+  }
+};
+
 typedef std::set<CommandEntry> CommandRegistry;
 
 class UseCommandRegistry {
