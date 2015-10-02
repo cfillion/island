@@ -64,7 +64,7 @@ private:
   static CommandRegistry *s_registry;
   friend UseCommandRegistry;
 
-  static bool matchCommand(const QString &name, CommandEntry &entry);
+  static bool matchCommand(const QString &name, CommandEntry **entry);
 
   bool m_isValid;
   void *m_data;
