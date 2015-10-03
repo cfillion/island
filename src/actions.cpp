@@ -8,8 +8,18 @@ using namespace Island;
 
 #define WIN cmd.data<Window *>()
 
-static const QString E_INVALID_TAB =
-  QStringLiteral("Invalid tab identifier: %1");
+static Page *GetPage(const Command &cmd, CommandResult *res)
+{
+  if(!cmd.hasCounter())
+    return WIN->currentPage();
+  else if(cmd.counter() <= WIN->pageCount())
+    return WIN->page(cmd.counter() - 1);
+
+  res->ok = false;
+  res->message = QString("Invalid tab identifier: %1").arg(cmd.counter());
+
+  return 0;
+};
 
 CommandResult Actions::normal_mode(const Command &cmd)
 {
@@ -34,14 +44,12 @@ CommandResult Actions::open(const Command &cmd)
   if(!cmd.hasArgument())
     return {false, "No url or search query"};
 
-  if(!cmd.hasCounter())
-    WIN->currentPage()->load(cmd.arg());
-  else if(cmd.counter() <= WIN->pageCount())
-    WIN->page(cmd.counter()-1)->load(cmd.arg());
-  else
-    return {false, E_INVALID_TAB.arg(cmd.counter())};
+  CommandResult res;
 
-  return {};
+  if(Page *p = GetPage(cmd, &res))
+    p->load(cmd.arg());
+
+  return res;
 }
 
 CommandResult Actions::tab_open(const Command &cmd)
@@ -54,14 +62,12 @@ CommandResult Actions::tab_open(const Command &cmd)
 
 CommandResult Actions::tab_close(const Command &cmd)
 {
-  if(!cmd.hasCounter())
-    WIN->closePage(WIN->currentPage());
-  else if(cmd.counter() <= WIN->pageCount())
-    WIN->closeTab(cmd.counter()-1);
-  else
-    return {false, E_INVALID_TAB.arg(cmd.counter())};
+  CommandResult res;
 
-  return {};
+  if(Page *p = GetPage(cmd, &res))
+    WIN->closePage(p);
+
+  return res;
 }
 
 CommandResult Actions::history_back(const Command &cmd)
