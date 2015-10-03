@@ -15,5 +15,7 @@ const CommandRegistry Island::ActionNames{
   {"tabclose",  &Actions::tab_close,       ARG_OFF},
   {"open",      &Actions::open,            ARG_ALL},
   {"tabopen",   &Actions::tab_open,        ARG_ALL},
+  {"reload",    &Actions::tab_reload,      ARG_OFF},
+  {"tabreload", &Actions::tab_reload,      ARG_OFF},
 
 };

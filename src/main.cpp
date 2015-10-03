@@ -38,6 +38,9 @@ int main(int argc, char *argv[])
   nmap.set("d", &Actions::tab_close);
   nmap.set("H", &Actions::history_back);
   nmap.set("L", &Actions::history_forward);
+  nmap.set("ga", &Actions::tab_open);
+  nmap.set("r", &Actions::tab_reload);
+  nmap.set("R", {&Actions::tab_reload, {}, true});
 
   Mapping imap;
   imap.set("<Esc>", &Actions::normal_mode);

@@ -135,6 +135,14 @@ void Page::load(const QString &input)
   m_engine->setUrl(parseUrl(input));
 }
 
+void Page::reload(const bool useCache)
+{
+  m_engine->triggerPageAction(
+    useCache ? QWebEnginePage::Reload
+    : QWebEnginePage::ReloadAndBypassCache
+  );
+}
+
 QUrl Page::parseUrl(const QString &input)
 {
   return QUrl::fromUserInput(input);

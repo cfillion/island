@@ -9,6 +9,7 @@ namespace Actions {
   CommandResult command_mode(const Command &);
   CommandResult open(const Command &);
   CommandResult tab_open(const Command &);
+  CommandResult tab_reload(const Command &);
   CommandResult tab_close(const Command &);
   CommandResult history_back(const Command &);
   CommandResult history_forward(const Command &);

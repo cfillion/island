@@ -60,6 +60,16 @@ CommandResult Actions::tab_open(const Command &cmd)
   return {};
 }
 
+CommandResult Actions::tab_reload(const Command &cmd)
+{
+  CommandResult res;
+
+  if(Page *p = GetPage(cmd, &res))
+    p->reload(!cmd.force());
+
+  return res;
+}
+
 CommandResult Actions::tab_close(const Command &cmd)
 {
   CommandResult res;

@@ -39,6 +39,7 @@ public:
 
   bool historyMotion(const int);
   void load(const QString &input);
+  void reload(const bool useCache = true);
 
 Q_SIGNALS:
   void displayTitleChanged(const QString &);
