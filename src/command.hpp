@@ -17,13 +17,21 @@ struct CommandResult {
 
 typedef CommandResult (*CommandFunc)(const Command &);
 
+namespace CommandOptions {
+  enum ArgumentMode {
+    ARG_OFF,
+    ARG_ALL,
+  };
+};
+
 struct CommandEntry {
-  CommandEntry(const QString &n, const CommandFunc f = 0, bool arg = false)
-    : name(n), func(f), acceptArgument(arg) {}
+  CommandEntry(const QString &n, const CommandFunc f = 0,
+      CommandOptions::ArgumentMode am = CommandOptions::ARG_OFF)
+    : name(n), func(f), argMode(am) {}
 
   QString name;
   CommandFunc func;
-  bool acceptArgument;
+  CommandOptions::ArgumentMode argMode;
 
   bool operator<(const CommandEntry &o) const
   {
@@ -65,7 +73,7 @@ private:
   static CommandRegistry *s_registry;
   friend UseCommandRegistry;
 
-  static bool matchCommand(const QString &name, CommandEntry **entry);
+  static bool matchCommand(const QString &name, const CommandEntry **entry);
 
   bool m_isValid;
   void *m_data;
