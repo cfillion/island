@@ -8,16 +8,13 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 
-Page::Page(const QUrl &url, Window *parent)
+Page::Page(const QString &url, Window *parent)
   : QObject(parent), m_window(parent), m_viewport(0), m_iconReply(0)
 {
-  m_engine = new Engine(url, parent);
+  m_engine = new Engine(parseUrl(url), parent);
 
   m_label = new TabLabel(parent);
-  m_label->setTitle("*"+url
-    .toString(QUrl::RemoveScheme | QUrl::RemoveUserInfo | QUrl::DecodeReserved)
-    .remove(QRegExp("^//(www\\.)?"))
-  );
+  m_label->setTitle(m_engine->title());
 
   // TODO: use a global app-wide instance
   m_iconRequestManager = new QNetworkAccessManager(this);
@@ -131,4 +128,14 @@ void Page::setHoveredLink(const QString &url)
 bool Page::historyMotion(const int motion)
 {
   return m_engine->historyMotion(motion);
+}
+
+void Page::load(const QString &input)
+{
+  m_engine->setUrl(parseUrl(input));
+}
+
+QUrl Page::parseUrl(const QString &input)
+{
+  return QUrl::fromUserInput(input);
 }

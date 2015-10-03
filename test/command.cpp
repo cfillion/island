@@ -67,6 +67,11 @@ TEST_CASE("set data pointer", M) {
   REQUIRE(ptr.data<void*>() == (void*)0x42);
 }
 
+TEST_CASE("data pointer from constructor", M) {
+  Command ptr(&test_cmd, {}, -1, (void*)0x42);
+  REQUIRE(ptr.data<void*>() == (void*)0x42);
+}
+
 TEST_CASE("set counter", M) {
   const UseCommandRegistry reg(&TestReg);
 
@@ -152,6 +157,7 @@ TEST_CASE("argument from string", M) {
   CHECK(cmd.isValid());
   CHECK(cmd.func() == &test_cmd);
 
+  REQUIRE(cmd.hasArgument());
   REQUIRE(cmd.arg() == "hello world");
 }
 
@@ -160,6 +166,7 @@ TEST_CASE("unexpected argument", M) {
 
   const Command cmd("noarg test");
   CHECK_FALSE(cmd.isValid());
+  REQUIRE_FALSE(cmd.hasArgument());
   REQUIRE(cmd.exec().message == "Trailing characters");
 }
 

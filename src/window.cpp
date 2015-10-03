@@ -8,7 +8,6 @@
 #include <QApplication>
 #include <QStackedLayout>
 #include <QTimer>
-#include <QUrl>
 #include <QVBoxLayout>
 
 using namespace Island;
@@ -39,16 +38,16 @@ Window::Window(const MappingArray &mappings, QWidget *parent)
   m_mappingTimer.setSingleShot(true);
   connect(&m_mappingTimer, &QTimer::timeout, this, &Window::execDelayedMapping);
 
-  addPage(QUrl("http://cfillion.tk"), NewTab);
-  addPage(QUrl("http://files.cfillion.tk"));
-  addPage(QUrl("data:text/html,<h1>test</h1>"), Split);
-  addPage(QUrl("http://google.com/"));
+  addPage("http://cfillion.tk", NewTab);
+  addPage("http://files.cfillion.tk");
+  addPage("data:text/html,<h1>test</h1>", Split);
+  addPage("http://google.com/");
   setCurrentTab(0);
 
   setMode(NormalMode);
 }
 
-int Window::addPage(const QUrl &url, const Window::OpenMode mode)
+int Window::addPage(const QString &url, const Window::OpenMode mode)
 {
   int index = currentPageIndex();
 
@@ -87,8 +86,8 @@ int Window::addPage(const QUrl &url, const Window::OpenMode mode)
 
 void Window::setCurrentTab(const int index)
 {
-  if(Page *page = m_pages.value(index))
-    setCurrentPage(page);
+  if(Page *p = page(index))
+    setCurrentPage(p);
 }
 
 void Window::setCurrentPage(Page *p)
@@ -115,8 +114,8 @@ void Window::setCurrentPage(Page *p)
 
 void Window::closeTab(const int index)
 {
-  if(Page *page = m_pages.value(index))
-    closePage(page);
+  if(Page *p = page(index))
+    closePage(p);
 }
 
 void Window::closePage(Page *page)
@@ -154,7 +153,7 @@ void Window::currentTabMotion(const bool polarity, const int size)
     index = m_pages.size() - abs(index);
 
   index %= m_pages.size();
-  setCurrentPage(m_pages[index]);
+  setCurrentPage(page(index));
 }
 
 int Window::currentPageIndex() const
@@ -166,7 +165,7 @@ void Window::shiftPageIndexes(const int start)
 {
   const int pageCount = m_pages.size();
   for(int i = start; i < pageCount; i++)
-    m_pages[i]->setIndex(i);
+    page(i)->setIndex(i);
 }
 
 bool Window::handleKeyEvent(const QKeyEvent *e)

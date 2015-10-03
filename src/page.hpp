@@ -17,7 +17,7 @@ class Page : public QObject {
   Q_OBJECT
 
 public:
-  Page(const QUrl &, Window *parent = 0);
+  Page(const QString &, Window *parent = 0);
   void destroyComponents();
 
   void setViewport(Viewport *v) { m_viewport = v; }
@@ -38,6 +38,7 @@ public:
   int loadProgress() const;
 
   bool historyMotion(const int);
+  void load(const QString &input);
 
 Q_SIGNALS:
   void displayTitleChanged(const QString &);
@@ -47,6 +48,7 @@ Q_SIGNALS:
   void triggered(Page *);
 
 private:
+  QUrl parseUrl(const QString &input);
   void setUrl(const QUrl &);
   void fetchIcon(const QUrl &);
   void setLoading(const bool);

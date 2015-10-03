@@ -10,8 +10,10 @@ class Engine : public QWebEngineView {
 public:
   Engine(const QUrl &url, QWidget *parent = 0);
   QUrl url() const;
+  QString title() const;
 
   bool historyMotion(const int);
+  void setUrl(const QUrl &url);
 
 Q_SIGNALS:
   void triggered();
@@ -23,6 +25,9 @@ protected:
   bool eventFilter(QObject *, QEvent *) override;
 
 private:
+  void setDeferredUrl(const QUrl &);
+
+  QString m_titleOverride;
   QUrl m_deferredUrl;
 };
 

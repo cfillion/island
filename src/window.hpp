@@ -26,12 +26,13 @@ public:
 
   explicit Window(const MappingArray &mappings, QWidget *parent = 0);
 
-  int addPage(const QUrl &url, const OpenMode mode = NewTab);
+  int addPage(const QString &url, const OpenMode mode = NewTab);
   void setCurrentPage(Page *);
   void setCurrentTab(const int index);
   Page *currentPage() const { return m_current; }
   int currentPageIndex() const;
   int pageCount() const { return m_pages.size(); }
+  Page *page(const int i) const { return m_pages.value(i); }
   void closeTab(const int index);
   void closePage(Page *page);
 

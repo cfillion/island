@@ -45,12 +45,13 @@ private:
 class Command {
 public:
   Command(const CommandFunc &func,
-    const QString &arg = QString(), const int counter = -1);
+    const QString &arg = QString(), const int counter = -1, void *data = 0);
   Command(const QString &cmd);
 
   bool isValid() const { return m_isValid; }
   CommandFunc func() const { return m_func; }
   const QString &arg() const { return m_arg; }
+  bool hasArgument() const { return !m_arg.isEmpty(); }
   int counter() const { return m_counter; }
   void setCounter(const int n) { m_counter = n; }
   bool hasCounter() const { return m_counter > 0; }

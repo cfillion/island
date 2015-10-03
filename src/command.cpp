@@ -16,8 +16,9 @@ UseCommandRegistry::~UseCommandRegistry()
   Command::s_registry = m_backup;
 }
 
-Command::Command(const CommandFunc &func, const QString &arg, const int counter)
-  : m_isValid(true), m_data(0), m_counter(counter), m_func(func), m_arg(arg)
+Command::Command(const CommandFunc &func,
+    const QString &arg, const int counter, void *data)
+  : m_isValid(true), m_data(data), m_counter(counter), m_func(func), m_arg(arg)
 {
 }
 

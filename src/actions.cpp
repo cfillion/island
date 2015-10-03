@@ -8,6 +8,9 @@ using namespace Island;
 
 #define WIN cmd.data<Window *>()
 
+static const QString E_INVALID_TAB =
+  QStringLiteral("Invalid tab identifier: %1");
+
 CommandResult Actions::normal_mode(const Command &cmd)
 {
   WIN->setMode(NormalMode);
@@ -26,16 +29,37 @@ CommandResult Actions::command_mode(const Command &cmd)
   return {};
 }
 
+CommandResult Actions::open(const Command &cmd)
+{
+  if(!cmd.hasArgument())
+    return {false, "No url or search query"};
+
+  if(!cmd.hasCounter())
+    WIN->currentPage()->load(cmd.arg());
+  else if(cmd.counter() <= WIN->pageCount())
+    WIN->page(cmd.counter()-1)->load(cmd.arg());
+  else
+    return {false, E_INVALID_TAB.arg(cmd.counter())};
+
+  return {};
+}
+
+CommandResult Actions::tab_open(const Command &cmd)
+{
+  const int index = WIN->addPage(cmd.arg());
+  WIN->setCurrentTab(index);
+
+  return {};
+}
+
 CommandResult Actions::tab_close(const Command &cmd)
 {
   if(!cmd.hasCounter())
     WIN->closePage(WIN->currentPage());
   else if(cmd.counter() <= WIN->pageCount())
     WIN->closeTab(cmd.counter()-1);
-  else {
-    return {false, "Invalid tab identifier: "
-      + QString::number(cmd.counter())};
-  }
+  else
+    return {false, E_INVALID_TAB.arg(cmd.counter())};
 
   return {};
 }
