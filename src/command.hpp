@@ -52,8 +52,8 @@ private:
 
 class Command {
 public:
-  Command(const CommandFunc &func,
-    const QString &arg = QString(), const int counter = -1, void *data = 0);
+  Command(const CommandFunc &func, const QString &arg = QString(),
+      const bool force = false, const int counter = -1, void *data = 0);
   Command(const QString &cmd);
 
   bool isValid() const { return m_isValid; }
@@ -63,6 +63,7 @@ public:
   int counter() const { return m_counter; }
   void setCounter(const int n) { m_counter = n; }
   bool hasCounter() const { return m_counter > 0; }
+  bool force() const { return m_force; }
 
   void setData(void *ptr) { m_data = ptr; }
   template<class T> T data() const { return static_cast<T>(m_data); }
@@ -81,6 +82,7 @@ private:
   CommandFunc m_func;
   QString m_arg;
   QString m_error;
+  bool m_force;
 };
 
 #endif

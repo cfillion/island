@@ -47,15 +47,6 @@ TEST_CASE("callback from string") {
   }
 }
 
-TEST_CASE("counter from string") {
-  const UseCommandRegistry reg(&TestReg);
-
-  const Command cmd("42test");
-  CHECK(cmd.isValid());
-  CHECK(cmd.func() == &test_cmd);
-  REQUIRE(cmd.counter() == 42);
-}
-
 TEST_CASE("set data pointer", M) {
   const UseCommandRegistry reg(&TestReg);
 
@@ -70,7 +61,7 @@ TEST_CASE("set data pointer", M) {
 }
 
 TEST_CASE("data pointer from constructor", M) {
-  Command ptr(&test_cmd, {}, -1, (void*)0x42);
+  Command ptr(&test_cmd, {}, false, -1, (void*)0x42);
   REQUIRE(ptr.data<void*>() == (void*)0x42);
 }
 
@@ -90,8 +81,17 @@ TEST_CASE("set counter", M) {
 }
 
 TEST_CASE("counter from constructor", M) {
-  Command ptr(&test_cmd, {}, 5);
+  Command ptr(&test_cmd, {}, false, 5);
   REQUIRE(ptr.counter() == 5);
+}
+
+TEST_CASE("counter from string") {
+  const UseCommandRegistry reg(&TestReg);
+
+  const Command cmd("42test");
+  CHECK(cmd.isValid());
+  CHECK(cmd.func() == &test_cmd);
+  REQUIRE(cmd.counter() == 42);
 }
 
 TEST_CASE("zero counter is invalid", M) {
@@ -146,8 +146,8 @@ TEST_CASE("ill-formed commands are invalid", M) {
   REQUIRE_FALSE(cmd.isValid());
 }
 
-TEST_CASE("direct argument", M) {
-  const Command cmd(&test_cmd, "hello world");
+TEST_CASE("argument from constructor", M) {
+  const Command cmd(&test_cmd, "hello world", false);
 
   REQUIRE(cmd.arg() == "hello world");
 }
@@ -180,4 +180,23 @@ TEST_CASE("ignore space padding", M) {
   CHECK(cmd.func() == &test_cmd);
   CHECK(cmd.arg() == "hello");
   REQUIRE(cmd.isValid());
+}
+
+TEST_CASE("force from string", M) {
+  const UseCommandRegistry reg(&TestReg);
+
+  const Command on("test!");
+  CHECK(on.isValid());
+  REQUIRE(on.force());
+
+  const Command off("test");
+  REQUIRE_FALSE(off.force());
+}
+
+TEST_CASE("force from constructor", M) {
+  const Command on(&test_cmd, {}, true);
+  REQUIRE(on.force());
+
+  const Command def(&test_cmd);
+  REQUIRE_FALSE(def.force());
 }
