@@ -44,8 +44,8 @@ void Prompt::selectionChanged()
   if(!hasSelectedText() || selectionStart() >= m_promptSize)
     return;
 
-  if(cursorPosition() > m_promptSize)
-    setSelection(m_promptSize, text().size() - m_promptSize);
-  else
+  if(cursorPosition() < m_promptSize)
     cursorForward(true);
+  else
+    setSelection(m_promptSize, text().size() - m_promptSize);
 }
