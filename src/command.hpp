@@ -19,8 +19,13 @@ typedef CommandResult (*CommandFunc)(const Command &);
 
 namespace CommandOptions {
   enum Flag {
-    OPT_ARG   = 1<<1,
-    OPT_FORCE = 1<<2,
+    EN_ARG   = 1<<1,
+    EN_FORCE = 1<<2,
+  };
+
+  enum Variant {
+    VA_DEFAULT,
+    VA_FORCE,
   };
 };
 
@@ -32,15 +37,8 @@ struct CommandEntry {
   CommandFunc func;
   int flags;
 
-  bool testFlag(const CommandOptions::Flag f) const
-  {
-    return flags & f;
-  }
-
-  bool operator<(const CommandEntry &o) const
-  {
-    return name < o.name;
-  }
+  bool hasFlag(const CommandOptions::Flag) const;
+  bool operator<(const CommandEntry &) const;
 };
 
 typedef std::set<CommandEntry> CommandRegistry;
@@ -57,20 +55,24 @@ private:
 class Command {
 public:
   Command(const CommandFunc &func, const QString &arg = QString(),
-      const bool force = false, const int counter = -1, void *data = 0);
+      const CommandOptions::Variant va = CommandOptions::VA_DEFAULT,
+      const int counter = -1, void *data = 0);
   Command(const QString &cmd);
 
   bool isValid() const { return m_isValid; }
   CommandFunc func() const { return m_func; }
-  const QString &arg() const { return m_arg; }
+
   bool hasArgument() const { return !m_arg.isEmpty(); }
-  int counter() const { return m_counter; }
+  const QString &arg() const { return m_arg; }
+
   void setCounter(const int n) { m_counter = n; }
   bool hasCounter() const { return m_counter > 0; }
-  bool force() const { return m_force; }
+  int counter() const { return m_counter; }
 
   void setData(void *ptr) { m_data = ptr; }
   template<class T> T data() const { return static_cast<T>(m_data); }
+
+  CommandOptions::Variant variant() const { return m_variant; }
 
   CommandResult exec() const;
 
@@ -78,7 +80,8 @@ private:
   static CommandRegistry *s_registry;
   friend UseCommandRegistry;
 
-  static bool matchCommand(const QString &name, const CommandEntry **entry);
+  static bool matchCommand(const QString &, const CommandEntry **);
+  bool checkVariant(const CommandEntry *) const;
 
   bool m_isValid;
   void *m_data;
@@ -86,7 +89,7 @@ private:
   CommandFunc m_func;
   QString m_arg;
   QString m_error;
-  bool m_force;
+  CommandOptions::Variant m_variant;
 };
 
 #endif

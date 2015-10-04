@@ -3,7 +3,17 @@
 #include <cassert>
 #include <QRegularExpression>
 
-CommandRegistry *Command::s_registry = 0;
+using namespace CommandOptions;
+
+bool CommandEntry::hasFlag(const CommandOptions::Flag f) const
+{
+  return flags & f;
+}
+
+bool CommandEntry::operator<(const CommandEntry &o) const
+{
+  return name < o.name;
+}
 
 UseCommandRegistry::UseCommandRegistry(const CommandRegistry *reg)
   : m_backup(Command::s_registry)
@@ -16,10 +26,12 @@ UseCommandRegistry::~UseCommandRegistry()
   Command::s_registry = m_backup;
 }
 
+CommandRegistry *Command::s_registry = 0;
+
 Command::Command(const CommandFunc &func, const QString &arg,
-    const bool force, const int counter, void *data)
+    const Variant va, const int counter, void *data)
   : m_isValid(true), m_data(data), m_counter(counter),
-    m_func(func), m_arg(arg), m_force(force)
+    m_func(func), m_arg(arg), m_variant(va)
 {
 }
 
@@ -31,7 +43,7 @@ Command::Command(const QString &input)
     "(?<counter>\\d*)"
     "\\s*"
     "(?<name>[a-zA-Z0-9_]+)"
-    "(?<force>\\!)?"
+    "(?<variant>[\\!])?"
     "(?:\\s+(?<args>.+))?"
     "\\z"
   );
@@ -40,16 +52,18 @@ Command::Command(const QString &input)
 
   const QString counter = match.captured("counter");
   const QString name = match.captured("name");
-  m_force = !match.captured("force").isEmpty();
   const QString args = match.captured("args");
+  const QChar variant = match.captured("variant")[0];
+
+  m_variant = variant == '!' ? VA_FORCE : VA_DEFAULT;
 
   const CommandEntry *entry = 0;
 
-  if(!match.hasMatch() || !matchCommand(name, &entry)) {
+  if(!match.hasMatch() || !matchCommand(name, &entry) || !checkVariant(entry)) {
     m_error = "Not a command: " + input;
     return;
   }
-  else if(!args.isEmpty() && !entry->testFlag(CommandOptions::OPT_ARG)) {
+  else if(!args.isEmpty() && !entry->hasFlag(EN_ARG)) {
     m_error = "Trailing characters";
     return;
   }
@@ -91,6 +105,16 @@ bool Command::matchCommand(const QString &name, const CommandEntry **entry)
 
   return false;
 };
+
+bool Command::checkVariant(const CommandEntry *entry) const
+{
+  switch(m_variant) {
+  case VA_DEFAULT:
+    return true;
+  case VA_FORCE:
+    return entry->hasFlag(EN_FORCE);
+  }
+}
 
 CommandResult Command::exec() const
 {

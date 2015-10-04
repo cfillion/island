@@ -5,9 +5,14 @@
 
 static void *g_ptr;
 
-static CommandResult test_cmd(const Command &cmd)
+static CommandResult address_cmd(const Command &cmd)
 {
   g_ptr = const_cast<Command*>(&cmd);
+  return CommandResult();
+}
+
+static CommandResult test_cmd(const Command &)
+{
   return CommandResult();
 }
 
@@ -19,9 +24,10 @@ static CommandResult alt_cmd(const Command &)
 using namespace CommandOptions;
 
 static const CommandRegistry TestReg{
-  {"test",   &test_cmd,  OPT_ARG},
-  {"tester", &alt_cmd,   OPT_ARG},
+  {"test",   &test_cmd,  EN_ARG},
+  {"tester", &alt_cmd,   EN_ARG},
   {"noarg",  &test_cmd},
+  {"force",  &test_cmd,  EN_FORCE},
 };
 
 static const char *M = "[command]";
@@ -61,7 +67,7 @@ TEST_CASE("set data pointer", M) {
 }
 
 TEST_CASE("data pointer from constructor", M) {
-  Command ptr(&test_cmd, {}, false, -1, (void*)0x42);
+  Command ptr(&test_cmd, {}, VA_DEFAULT, -1, (void*)0x42);
   REQUIRE(ptr.data<void*>() == (void*)0x42);
 }
 
@@ -81,7 +87,7 @@ TEST_CASE("set counter", M) {
 }
 
 TEST_CASE("counter from constructor", M) {
-  Command ptr(&test_cmd, {}, false, 5);
+  Command ptr(&test_cmd, {}, VA_DEFAULT, 5);
   REQUIRE(ptr.counter() == 5);
 }
 
@@ -103,7 +109,7 @@ TEST_CASE("zero counter is invalid", M) {
 TEST_CASE("execute", M) {
   g_ptr = 0;
 
-  const Command cmd(&test_cmd);
+  const Command cmd(&address_cmd);
   cmd.exec();
 
   REQUIRE(g_ptr == &cmd);
@@ -135,7 +141,7 @@ TEST_CASE("execute invalid command", M) {
 
   const Command cmd("hello_world");
   const CommandResult res = cmd.exec();
-  REQUIRE(res.ok == false);
+  REQUIRE_FALSE(res.ok);
   REQUIRE(res.message == "Not a command: hello_world");
 }
 
@@ -147,7 +153,7 @@ TEST_CASE("ill-formed commands are invalid", M) {
 }
 
 TEST_CASE("argument from constructor", M) {
-  const Command cmd(&test_cmd, "hello world", false);
+  const Command cmd(&test_cmd, "hello world");
 
   REQUIRE(cmd.arg() == "hello world");
 }
@@ -182,21 +188,33 @@ TEST_CASE("ignore space padding", M) {
   REQUIRE(cmd.isValid());
 }
 
-TEST_CASE("force from string", M) {
+TEST_CASE("variant from string", M) {
   const UseCommandRegistry reg(&TestReg);
 
-  const Command on("test!");
-  CHECK(on.isValid());
-  REQUIRE(on.force());
+  SECTION("default") {
+    const Command cmd("test");
+    REQUIRE(cmd.variant() == VA_DEFAULT);
+  }
 
-  const Command off("test");
-  REQUIRE_FALSE(off.force());
+  SECTION("force") {
+    const Command cmd("force!");
+    CHECK(cmd.isValid());
+    REQUIRE(cmd.variant() == VA_FORCE);
+  }
 }
 
-TEST_CASE("force from constructor", M) {
-  const Command on(&test_cmd, {}, true);
-  REQUIRE(on.force());
+TEST_CASE("invalid variant", M) {
+  const UseCommandRegistry reg(&TestReg);
+
+  const Command cmd("test!");
+  CHECK_FALSE(cmd.isValid());
+  REQUIRE(cmd.exec().message == "Not a command: test!");
+}
+
+TEST_CASE("variant from constructor", M) {
+  const Command set(&test_cmd, {}, VA_FORCE);
+  REQUIRE(set.variant() == VA_FORCE);
 
   const Command def(&test_cmd);
-  REQUIRE_FALSE(def.force());
+  REQUIRE(def.variant() == VA_DEFAULT);
 }

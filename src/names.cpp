@@ -13,9 +13,9 @@ const CommandRegistry Island::ActionNames{
   {"forward",   &Actions::history_forward},
   {"close",     &Actions::tab_close},
   {"tabclose",  &Actions::tab_close},
-  {"open",      &Actions::open,          OPT_ARG},
-  {"tabopen",   &Actions::tab_open,      OPT_ARG},
-  {"reload",    &Actions::tab_reload,    OPT_FORCE},
-  {"tabreload", &Actions::tab_reload,    OPT_FORCE},
+  {"open",      &Actions::open,          EN_ARG},
+  {"tabopen",   &Actions::tab_open,      EN_ARG},
+  {"reload",    &Actions::tab_reload,    EN_FORCE},
+  {"tabreload", &Actions::tab_reload,    EN_FORCE},
 
 };

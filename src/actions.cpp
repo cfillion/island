@@ -4,6 +4,7 @@
 #include "page.hpp"
 #include "window.hpp"
 
+using namespace CommandOptions;
 using namespace Island;
 
 #define WIN cmd.data<Window *>()
@@ -65,7 +66,7 @@ CommandResult Actions::tab_reload(const Command &cmd)
   CommandResult res;
 
   if(Page *p = GetPage(cmd, &res))
-    p->reload(!cmd.force());
+    p->reload(cmd.variant() == VA_DEFAULT);
 
   return res;
 }

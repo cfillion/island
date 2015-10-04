@@ -25,6 +25,8 @@ protected:
 
 int main(int argc, char *argv[])
 {
+  using namespace CommandOptions;
+
   UseCommandRegistry reg(&Island::ActionNames);
 
   QApplication app(argc, argv);
@@ -40,7 +42,7 @@ int main(int argc, char *argv[])
   nmap.set("L", &Actions::history_forward);
   nmap.set("ga", &Actions::tab_open);
   nmap.set("r", &Actions::tab_reload);
-  nmap.set("R", {&Actions::tab_reload, {}, true});
+  nmap.set("R", {&Actions::tab_reload, {}, VA_FORCE});
 
   Mapping imap;
   imap.set("<Esc>", &Actions::normal_mode);
