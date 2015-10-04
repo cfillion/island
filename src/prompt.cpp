@@ -1,5 +1,7 @@
 #include "prompt.hpp"
 
+#include <QKeyEvent>
+
 Prompt::Prompt(QWidget *parent)
   : QLineEdit(parent), m_promptSize(0)
 {
@@ -48,4 +50,20 @@ void Prompt::selectionChanged()
     cursorForward(true);
   else
     setSelection(m_promptSize, text().size() - m_promptSize);
+}
+
+void Prompt::keyPressEvent(QKeyEvent *e)
+{
+#ifdef Q_OS_OSX
+  switch(e->key()) {
+  case Qt::Key_Home:
+    home(false);
+    return;
+  case Qt::Key_End:
+    end(false);
+    return;
+  };
+#endif
+
+  QLineEdit::keyPressEvent(e);
 }
