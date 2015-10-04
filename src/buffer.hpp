@@ -1,6 +1,7 @@
 #ifndef ISLAND_BUFFER_HPP
 #define ISLAND_BUFFER_HPP
 
+#include <QList>
 #include <QStringList>
 
 class Buffer {
@@ -22,6 +23,9 @@ public:
   Buffer &operator<<(const QString &str);
   bool operator==(const Buffer &o) const { return m_list == o.m_list; }
   bool operator!=(const Buffer &o) const { return !(*this == o); }
+
+  QList<QString>::const_iterator begin() const { return m_list.constBegin(); }
+  QList<QString>::const_iterator end() const { return m_list.constEnd(); }
 
 private:
   void importString(const QString &input);

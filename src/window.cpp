@@ -171,7 +171,7 @@ void Window::shiftPageIndexes(const int start)
 bool Window::handleKeyEvent(const QKeyEvent *e)
 {
   const bool eatKey = m_mode == NormalMode;
-  const QString seq = KeyEventToSequence(e);
+  const QString seq = EncodeSequence(e);
 
   if(seq.isEmpty())
     return eatKey;
