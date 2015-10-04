@@ -188,8 +188,14 @@ bool Window::handleKeyEvent(const QKeyEvent *e)
 
   Q_EMIT bufferChanged(m_buffer);
 
-  if(!match.mapping)
+  if(!match.mapping) {
+    if(m_delayedMapping) {
+      execDelayedMapping();
+      return handleKeyEvent(e);
+    }
+
     return eatKey;
+  }
 
   if(match.ambiguous) {
     m_delayedMapping = match.mapping;
