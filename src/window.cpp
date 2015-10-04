@@ -237,9 +237,11 @@ void Window::execDelayedMapping()
 
 void Window::execMapping(const Mapping *mapping)
 {
-  Command cmd = *mapping->command();
-  cmd.setCounter(m_buffer.counter());
-  execCommand(cmd);
+  if(mapping->type() == Mapping::Native) {
+    Command cmd = *mapping->boundCommand();
+    cmd.setCounter(m_buffer.counter());
+    execCommand(cmd);
+  }
 
   m_buffer.clear();
   Q_EMIT bufferChanged(m_buffer);

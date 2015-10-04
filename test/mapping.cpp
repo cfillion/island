@@ -9,10 +9,24 @@ using namespace Island;
 
 TEST_CASE("bind to command", M) {
   Mapping map;
-  REQUIRE(map.command() == 0);
+  CHECK(map.type() == Mapping::Stem);
+  CHECK(map.boundBuffer() == 0);
+  CHECK(map.boundCommand() == 0);
 
   map.bindTo(Command(0));
-  REQUIRE_FALSE(map.command() == 0);
+
+  CHECK(map.type() == Mapping::Native);
+  REQUIRE(map.boundBuffer() == 0);
+  REQUIRE_FALSE(map.boundCommand() == 0);
+}
+
+TEST_CASE("bind to buffer", M) {
+  Mapping map;
+  map.bindTo("hello");
+
+  CHECK(map.type() == Mapping::User);
+  REQUIRE_FALSE(map.boundBuffer() == 0);
+  REQUIRE(map.boundCommand() == 0);
 }
 
 TEST_CASE("match buffer", M) {
@@ -26,7 +40,7 @@ TEST_CASE("match buffer", M) {
     REQUIRE(m.mapping == 0);
   }
 
-  map.set("aa", 0);
+  map.set("aa", "");
   REQUIRE_FALSE(map.isLeaf());
 
   SECTION("ambiguous match") {
@@ -41,6 +55,6 @@ TEST_CASE("match buffer", M) {
     REQUIRE(m.index == 1);
     REQUIRE(m.ambiguous == false);
     REQUIRE_FALSE(m.mapping == 0);
-    REQUIRE(m.mapping->command());
+    REQUIRE(m.mapping->type() == Mapping::User);
   }
 }

@@ -1,8 +1,9 @@
 #ifndef ISLAND_MAPPING_HPP
 #define ISLAND_MAPPING_HPP
 
-#include <boost/optional.hpp>
+#include <boost/variant.hpp>
 #include <QMap>
+#include <stack>
 
 #include "buffer.hpp"
 #include "command.hpp"
@@ -20,23 +21,36 @@ struct MappingMatch {
 
 QDebug operator<<(QDebug debug, const MappingMatch &m);
 
+typedef boost::variant<Buffer, Command> Binding;
+
 class Mapping {
 public:
+  enum Type {
+    Stem,
+    Native,
+    User,
+  };
+
   ~Mapping();
 
-  const Command *command() const;
+  const Buffer *boundBuffer() const;
+  const Command *boundCommand() const;
 
+  Type type() const;
   bool isLeaf() const { return m_children.isEmpty(); }
-  void bindTo(const Command &command);
+  void set(const Buffer &sequence, const Buffer &binding);
   void set(const Buffer &sequence, const Command &command);
   MappingMatch match(const Buffer &buf);
+
+  template <typename T>
+  void bindTo(const T &binding) { m_bindings.push(binding); }
 
 private:
   Mapping *resolve(const Buffer &buf, const bool create = true);
   Mapping *resolve(const QString &req, const bool create = true);
 
   QMap<QString, Mapping *> m_children;
-  boost::optional<Command> m_command;
+  std::stack<Binding> m_bindings;
 };
 
 #endif

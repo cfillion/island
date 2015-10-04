@@ -22,15 +22,16 @@ Mapping::~Mapping()
   qDeleteAll(m_children);
 }
 
+void Mapping::set(const Buffer &sequence, const Buffer &binding)
+{
+  Mapping *map = resolve(sequence, true);
+  map->bindTo(binding);
+}
+
 void Mapping::set(const Buffer &sequence, const Command &command)
 {
   Mapping *map = resolve(sequence, true);
   map->bindTo(command);
-}
-
-void Mapping::bindTo(const Command &cmd)
-{
-  m_command = cmd;
 }
 
 Mapping *Mapping::resolve(const Buffer &buf, const bool create)
@@ -73,7 +74,7 @@ MappingMatch Mapping::match(const Buffer &buf)
       return match;
   }
 
-  if(node->command())
+  if(node->type() != Stem)
     match.mapping = node;
 
   match.ambiguous = !node->isLeaf();
@@ -81,11 +82,28 @@ MappingMatch Mapping::match(const Buffer &buf)
   return match;
 }
 
-const Command *Mapping::command() const
+const Buffer *Mapping::boundBuffer() const
 {
-  if(m_command == boost::none)
+  if(type() != User)
     return 0;
 
-  const Command &cmd = *m_command;
+  const Buffer &buf = boost::get<Buffer>(m_bindings.top());
+  return &buf;
+}
+
+const Command *Mapping::boundCommand() const
+{
+  if(type() != Native)
+    return 0;
+
+  const Command &cmd = boost::get<Command>(m_bindings.top());
   return &cmd;
+}
+
+Mapping::Type Mapping::type() const
+{
+  if(m_bindings.empty())
+    return Stem;
+
+  return m_bindings.top().which() == 0 ? User : Native;
 }
