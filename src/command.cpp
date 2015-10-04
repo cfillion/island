@@ -114,6 +114,8 @@ bool Command::checkVariant(const CommandEntry *entry) const
   case VA_FORCE:
     return entry->hasFlag(EN_FORCE);
   }
+
+  return false;
 }
 
 CommandResult Command::exec() const
