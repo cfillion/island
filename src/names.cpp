@@ -8,14 +8,14 @@ using namespace CommandOptions;
 
 const CommandRegistry Island::ActionNames{
 
-  {"insert",    &Actions::insert_mode,     ARG_OFF},
-  {"back",      &Actions::history_back,    ARG_OFF},
-  {"forward",   &Actions::history_forward, ARG_OFF},
-  {"close",     &Actions::tab_close,       ARG_OFF},
-  {"tabclose",  &Actions::tab_close,       ARG_OFF},
-  {"open",      &Actions::open,            ARG_ALL},
-  {"tabopen",   &Actions::tab_open,        ARG_ALL},
-  {"reload",    &Actions::tab_reload,      ARG_OFF},
-  {"tabreload", &Actions::tab_reload,      ARG_OFF},
+  {"insert",    &Actions::insert_mode},
+  {"back",      &Actions::history_back},
+  {"forward",   &Actions::history_forward},
+  {"close",     &Actions::tab_close},
+  {"tabclose",  &Actions::tab_close},
+  {"open",      &Actions::open,          OPT_ARG},
+  {"tabopen",   &Actions::tab_open,      OPT_ARG},
+  {"reload",    &Actions::tab_reload,    OPT_FORCE},
+  {"tabreload", &Actions::tab_reload,    OPT_FORCE},
 
 };

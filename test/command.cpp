@@ -19,9 +19,9 @@ static CommandResult alt_cmd(const Command &)
 using namespace CommandOptions;
 
 static const CommandRegistry TestReg{
-  {"test",   &test_cmd, ARG_ALL},
-  {"tester", &alt_cmd,  ARG_ALL},
-  {"noarg",  &test_cmd, ARG_OFF},
+  {"test",   &test_cmd,  OPT_ARG},
+  {"tester", &alt_cmd,   OPT_ARG},
+  {"noarg",  &test_cmd},
 };
 
 static const char *M = "[command]";

@@ -49,7 +49,7 @@ Command::Command(const QString &input)
     m_error = "Not a command: " + input;
     return;
   }
-  else if(!args.isEmpty() && entry->argMode == CommandOptions::ARG_OFF) {
+  else if(!args.isEmpty() && !entry->testFlag(CommandOptions::OPT_ARG)) {
     m_error = "Trailing characters";
     return;
   }

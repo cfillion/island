@@ -18,20 +18,24 @@ struct CommandResult {
 typedef CommandResult (*CommandFunc)(const Command &);
 
 namespace CommandOptions {
-  enum ArgumentMode {
-    ARG_OFF,
-    ARG_ALL,
+  enum Flag {
+    OPT_ARG   = 1<<1,
+    OPT_FORCE = 1<<2,
   };
 };
 
 struct CommandEntry {
-  CommandEntry(const QString &n, const CommandFunc f = 0,
-      CommandOptions::ArgumentMode am = CommandOptions::ARG_OFF)
-    : name(n), func(f), argMode(am) {}
+  CommandEntry(const QString &n, const CommandFunc fp = 0, int fl = 0)
+    : name(n), func(fp), flags(fl) {}
 
   QString name;
   CommandFunc func;
-  CommandOptions::ArgumentMode argMode;
+  int flags;
+
+  bool testFlag(const CommandOptions::Flag f) const
+  {
+    return flags & f;
+  }
 
   bool operator<(const CommandEntry &o) const
   {
