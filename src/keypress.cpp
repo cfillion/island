@@ -1,6 +1,7 @@
-#include "global.hpp"
+#include "keypress.hpp"
 
 #include <boost/bimap.hpp>
+#include <QDebug>
 #include <QKeyEvent>
 #include <QRegularExpression>
 
@@ -46,24 +47,75 @@ static bool isLetter(const int key)
   return key >= Qt::Key_Exclam && key <= Qt::Key_Yacute;
 }
 
-QString Island::EncodeSequence(const QKeyEvent *e)
+QDebug operator<<(QDebug debug, const KeyPress &kp)
 {
-  const Qt::KeyboardModifiers mod = e->modifiers();
+  QDebugStateSaver saver(debug);
+  debug.nospace()
+    << "KeyPress("
+    << kp.toString()
+    << ", key: " << kp.key()
+    << ", modifiers: " << kp.modifiers()
+    << ')';
 
-  const QString charStr = EncodeCharacter(e);
+  return debug;
+}
+
+KeyPress::KeyPress(const QKeyEvent *e)
+  : m_key(e->key()), m_mods(e->modifiers())
+{}
+
+KeyPress::KeyPress(const QString &seq)
+  : m_key(0), m_mods(Qt::NoModifier)
+{
+  static const QRegularExpression pattern("\\A\\<([^\\>]+)\\>\\z");
+  const auto match = pattern.match(seq);
+
+  if(!match.hasMatch()) {
+    decodeCharacter(seq);
+    return;
+  }
+
+  QStringList parts = match.captured(1).split('-');
+  decodeCharacter(parts.takeLast());
+
+  for(const QString &part : parts) {
+    if(part == "C")
+      m_mods |= Qt::ControlModifier;
+    else if(part == "A")
+      m_mods |= Qt::AltModifier;
+    else if(part == "M")
+      m_mods |= Qt::MetaModifier;
+    else if(part == "S")
+      m_mods |= Qt::ShiftModifier;
+  }
+}
+
+bool KeyPress::operator==(const KeyPress &o) const
+{
+  return m_key == o.key() && m_mods == o.modifiers();
+}
+
+bool KeyPress::operator!=(const KeyPress &o) const
+{
+  return !(*this == o);
+}
+
+QString KeyPress::toString() const
+{
+  const QString charStr = encodeCharacter();
   const bool isSpecial = charStr.size() > 1 && charStr[0].isUpper();
 
   if(charStr.isEmpty())
     return QString();
 
   QStringList parts;
-  if(mod & Qt::ControlModifier)
+  if(m_mods & Qt::ControlModifier)
     parts << "C";
-  if(mod & Qt::AltModifier)
+  if(m_mods & Qt::AltModifier)
     parts << "A";
-  if(mod & Qt::MetaModifier)
+  if(m_mods & Qt::MetaModifier)
     parts << "M";
-  if(mod & Qt::ShiftModifier && isSpecial)
+  if(m_mods & Qt::ShiftModifier && isSpecial)
     parts << "S";
 
   parts << charStr;
@@ -74,10 +126,10 @@ QString Island::EncodeSequence(const QKeyEvent *e)
     return parts[0];
 }
 
-QString Island::EncodeCharacter(const QKeyEvent *e)
+QString KeyPress::encodeCharacter() const
 {
-  const bool aliased = KeyAliases.count(e->key());
-  const int key = aliased ? KeyAliases.at(e->key()) : e->key();
+  const bool aliased = KeyAliases.count(m_key);
+  const int key = aliased ? KeyAliases.at(m_key) : m_key;
 
   if(SpecialKeys.left.count(key))
     return SpecialKeys.left.at(key);
@@ -85,14 +137,9 @@ QString Island::EncodeCharacter(const QKeyEvent *e)
   if(key >= Qt::Key_F1 && key <= Qt::Key_F35)
     return QString("F%1").arg(key - Qt::Key_F1 + 1);
   else if(isLetter(key)) {
-    const QString text = e->text();
-
-    if(!text.isEmpty())
-      return text;
-
     const QString seq = QString(QChar(key));
 
-    if(e->modifiers() & Qt::ShiftModifier)
+    if(m_mods & Qt::ShiftModifier)
       return seq.toUpper();
     else
       return seq.toLower();
@@ -101,58 +148,33 @@ QString Island::EncodeCharacter(const QKeyEvent *e)
   return QString();
 }
 
-Island::KeyModPair Island::DecodeSequence(const QString &text)
+void KeyPress::decodeCharacter(const QString &seq)
 {
-  static const QRegularExpression pattern("\\A\\<([^\\>]+)\\>\\z");
-  const auto match = pattern.match(text);
-
-  if(!match.hasMatch())
-    return DecodeCharacter(text);
-
-  Qt::KeyboardModifiers mod;
-
-  QStringList parts = match.captured(1).split('-');
-  const KeyModPair last = DecodeCharacter(parts.takeLast());
-
-  for(const QString &part : parts) {
-    if(part == "C")
-      mod |= Qt::ControlModifier;
-    else if(part == "A")
-      mod |= Qt::AltModifier;
-    else if(part == "M")
-      mod |= Qt::MetaModifier;
-    else if(part == "S")
-      mod |= Qt::ShiftModifier;
+  if(SpecialKeys.right.count(seq)) {
+    m_key = SpecialKeys.right.at(seq);
+    return;
   }
 
-  mod |= std::get<Qt::KeyboardModifiers>(last);
+  if(seq.indexOf('F') == 0) {
+    const int fkey = seq.right(seq.size()-1).toInt();
 
-  return {std::get<int>(last), mod};
-}
-
-Island::KeyModPair Island::DecodeCharacter(const QString &text)
-{
-  if(SpecialKeys.right.count(text))
-    return {SpecialKeys.right.at(text), Qt::NoModifier};
-
-  if(text.indexOf('F') == 0) {
-    const int fkey = text.right(text.size()-1).toInt();
-    if(fkey >= 1 && fkey <= 35)
-      return {Qt::Key_F1 + (fkey-1), Qt::NoModifier};
+    if(fkey >= 1 && fkey <= 35) {
+      m_key = Qt::Key_F1 + (fkey-1);
+      return;
+    }
   }
 
-  const QChar c = text[0];
+  const QChar c = seq[0];
   int code = c.unicode();
 
   if(c.isLower())
     code -= code - c.toUpper().unicode();
 
-  if(isLetter(code)) {
-    if(c.isUpper())
-      return {code, Qt::ShiftModifier};
-    else
-      return {code, Qt::NoModifier};
-  }
-  else
-    return {0, Qt::NoModifier};
+  if(!isLetter(code))
+    return;
+
+  m_key = code;
+
+  if(c.isUpper())
+    m_mods = Qt::ShiftModifier;
 }

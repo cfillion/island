@@ -7,6 +7,7 @@
 
 #include "buffer.hpp"
 #include "global.hpp"
+#include "keypress.hpp"
 #include "mapping.hpp"
 
 class Mapping;
@@ -36,7 +37,7 @@ public:
   void closeTab(const int index);
   void closePage(Page *page);
 
-  bool handleKeyEvent(const QKeyEvent *);
+  bool handleInput(const KeyPress &);
 
   void setMode(const Island::Mode);
 
@@ -47,7 +48,6 @@ Q_SIGNALS:
 private:
   void currentTabMotion(const bool polarity, const int size);
   void shiftPageIndexes(const int start = 0);
-  QString keyEventToString(const QKeyEvent *) const;
   void execPrompt(const QString &);
   void execDelayedMapping();
   void execMapping(const Mapping *);

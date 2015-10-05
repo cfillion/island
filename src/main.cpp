@@ -17,7 +17,7 @@ protected:
     Window *win = qobject_cast<Window *>(qApp->activeWindow());
 
     if(win && isKeyPress && isToWindow)
-      return win->handleKeyEvent(static_cast<QKeyEvent *>(e));
+      return win->handleInput(static_cast<QKeyEvent *>(e));
 
     return false;
   }

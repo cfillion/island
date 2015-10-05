@@ -19,7 +19,7 @@ struct MappingMatch {
   Mapping *mapping = 0;
 };
 
-QDebug operator<<(QDebug debug, const MappingMatch &m);
+QDebug operator<<(QDebug, const MappingMatch &);
 
 typedef boost::variant<Buffer, Command> Binding;
 

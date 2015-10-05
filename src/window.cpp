@@ -168,10 +168,10 @@ void Window::shiftPageIndexes(const int start)
     page(i)->setIndex(i);
 }
 
-bool Window::handleKeyEvent(const QKeyEvent *e)
+bool Window::handleInput(const KeyPress &kp)
 {
   const bool eatKey = m_mode == NormalMode;
-  const QString seq = EncodeSequence(e);
+  const QString seq = kp.toString();
 
   if(seq.isEmpty())
     return eatKey;
@@ -191,7 +191,7 @@ bool Window::handleKeyEvent(const QKeyEvent *e)
   if(!match.mapping) {
     if(m_delayedMapping) {
       execDelayedMapping();
-      return handleKeyEvent(e);
+      return handleInput(kp);
     }
 
     return eatKey;
