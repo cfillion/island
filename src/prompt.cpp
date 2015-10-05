@@ -18,7 +18,12 @@ void Prompt::setPrompt(const QString &prompt)
 {
   m_promptSize = prompt.size();
 
-  setText(prompt);
+  QLineEdit::setText(prompt);
+}
+
+void Prompt::setText(const QString &userText)
+{
+  QLineEdit::setText(text().left(m_promptSize) + userText);
 }
 
 void Prompt::check()

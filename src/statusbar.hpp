@@ -23,6 +23,7 @@ public:
   void setBuffer(const Buffer &);
   void setMode(const Island::Mode);
   void setStatus(const QString &);
+  void setPromptText(const QString &);
 
 Q_SIGNALS:
   void promptFinished(const QString &);

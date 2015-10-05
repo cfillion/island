@@ -9,7 +9,9 @@ class Prompt : public QLineEdit
 
 public:
   Prompt(QWidget *parent = 0);
+
   void setPrompt(const QString &);
+  void setText(const QString &);
 
 Q_SIGNALS:
   void editingFinished(const QString &);

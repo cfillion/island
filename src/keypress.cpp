@@ -126,26 +126,35 @@ QString KeyPress::toString() const
     return parts[0];
 }
 
-QString KeyPress::encodeCharacter() const
+QString KeyPress::displayString() const
+{
+  if(m_mods != Qt::NoModifier)
+    return QString();
+
+  const QString charStr = encodeCharacter(false);
+  return charStr;
+}
+
+QString KeyPress::encodeCharacter(const bool lookupSpecials) const
 {
   const bool aliased = KeyAliases.count(m_key);
   const int key = aliased ? KeyAliases.at(m_key) : m_key;
 
-  if(SpecialKeys.left.count(key))
+  if(lookupSpecials && SpecialKeys.left.count(key))
     return SpecialKeys.left.at(key);
 
   if(key >= Qt::Key_F1 && key <= Qt::Key_F35)
     return QString("F%1").arg(key - Qt::Key_F1 + 1);
-  else if(isLetter(key)) {
-    const QString seq = QString(QChar(key));
 
-    if(m_mods & Qt::ShiftModifier)
-      return seq.toUpper();
-    else
-      return seq.toLower();
-  }
+  const QChar c(key);
 
-  return QString();
+  if(!isLetter(key) && (lookupSpecials || !c.isPrint()))
+    return QString();
+
+  if(m_mods & Qt::ShiftModifier)
+    return c.toUpper();
+  else
+    return c.toLower();
 }
 
 void KeyPress::decodeCharacter(const QString &seq)

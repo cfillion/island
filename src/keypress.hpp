@@ -16,12 +16,13 @@ public:
   Qt::KeyboardModifiers modifiers() const { return m_mods; }
 
   QString toString() const;
+  QString displayString() const;
 
   bool operator==(const KeyPress &) const;
   bool operator!=(const KeyPress &) const;
 
 private:
-  QString encodeCharacter() const;
+  QString encodeCharacter(const bool lookupSpecials = true) const;
   void decodeCharacter(const QString &);
 
   int m_key;

@@ -127,6 +127,11 @@ void StatusBar::setStatus(const QString &text)
   m_status->setText(text);
 }
 
+void StatusBar::setPromptText(const QString &text)
+{
+  m_prompt->setText(text);
+}
+
 void StatusBar::resizeEvent(QResizeEvent *e)
 {
   const int width = e->size().width();

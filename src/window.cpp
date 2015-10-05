@@ -209,6 +209,32 @@ bool Window::handleInput(const KeyPress &kp)
   return true;
 }
 
+void Window::simulateInput(const Buffer &buf)
+{
+  QString fakePrompt;
+
+  for(const QString &seq : buf) {
+    const KeyPress kp(seq);
+    const bool eaten = handleInput(kp);
+
+    if(eaten || m_mode == InsertMode) {
+      fakePrompt.clear();
+      continue;
+    }
+
+    // simulate prompt
+    if(kp.key() == Qt::Key_Return) {
+      execPrompt(fakePrompt);
+      fakePrompt.clear();
+    }
+    else
+      fakePrompt += kp.displayString();
+  }
+
+  if(!fakePrompt.isEmpty())
+    m_status->setPromptText(fakePrompt);
+}
+
 void Window::setMode(const Mode mode)
 {
   m_mode = mode;
@@ -245,6 +271,11 @@ void Window::execMapping(const Mapping *mapping)
 
   m_buffer.clear();
   Q_EMIT bufferChanged(m_buffer);
+
+  if(mapping->type() == Mapping::User) {
+    const Buffer &buf = *mapping->boundBuffer();
+    simulateInput(buf);
+  }
 }
 
 void Window::execCommand(Command &cmd)

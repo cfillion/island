@@ -43,6 +43,8 @@ int main(int argc, char *argv[])
   nmap.set("ga", &Actions::tab_open);
   nmap.set("r", &Actions::tab_reload);
   nmap.set("R", {&Actions::tab_reload, {}, VA_FORCE});
+  nmap.set("o", ":open<Space>");
+  nmap.set("O", ":tabopen<Space>");
 
   Mapping imap;
   imap.set("<Esc>", &Actions::normal_mode);

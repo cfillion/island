@@ -38,6 +38,7 @@ public:
   void closePage(Page *page);
 
   bool handleInput(const KeyPress &);
+  void simulateInput(const Buffer &);
 
   void setMode(const Island::Mode);
 

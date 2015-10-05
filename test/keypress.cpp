@@ -10,6 +10,7 @@ TEST_CASE("letters", M) {
     const KeyPress ki(Qt::Key_A);
 
     REQUIRE(ki.toString() == "a");
+    REQUIRE(ki.displayString() == "a");
     REQUIRE(KeyPress("a") == ki);
   }
 
@@ -17,6 +18,7 @@ TEST_CASE("letters", M) {
     const KeyPress ki(Qt::Key_A, Qt::ControlModifier);
 
     REQUIRE(ki.toString() == "<C-a>");
+    REQUIRE(ki.displayString() == "");
     REQUIRE(KeyPress("<C-a>") == ki);
   }
 
@@ -62,6 +64,7 @@ TEST_CASE("special keys", M) {
     const KeyPress ki(Qt::Key_Space);
 
     REQUIRE(ki.toString() == "<Space>");
+    REQUIRE(ki.displayString() == "\x20");
     REQUIRE(KeyPress("<Space>") == ki);
   }
 
@@ -86,6 +89,11 @@ TEST_CASE("special keys", M) {
     REQUIRE(KeyPress("<CR>") != ki);
     REQUIRE(KeyPress("<CR>") == KeyPress(Qt::Key_Return));
   }
+
+  SECTION("non printable") {
+    const KeyPress ki(Qt::Key_Return);
+    REQUIRE(ki.displayString() == "");
+  }
 }
 
 TEST_CASE("less/more keys", M) {
@@ -93,4 +101,15 @@ TEST_CASE("less/more keys", M) {
     const KeyPress ki(Qt::Key_Less, Qt::ShiftModifier);
     REQUIRE(ki.toString() == "<lt>");
   }
+}
+
+TEST_CASE("modifiers keys", M) {
+  const KeyPress ki(Qt::Key_Control, Qt::ControlModifier);
+  REQUIRE(ki.toString() == "");
+  REQUIRE(ki.displayString() == "");
+}
+
+TEST_CASE("unprintable keys", M) {
+  const KeyPress ki(Qt::Key_Clear);
+  REQUIRE(ki.displayString() == "");
 }
