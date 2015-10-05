@@ -53,7 +53,7 @@ QDebug operator<<(QDebug debug, const KeyPress &kp)
   debug.nospace()
     << "KeyPress("
     << kp.toString()
-    << ", key: " << kp.key()
+    << ", key: " << static_cast<Qt::Key>(kp.key())
     << ", modifiers: " << kp.modifiers()
     << ')';
 
