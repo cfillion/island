@@ -27,6 +27,7 @@ private:
 
   int m_key;
   Qt::KeyboardModifiers m_mods;
+  QString m_charTextOverride;
 };
 
 QDebug operator<<(QDebug, const KeyPress &);

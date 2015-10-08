@@ -3,6 +3,8 @@
 
 #include <keypress.hpp>
 
+#include <QKeyEvent>
+
 static const char *M = "[keypress]";
 
 TEST_CASE("letters", M) {
@@ -112,4 +114,10 @@ TEST_CASE("modifiers keys", M) {
 TEST_CASE("unprintable keys", M) {
   const KeyPress ki(Qt::Key_Clear);
   REQUIRE(ki.displayString() == "");
+}
+
+TEST_CASE("key event conversion", M) {
+  QKeyEvent e(QEvent::None, Qt::Key_E, Qt::NoModifier, "é");
+  const KeyPress ki(&e);
+  REQUIRE(ki.toString() == "é");
 }

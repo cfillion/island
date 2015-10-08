@@ -61,7 +61,7 @@ QDebug operator<<(QDebug debug, const KeyPress &kp)
 }
 
 KeyPress::KeyPress(const QKeyEvent *e)
-  : m_key(e->key()), m_mods(e->modifiers())
+  : m_key(e->key()), m_mods(e->modifiers()), m_charTextOverride(e->text())
 {}
 
 KeyPress::KeyPress(const QString &seq)
@@ -145,6 +145,9 @@ QString KeyPress::encodeCharacter(const bool lookupSpecials) const
 
   if(key >= Qt::Key_F1 && key <= Qt::Key_F35)
     return QString("F%1").arg(key - Qt::Key_F1 + 1);
+
+  if(!m_charTextOverride.isEmpty())
+    return m_charTextOverride;
 
   const QChar c(key);
 
