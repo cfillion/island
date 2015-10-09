@@ -53,6 +53,7 @@ private:
   void execDelayedMapping();
   void execMapping(const Mapping *);
   void execCommand(Command &);
+  void clearBuffer();
 
   Page *m_current;
   QList<Page *> m_pages;

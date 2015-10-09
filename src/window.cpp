@@ -110,6 +110,8 @@ void Window::setCurrentPage(Page *p)
 
   setWindowTitle(m_current->displayTitle());
   setWindowIcon(m_current->icon());
+
+  clearBuffer();
 }
 
 void Window::closeTab(const int index)
@@ -258,7 +260,7 @@ void Window::execPrompt(const QString &input)
 void Window::execDelayedMapping()
 {
   execMapping(m_delayedMapping);
-  m_delayedMapping = 0;
+  // m_delayedMapping is unset in clearBuffer which is called by execMapping
 }
 
 void Window::execMapping(const Mapping *mapping)
@@ -269,8 +271,9 @@ void Window::execMapping(const Mapping *mapping)
     execCommand(cmd);
   }
 
-  m_buffer.clear();
-  Q_EMIT bufferChanged(m_buffer);
+  // this can't be done earlier because we need the counter to be set
+  // and it can't be done later because it would re-trigger the mapping
+  clearBuffer();
 
   if(mapping->type() == Mapping::User) {
     const Buffer &buf = *mapping->boundBuffer();
@@ -288,4 +291,11 @@ void Window::execCommand(Command &cmd)
     message.prepend("Error: ");
 
   m_status->setStatus(message);
+}
+
+void Window::clearBuffer()
+{
+  m_delayedMapping = 0;
+  m_buffer.clear();
+  Q_EMIT bufferChanged(m_buffer);
 }
