@@ -18,9 +18,6 @@ public:
 Q_SIGNALS:
   void editingFinished(const QString &);
 
-protected:
-  void keyPressEvent(QKeyEvent *) override;
-
 private:
   void check();
   void cursorMoved(const int, const int);

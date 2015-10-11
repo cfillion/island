@@ -14,6 +14,11 @@ namespace Actions {
   CommandResult history_back(const Command &);
   CommandResult history_forward(const Command &);
   CommandResult prompt_execute(const Command &);
+  CommandResult prompt_home(const Command &);
+  CommandResult prompt_end(const Command &);
+  CommandResult prompt_left(const Command &);
+  CommandResult prompt_right(const Command &);
+  CommandResult prompt_clear(const Command &);
 };
 
 #endif

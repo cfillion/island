@@ -107,3 +107,34 @@ CommandResult Actions::prompt_execute(const Command &cmd)
   WIN->prompt()->send();
   return {};
 }
+
+CommandResult Actions::prompt_home(const Command &cmd)
+{
+  WIN->prompt()->home(false);
+  return {};
+}
+
+CommandResult Actions::prompt_end(const Command &cmd)
+{
+  WIN->prompt()->end(false);
+  return {};
+}
+
+CommandResult Actions::prompt_left(const Command &cmd)
+{
+  WIN->prompt()->cursorBackward(false);
+  return {};
+}
+
+CommandResult Actions::prompt_right(const Command &cmd)
+{
+  WIN->prompt()->cursorForward(false);
+  return {};
+}
+
+CommandResult Actions::prompt_clear(const Command &cmd)
+{
+  WIN->prompt()->home(true);
+  WIN->prompt()->del();
+  return {};
+}
