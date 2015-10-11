@@ -13,6 +13,8 @@ public:
   void setPrompt(const QString &);
   void setText(const QString &);
 
+  void send();
+
 Q_SIGNALS:
   void editingFinished(const QString &);
 
@@ -21,7 +23,6 @@ protected:
 
 private:
   void check();
-  void send();
   void cursorMoved(const int, const int);
   void selectionChanged();
 

@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
 
   Mapping pmap;
   pmap.set("<Esc>", &Actions::normal_mode);
+  pmap.set("<CR>", &Actions::prompt_execute);
 
   Window win({&nmap, &imap, &pmap});
   win.show();

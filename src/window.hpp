@@ -12,6 +12,7 @@
 
 class Mapping;
 class Page;
+class Prompt;
 class QStackedLayout;
 class StatusBar;
 class TabBar;
@@ -26,6 +27,8 @@ public:
   };
 
   explicit Window(const MappingArray &mappings, QWidget *parent = 0);
+
+  Prompt *prompt() const;
 
   int addPage(const QString &url, const OpenMode mode = NewTab);
   void setCurrentPage(Page *);

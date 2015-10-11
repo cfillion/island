@@ -13,6 +13,7 @@ namespace Actions {
   CommandResult tab_close(const Command &);
   CommandResult history_back(const Command &);
   CommandResult history_forward(const Command &);
+  CommandResult prompt_execute(const Command &);
 };
 
 #endif

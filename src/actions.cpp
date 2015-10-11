@@ -2,6 +2,7 @@
 
 #include "global.hpp"
 #include "page.hpp"
+#include "prompt.hpp"
 #include "window.hpp"
 
 using namespace CommandOptions;
@@ -99,4 +100,10 @@ CommandResult Actions::history_forward(const Command &cmd)
     return {};
   else
     return {false, "Start of history"};
+}
+
+CommandResult Actions::prompt_execute(const Command &cmd)
+{
+  WIN->prompt()->send();
+  return {};
 }
