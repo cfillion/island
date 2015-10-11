@@ -19,9 +19,14 @@ TEST_CASE("letters", M) {
   SECTION("control") {
     const KeyPress ki(Qt::Key_A, Qt::ControlModifier);
 
+#ifndef Q_OS_OSX
     REQUIRE(ki.toString() == "<C-a>");
-    REQUIRE(ki.displayString() == "");
     REQUIRE(KeyPress("<C-a>") == ki);
+#else
+    REQUIRE(ki.toString() == "<M-a>");
+    REQUIRE(KeyPress("<M-a>") == ki);
+#endif
+    REQUIRE(ki.displayString() == "");
   }
 
   SECTION("shift") {
@@ -29,6 +34,18 @@ TEST_CASE("letters", M) {
 
     REQUIRE(ki.toString() == "A");
     REQUIRE(KeyPress("A") == ki);
+  }
+
+  SECTION("meta") {
+    const KeyPress ki(Qt::Key_A, Qt::MetaModifier);
+
+#ifndef Q_OS_OSX
+    REQUIRE(ki.toString() == "<M-a>");
+    REQUIRE(KeyPress("<M-a>") == ki);
+#else
+    REQUIRE(ki.toString() == "<C-a>");
+    REQUIRE(KeyPress("<C-a>") == ki);
+#endif
   }
 
   SECTION("all modifiers") {

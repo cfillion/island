@@ -79,11 +79,19 @@ KeyPress::KeyPress(const QString &seq)
   decodeCharacter(parts.takeLast());
 
   for(const QString &part : parts) {
+#ifndef Q_OS_OSX
     if(part == "C")
+#else
+    if(part == "M")
+#endif
       m_mods |= Qt::ControlModifier;
     else if(part == "A")
       m_mods |= Qt::AltModifier;
+#ifndef Q_OS_OSX
     else if(part == "M")
+#else
+    else if(part == "C")
+#endif
       m_mods |= Qt::MetaModifier;
     else if(part == "S")
       m_mods |= Qt::ShiftModifier;
@@ -109,11 +117,19 @@ QString KeyPress::toString() const
     return QString();
 
   QStringList parts;
+#ifndef Q_OS_OSX
   if(m_mods & Qt::ControlModifier)
+#else
+  if(m_mods & Qt::MetaModifier)
+#endif
     parts << "C";
   if(m_mods & Qt::AltModifier)
     parts << "A";
+#ifndef Q_OS_OSX
   if(m_mods & Qt::MetaModifier)
+#else
+  if(m_mods & Qt::ControlModifier)
+#endif
     parts << "M";
   if(m_mods & Qt::ShiftModifier && isSpecial)
     parts << "S";
