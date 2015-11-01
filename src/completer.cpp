@@ -32,13 +32,10 @@ QSize Completer::sizeHint() const
 
 void Completer::trigger(const int index, const QString &word)
 {
-  if(isVisible())
+  if(isVisible() || index != 0)
     return;
 
   const auto list = Command::findCommands(word);
-
-  if(list.empty() || index != 0)
-    return;
 
   for(const CommandEntry &entry : list) {
     addItem(entry.name);
@@ -47,9 +44,16 @@ void Completer::trigger(const int index, const QString &word)
       addItem(entry.name + "!");
   }
 
-  show();
+  const int size = count();
 
-  Q_EMIT triggered();
+  if(size == 1) {
+    Q_EMIT wordChanged(item(0)->text());
+    clear();
+  }
+  else if(size > 1) {
+    show();
+    Q_EMIT triggered();
+  }
 }
 
 void Completer::dismiss()
