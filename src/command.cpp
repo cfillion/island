@@ -106,6 +106,22 @@ bool Command::matchCommand(const QString &name, const CommandEntry **entry)
   return false;
 };
 
+std::vector<CommandEntry> Command::findCommands(const QString &prefix)
+{
+  assert(s_registry);
+
+  auto it = s_registry->lower_bound({prefix});
+
+  std::vector<CommandEntry> list;
+
+  while(it != s_registry->end() && it->name.startsWith(prefix)) {
+    list.push_back(*it);
+    it++;
+  }
+
+  return list;
+}
+
 bool Command::checkVariant(const CommandEntry *entry) const
 {
   switch(m_variant) {

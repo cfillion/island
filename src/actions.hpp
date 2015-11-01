@@ -19,6 +19,8 @@ namespace Actions {
   CommandResult prompt_left(const Command &);
   CommandResult prompt_right(const Command &);
   CommandResult prompt_clear(const Command &);
+  CommandResult prompt_complete(const Command &);
+  CommandResult prompt_complete_reverse(const Command &);
 };
 
 #endif

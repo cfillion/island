@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <set>
+#include <vector>
 
 class Command;
 class Window;
@@ -54,6 +55,8 @@ private:
 
 class Command {
 public:
+  static std::vector<CommandEntry> findCommands(const QString &);
+
   Command(const CommandFunc &func, const QString &arg = QString(),
       const CommandOptions::Variant va = CommandOptions::VA_DEFAULT,
       const int counter = -1, void *data = 0);

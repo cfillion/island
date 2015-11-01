@@ -138,3 +138,15 @@ CommandResult Actions::prompt_clear(const Command &cmd)
   WIN->prompt()->del();
   return {};
 }
+
+CommandResult Actions::prompt_complete(const Command &cmd)
+{
+  WIN->prompt()->complete(1);
+  return {};
+}
+
+CommandResult Actions::prompt_complete_reverse(const Command &cmd)
+{
+  WIN->prompt()->complete(-1);
+  return {};
+}

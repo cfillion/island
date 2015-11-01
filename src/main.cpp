@@ -57,6 +57,8 @@ int main(int argc, char *argv[])
   pmap.set("<Left>", &Actions::prompt_left);
   pmap.set("<Right>", &Actions::prompt_right);
   pmap.set("<C-u>", &Actions::prompt_clear);
+  pmap.set("<Tab>", &Actions::prompt_complete);
+  pmap.set("<S-Tab>", &Actions::prompt_complete_reverse);
 
   Window win({&nmap, &imap, &pmap});
   win.show();

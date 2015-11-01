@@ -10,6 +10,7 @@
 #include "keypress.hpp"
 #include "mapping.hpp"
 
+class Completer;
 class Mapping;
 class Page;
 class Prompt;
@@ -49,6 +50,9 @@ Q_SIGNALS:
   void bufferChanged(const Buffer &);
   void modeChanged(const Island::Mode);
 
+protected:
+  void resizeEvent(QResizeEvent *) override;
+
 private:
   void currentTabMotion(const bool polarity, const int size);
   void shiftPageIndexes(const int start = 0);
@@ -57,12 +61,14 @@ private:
   void execMapping(const Mapping *);
   void execCommand(Command &);
   void clearBuffer();
+  void resizeCompleter();
 
   Page *m_current;
   QList<Page *> m_pages;
   QStackedLayout *m_stack;
   TabBar *m_tabs;
   StatusBar *m_status;
+  Completer *m_completer;
 
   Island::Mode m_mode;
   MappingArray m_mappings;

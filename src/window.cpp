@@ -1,5 +1,6 @@
 #include "window.hpp"
 
+#include "completer.hpp"
 #include "page.hpp"
 #include "prompt.hpp"
 #include "statusbar.hpp"
@@ -18,7 +19,10 @@ Window::Window(const MappingArray &mappings, QWidget *parent)
 {
   m_tabs = new TabBar;
   m_stack = new QStackedLayout;
-  m_status = new StatusBar;
+  m_status = new StatusBar(this);
+
+  m_completer = m_status->prompt()->completer();
+  m_completer->setParent(this);
 
   QVBoxLayout *main_layout = new QVBoxLayout(this);
   main_layout->setSpacing(0);
@@ -34,6 +38,7 @@ Window::Window(const MappingArray &mappings, QWidget *parent)
   connect(this, &Window::bufferChanged, m_status, &StatusBar::setBuffer);
   connect(this, &Window::modeChanged, m_status, &StatusBar::setMode);
   connect(m_status, &StatusBar::promptFinished, this, &Window::execPrompt);
+  connect(m_completer, &Completer::triggered, this, &Window::resizeCompleter);
 
   m_mappingTimer.setInterval(1000);
   m_mappingTimer.setSingleShot(true);
@@ -238,7 +243,7 @@ void Window::execPrompt(const QString &input)
     if(input.isEmpty())
       return;
 
-    Command cmd(input);
+    Command cmd(input.simplified());
     execCommand(cmd);
   });
 }
@@ -289,4 +294,18 @@ void Window::clearBuffer()
 Prompt *Window::prompt() const
 {
   return m_status->prompt();
+}
+
+void Window::resizeEvent(QResizeEvent *)
+{
+  resizeCompleter();
+}
+
+void Window::resizeCompleter()
+{
+  const QRect statusGeometry = m_status->geometry();
+  const int completerHeight = m_completer->sizeHint().height();
+
+  m_completer->setGeometry(0, statusGeometry.y() - completerHeight,
+    width(), std::min(completerHeight, height() - statusGeometry.height()));
 }
