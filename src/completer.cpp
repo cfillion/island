@@ -3,7 +3,7 @@
 #include "command.hpp"
 
 #include <QEvent>
-#include <QHBoxlayout>
+#include <QHBoxLayout>
 #include <QLabel>
 
 using namespace CommandOptions;
