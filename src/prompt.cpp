@@ -52,7 +52,7 @@ void Prompt::check()
 
 void Prompt::send()
 {
-  Q_EMIT editingFinished(hasFocus() ? text() : QString());
+  Q_EMIT editingFinished(hasFocus() ? text().simplified() : QString());
 }
 
 void Prompt::cursorMoved(const int, const int after)

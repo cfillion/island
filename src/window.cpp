@@ -243,7 +243,7 @@ void Window::execPrompt(const QString &input)
     if(input.isEmpty())
       return;
 
-    Command cmd(input.simplified());
+    Command cmd(input);
     execCommand(cmd);
   });
 }
