@@ -37,11 +37,11 @@ void Completer::trigger(const int index, const QString &word)
 
   const auto list = Command::findCommands(word);
 
-  for(const CommandEntry &entry : list) {
-    addItem(entry.name);
+  for(const CommandEntry *entry : list) {
+    addItem(entry->name);
 
-    if(entry.hasFlag(EN_FORCE))
-      addItem(entry.name + "!");
+    if(entry->hasFlag(EN_FORCE))
+      addItem(entry->name + "!");
   }
 
   const int size = count();

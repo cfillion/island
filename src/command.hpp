@@ -43,6 +43,7 @@ struct CommandEntry {
 };
 
 typedef std::set<CommandEntry> CommandRegistry;
+typedef std::vector<const CommandEntry *> CommandList;
 
 class UseCommandRegistry {
 public:
@@ -55,7 +56,7 @@ private:
 
 class Command {
 public:
-  static std::vector<CommandEntry> findCommands(const QString &);
+  static CommandList findCommands(const QString &);
 
   Command(const CommandFunc &func, const QString &arg = QString(),
       const CommandOptions::Variant va = CommandOptions::VA_DEFAULT,
@@ -83,7 +84,7 @@ private:
   static CommandRegistry *s_registry;
   friend UseCommandRegistry;
 
-  static bool matchCommand(const QString &, const CommandEntry **);
+  static bool findCommand(const QString &, const CommandEntry ** = 0);
   bool checkVariant(const CommandEntry *) const;
 
   bool m_isValid;

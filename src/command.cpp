@@ -59,7 +59,7 @@ Command::Command(const QString &input)
 
   const CommandEntry *entry = 0;
 
-  if(!match.hasMatch() || !matchCommand(name, &entry) || !checkVariant(entry)) {
+  if(!match.hasMatch() || !findCommand(name, &entry) || !checkVariant(entry)) {
     m_error = "Not a command: " + input;
     return;
   }
@@ -76,46 +76,29 @@ Command::Command(const QString &input)
   m_arg = args;
 }
 
-bool Command::matchCommand(const QString &name, const CommandEntry **entry)
+bool Command::findCommand(const QString &name, const CommandEntry **entry)
 {
-  assert(s_registry);
+  const CommandList matches = findCommands(name);
 
-  const auto match = s_registry->lower_bound({name});
-
-  // no match
-  if(match == s_registry->end())
+  if(matches.empty() || (matches.size() > 1 && matches.front()->name != name))
     return false;
 
-  // exact match
-  if(match->name == name) {
-    *entry = &*match;
-    return true;
-  }
+  if(entry)
+    *entry = matches.front();
 
-  // ambiguous match
-  const auto next = std::next(match);
-  if(next != s_registry->end() && next->name.startsWith(name))
-    return false;
-
-  // partial match
-  if(match->name.startsWith(name)) {
-    *entry = &*match;
-    return true;
-  }
-
-  return false;
+  return true;
 };
 
-std::vector<CommandEntry> Command::findCommands(const QString &prefix)
+CommandList Command::findCommands(const QString &prefix)
 {
   assert(s_registry);
 
   auto it = s_registry->lower_bound({prefix});
 
-  std::vector<CommandEntry> list;
+  CommandList list;
 
   while(it != s_registry->end() && it->name.startsWith(prefix)) {
-    list.push_back(*it);
+    list.push_back(&*it);
     it++;
   }
 
