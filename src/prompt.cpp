@@ -44,7 +44,7 @@ QString Prompt::text() const
 
 void Prompt::check()
 {
-  if(text().isEmpty())
+  if(prompt().size() < m_promptSize)
     send();
   else
     m_completer->dismiss();
