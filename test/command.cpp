@@ -218,3 +218,25 @@ TEST_CASE("variant from constructor", M) {
   const Command def(&test_cmd);
   REQUIRE(def.variant() == VA_DEFAULT);
 }
+
+TEST_CASE("command search", M) {
+  const UseCommandRegistry reg(&TestReg);
+
+  SECTION("empty prefix") {
+    const auto list = Command::findCommands("");
+
+    CHECK(list.size() == 4);
+    REQUIRE(list[0].name == "force");
+    REQUIRE(list[1].name == "noarg");
+    REQUIRE(list[2].name == "test");
+    REQUIRE(list[3].name == "tester");
+  }
+
+  SECTION("matching prefix") {
+    const auto list = Command::findCommands("test");
+
+    CHECK(list.size() == 2);
+    REQUIRE(list[0].name == "test");
+    REQUIRE(list[1].name == "tester");
+  }
+}
