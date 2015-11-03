@@ -175,7 +175,7 @@ CommandResult Actions::search_previous(const Command &)
   return {false, "Not implemented"};
 }
 
-CommandResult Actions::stop_clear(const Command &cmd)
+CommandResult Actions::search_clear(const Command &cmd)
 {
   WIN->currentPage()->findText(QString());
   return {};

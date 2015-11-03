@@ -25,7 +25,7 @@ namespace Actions {
   CommandResult search_backward(const Command &);
   CommandResult search_next(const Command &);
   CommandResult search_previous(const Command &);
-  CommandResult stop_clear(const Command &);
+  CommandResult search_clear(const Command &);
 };
 
 #endif
