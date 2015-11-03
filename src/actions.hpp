@@ -21,6 +21,11 @@ namespace Actions {
   CommandResult prompt_clear(const Command &);
   CommandResult prompt_complete(const Command &);
   CommandResult prompt_complete_reverse(const Command &);
+  CommandResult search_forward(const Command &);
+  CommandResult search_backward(const Command &);
+  CommandResult search_next(const Command &);
+  CommandResult search_previous(const Command &);
+  CommandResult stop_clear(const Command &);
 };
 
 #endif

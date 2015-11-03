@@ -25,6 +25,7 @@ void Prompt::setPrompt(const QString &prompt)
   m_promptSize = prompt.size();
 
   QLineEdit::setText(prompt);
+  Q_EMIT promptChanged(prompt);
 }
 
 QString Prompt::prompt() const

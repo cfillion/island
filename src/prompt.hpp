@@ -31,6 +31,7 @@ public:
 
 Q_SIGNALS:
   void editingFinished(const QString &);
+  void promptChanged(const QString &);
 
 protected:
   void hideEvent(QHideEvent *) override;

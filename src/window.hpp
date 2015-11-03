@@ -57,6 +57,8 @@ private:
   void currentTabMotion(const bool polarity, const int size);
   void shiftPageIndexes(const int start = 0);
   void execPrompt(const QString &);
+  void execCommandPrompt(const QString &);
+  void execSearchPrompt(const QString &);
   void execDelayedMapping();
   void execMapping(const Mapping *);
   void execCommand(Command &);

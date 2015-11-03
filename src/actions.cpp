@@ -49,14 +49,14 @@ CommandResult Actions::open(const Command &cmd)
   CommandResult res;
 
   if(Page *p = GetPage(cmd, &res))
-    p->load(cmd.arg());
+    p->load(cmd.argument());
 
   return res;
 }
 
 CommandResult Actions::tab_open(const Command &cmd)
 {
-  const int index = WIN->addPage(cmd.arg());
+  const int index = WIN->addPage(cmd.argument());
   WIN->setCurrentTab(index);
 
   return {};
@@ -148,5 +148,33 @@ CommandResult Actions::prompt_complete(const Command &cmd)
 CommandResult Actions::prompt_complete_reverse(const Command &cmd)
 {
   WIN->prompt()->complete(-1);
+  return {};
+}
+
+CommandResult Actions::search_forward(const Command &cmd)
+{
+  WIN->setMode(SearchForwardMode);
+  return {};
+}
+
+CommandResult Actions::search_backward(const Command &cmd)
+{
+  WIN->setMode(SearchBackwardMode);
+  return {};
+}
+
+CommandResult Actions::search_next(const Command &)
+{
+  return {false, "Not implemented"};
+}
+
+CommandResult Actions::search_previous(const Command &)
+{
+  return {false, "Not implemented"};
+}
+
+CommandResult Actions::stop_clear(const Command &cmd)
+{
+  WIN->currentPage()->findText(QString());
   return {};
 }

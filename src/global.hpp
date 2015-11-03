@@ -8,10 +8,9 @@ namespace Island {
     NormalMode,
     InsertMode,
     CommandMode,
-    SearchMode,
+    SearchForwardMode,
+    SearchBackwardMode,
   };
-
-  static constexpr int ModeCount = SearchMode+1;
 };
 
 #endif

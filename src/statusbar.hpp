@@ -34,6 +34,7 @@ protected:
 
 private:
   void updateLabels();
+  void promptChanged();
 
   Page *m_page;
   int m_pageCount;

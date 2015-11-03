@@ -155,7 +155,7 @@ TEST_CASE("ill-formed commands are invalid", M) {
 TEST_CASE("argument from constructor", M) {
   const Command cmd(&test_cmd, "hello world");
 
-  REQUIRE(cmd.arg() == "hello world");
+  REQUIRE(cmd.argument() == "hello world");
 }
 
 TEST_CASE("argument from string", M) {
@@ -166,7 +166,7 @@ TEST_CASE("argument from string", M) {
   CHECK(cmd.func() == &test_cmd);
 
   REQUIRE(cmd.hasArgument());
-  REQUIRE(cmd.arg() == "hello world");
+  REQUIRE(cmd.argument() == "hello world");
 }
 
 TEST_CASE("unexpected argument", M) {
@@ -184,7 +184,7 @@ TEST_CASE("ignore space padding", M) {
   const Command cmd("4  test     hello");
   CHECK(cmd.counter() == 4);
   CHECK(cmd.func() == &test_cmd);
-  CHECK(cmd.arg() == "hello");
+  CHECK(cmd.argument() == "hello");
   REQUIRE(cmd.isValid());
 }
 

@@ -11,7 +11,7 @@
 
 class Mapping;
 
-typedef std::array<Mapping *, Island::ModeCount> MappingArray;
+typedef std::array<Mapping *, Island::CommandMode+1> MappingArray;
 
 struct MappingMatch {
   int index = -1;

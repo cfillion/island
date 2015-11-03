@@ -187,7 +187,7 @@ bool Window::handleInput(const KeyPress &kp)
   m_mappingTimer.stop();
   m_buffer << seq;
 
-  auto match = m_mappings[m_mode]->match(m_buffer);
+  auto match = m_mappings[std::min(m_mode, CommandMode)]->match(m_buffer);
 
   if(!eatKey && match.index == -1)
     m_buffer.clear(); // clears the counter in insert and prompt modes
@@ -238,14 +238,34 @@ void Window::execPrompt(const QString &input)
 {
   // executing this later prevents <CR> from being added to the input buffer
   QTimer::singleShot(0, this, [=] {
+    switch(m_mode) {
+    case CommandMode:
+      execCommandPrompt(input);
+      break;
+    case SearchForwardMode:
+    case SearchBackwardMode:
+      execSearchPrompt(input);
+      break;
+    default:
+      break;
+    }
+
     setMode(NormalMode);
-
-    if(input.isEmpty())
-      return;
-
-    Command cmd(input);
-    execCommand(cmd);
   });
+}
+
+void Window::execCommandPrompt(const QString &input)
+{
+  if(input.isEmpty())
+    return;
+
+  Command cmd(input);
+  execCommand(cmd);
+}
+
+void Window::execSearchPrompt(const QString &input)
+{
+  currentPage()->findText(input, m_mode == SearchForwardMode);
 }
 
 void Window::execDelayedMapping()

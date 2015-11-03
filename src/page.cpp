@@ -143,6 +143,16 @@ void Page::reload(const bool useCache)
   );
 }
 
+void Page::findText(const QString &input, const bool forward)
+{
+  QWebEnginePage::FindFlags flags;
+
+  if(!forward)
+    flags |= QWebEnginePage::FindBackward;
+
+  m_engine->findText(input, flags);
+}
+
 QUrl Page::parseUrl(const QString &input)
 {
   return QUrl::fromUserInput(input);

@@ -40,6 +40,7 @@ public:
   bool historyMotion(const int);
   void load(const QString &input);
   void reload(const bool useCache = true);
+  void findText(const QString &, const bool forward = true);
 
 Q_SIGNALS:
   void displayTitleChanged(const QString &);

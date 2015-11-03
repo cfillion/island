@@ -45,6 +45,11 @@ int main(int argc, char *argv[])
   nmap.set("R", {&Actions::tab_reload, {}, VA_FORCE});
   nmap.set("o", ":open<Space>");
   nmap.set("O", ":tabopen<Space>");
+  nmap.set("/", &Actions::search_forward);
+  nmap.set("?", &Actions::search_backward);
+  nmap.set("n", &Actions::search_next);
+  nmap.set("N", &Actions::search_previous);
+  nmap.set("<Esc>", &Actions::stop_clear);
 
   Mapping imap;
   imap.set("<Esc>", &Actions::normal_mode);

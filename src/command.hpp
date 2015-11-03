@@ -67,7 +67,7 @@ public:
   CommandFunc func() const { return m_func; }
 
   bool hasArgument() const { return !m_arg.isEmpty(); }
-  const QString &arg() const { return m_arg; }
+  const QString &argument() const { return m_arg; }
 
   void setCounter(const int n) { m_counter = n; }
   bool hasCounter() const { return m_counter > 0; }
