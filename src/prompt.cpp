@@ -95,7 +95,6 @@ Word Prompt::currentWord() const
   return word;
 }
 
-#include <QDebug>
 void Prompt::replaceWord(const QString &newWord)
 {
   const Word word = currentWord();
@@ -109,4 +108,5 @@ void Prompt::replaceWord(const QString &newWord)
 void Prompt::hideEvent(QHideEvent *)
 {
   m_completer->dismiss();
+  QLineEdit::setText(QString());
 }
