@@ -8,7 +8,6 @@ using namespace CommandOptions;
 
 const CommandRegistry Island::ActionNames{
 
-  {"insert",    &Actions::insert_mode},
   {"back",      &Actions::history_back},
   {"forward",   &Actions::history_forward},
   {"close",     &Actions::tab_close},
