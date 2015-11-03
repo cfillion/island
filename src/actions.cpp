@@ -48,8 +48,10 @@ CommandResult Actions::open(const Command &cmd)
 
   CommandResult res;
 
-  if(Page *p = GetPage(cmd, &res))
-    p->load(cmd.argument());
+  if(Page *p = GetPage(cmd, &res)) {
+    if(!p->load(cmd.argument()))
+      res = {false, "Invalid url"};
+  }
 
   return res;
 }

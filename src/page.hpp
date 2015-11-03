@@ -38,7 +38,7 @@ public:
   int loadProgress() const;
 
   bool historyMotion(const int);
-  void load(const QString &input);
+  bool load(const QString &input);
   void reload(const bool useCache = true);
   void findText(const QString &, const bool forward = true);
 

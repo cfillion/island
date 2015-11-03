@@ -130,9 +130,15 @@ bool Page::historyMotion(const int motion)
   return m_engine->historyMotion(motion);
 }
 
-void Page::load(const QString &input)
+bool Page::load(const QString &input)
 {
-  m_engine->setUrl(parseUrl(input));
+  const QUrl url = parseUrl(input);
+
+  if(!url.isValid())
+    return false;
+
+  m_engine->setUrl(url);
+  return true;
 }
 
 void Page::reload(const bool useCache)
