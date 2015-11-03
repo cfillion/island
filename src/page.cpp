@@ -137,6 +137,9 @@ void Page::load(const QString &input)
 
 void Page::reload(const bool useCache)
 {
+  if(m_engine->loadDeferredUrl())
+    return;
+
   m_engine->triggerPageAction(
     useCache ? QWebEnginePage::Reload
     : QWebEnginePage::ReloadAndBypassCache

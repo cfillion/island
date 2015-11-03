@@ -12,6 +12,8 @@ public:
   QUrl url() const;
   QString title() const;
 
+  bool loadDeferredUrl();
+
   bool historyMotion(const int);
   void setUrl(const QUrl &url);
 

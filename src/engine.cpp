@@ -17,10 +17,7 @@ Engine::Engine(const QUrl &url, QWidget *parent)
 
 void Engine::showEvent(QShowEvent *)
 {
-  if(!m_deferredUrl.isEmpty()) {
-    load(m_deferredUrl);
-    m_deferredUrl = QUrl();
-  }
+  loadDeferredUrl();
 }
 
 void Engine::childEvent(QChildEvent *e)
@@ -74,6 +71,17 @@ bool Engine::historyMotion(const int movement)
   history()->goToItem(history()->itemAt(bounded));
 
   return index >= 0 && index < size;
+}
+
+bool Engine::loadDeferredUrl()
+{
+  if(m_deferredUrl.isEmpty())
+    return false;
+
+  load(m_deferredUrl);
+  m_deferredUrl = QUrl();
+
+  return true;
 }
 
 void Engine::setDeferredUrl(const QUrl &url)
