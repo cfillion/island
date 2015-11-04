@@ -9,8 +9,7 @@ QDebug operator<<(QDebug debug, const MappingMatch &m)
   QDebugStateSaver saver(debug);
   debug.nospace()
     << "MappingMatch("
-    << "index: " << m.index
-    << ", ambiguous: " << m.ambiguous
+    << "ambiguous: " << m.ambiguous
     << ", mapping: " << m.mapping
     << ')';
 
@@ -22,69 +21,53 @@ Mapping::~Mapping()
   qDeleteAll(m_children);
 }
 
-void Mapping::set(const Buffer &sequence, const Buffer &binding)
+void Mapping::set(const Buffer &buf, const Buffer &binding)
 {
-  Mapping *map = resolve(sequence, true);
+  if(buf.empty())
+    return;
+
+  Mapping *map = resolve(buf);
   map->bindTo(binding);
 }
 
-void Mapping::set(const Buffer &sequence, const Command &command)
+void Mapping::set(const Buffer &buf, const Command &command)
 {
-  Mapping *map = resolve(sequence, true);
+  if(buf.empty())
+    return;
+
+  Mapping *map = resolve(buf);
   map->bindTo(command);
 }
 
-Mapping *Mapping::resolve(const Buffer &buf, const bool create)
+Mapping *Mapping::resolve(const Buffer &buf)
 {
-  const int bufSize = buf.size();
-  const QString seq = buf[0];
+  Mapping *node = resolve(buf[0]);
 
-  Mapping *node = resolve(seq, create);
-
-  if(bufSize > 1 && node)
-    return node->resolve(buf.truncateCopy(1), create);
+  if(buf.size() > 1 && node)
+    return node->resolve(buf.truncateCopy(1));
 
   return node;
 }
 
-Mapping *Mapping::resolve(const QString &seq, const bool create)
+Mapping *Mapping::resolve(const QString &key)
 {
-  Mapping *node = m_children.value(seq);
+  Mapping *node = m_children.value(key);
 
-  if(!node && create)
-    node = m_children[seq] = new Mapping;
+  if(!node)
+    node = m_children[key] = new Mapping;
  
   return node;
 }
 
-MappingMatch Mapping::match(const Buffer &buf)
+MappingMatch Mapping::match(const QString &key) const
 {
-  MappingMatch match;
-
-  Mapping *node = this;
-
-  const int bufSize = buf.size();
-  for(int i = 0; i < bufSize; i++) {
-    const QString key = buf[i];
-    node = node->resolve(key, false);
-
-    match.index = i;
-
-    if(!node)
-      return match;
-  }
-
-  if(node->type() != Stem)
-    match.mapping = node;
-
-  match.ambiguous = !node->isLeaf();
-
-  return match;
+  const Mapping *node = m_children.value(key);
+  return {node, node && !node->isLeaf()};
 }
 
 const Buffer *Mapping::boundBuffer() const
 {
-  if(type() != User)
+  if(bindingType() != BufferBinding)
     return 0;
 
   const Buffer &buf = boost::get<Buffer>(m_bindings.top());
@@ -93,17 +76,17 @@ const Buffer *Mapping::boundBuffer() const
 
 const Command *Mapping::boundCommand() const
 {
-  if(type() != Native)
+  if(bindingType() != CommandBinding)
     return 0;
 
   const Command &cmd = boost::get<Command>(m_bindings.top());
   return &cmd;
 }
 
-Mapping::Type Mapping::type() const
+Mapping::BindingType Mapping::bindingType() const
 {
   if(m_bindings.empty())
-    return Stem;
+    return EmptyBinding;
 
-  return m_bindings.top().which() == 0 ? User : Native;
+  return m_bindings.top().which() == 0 ? BufferBinding : CommandBinding;
 }

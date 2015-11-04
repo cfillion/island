@@ -14,9 +14,8 @@ class Mapping;
 typedef std::array<Mapping *, Island::CommandMode+1> MappingArray;
 
 struct MappingMatch {
-  int index = -1;
-  bool ambiguous = false;
-  Mapping *mapping = 0;
+  const Mapping *mapping;
+  bool ambiguous;
 };
 
 QDebug operator<<(QDebug, const MappingMatch &);
@@ -25,10 +24,10 @@ typedef boost::variant<Buffer, Command> Binding;
 
 class Mapping {
 public:
-  enum Type {
-    Stem,
-    Native,
-    User,
+  enum BindingType {
+    EmptyBinding,
+    CommandBinding,
+    BufferBinding,
   };
 
   ~Mapping();
@@ -36,18 +35,19 @@ public:
   const Buffer *boundBuffer() const;
   const Command *boundCommand() const;
 
-  Type type() const;
+  BindingType bindingType() const;
   bool isLeaf() const { return m_children.isEmpty(); }
-  void set(const Buffer &sequence, const Buffer &binding);
-  void set(const Buffer &sequence, const Command &command);
-  MappingMatch match(const Buffer &buf);
+  bool isBound() const { return bindingType() != EmptyBinding; }
+  void set(const Buffer &buf, const Buffer &binding);
+  void set(const Buffer &buf, const Command &command);
+  MappingMatch match(const QString &key) const;
 
   template <typename T>
   void bindTo(const T &binding) { m_bindings.push(binding); }
 
 private:
-  Mapping *resolve(const Buffer &buf, const bool create = true);
-  Mapping *resolve(const QString &req, const bool create = true);
+  Mapping *resolve(const Buffer &buf);
+  Mapping *resolve(const QString &key);
 
   QMap<QString, Mapping *> m_children;
   std::stack<Binding> m_bindings;

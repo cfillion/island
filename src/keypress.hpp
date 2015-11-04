@@ -20,6 +20,7 @@ public:
 
   bool operator==(const KeyPress &) const;
   bool operator!=(const KeyPress &) const;
+  bool operator<(const KeyPress &) const;
 
 private:
   QString encodeCharacter(const bool lookupSpecials = true) const;

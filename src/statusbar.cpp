@@ -98,7 +98,10 @@ void StatusBar::setMode(const Mode mode)
   if(mode < CommandMode) {
     m_mode->show();
     m_status->show();
+
+    m_prompt->blockSignals(true);
     m_prompt->hide();
+    m_prompt->blockSignals(false);
   }
   else {
     m_mode->hide();

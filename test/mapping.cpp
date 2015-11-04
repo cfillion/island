@@ -7,24 +7,24 @@ static const char *M = "[mapping]";
 
 using namespace Island;
 
-TEST_CASE("bind to command", M) {
+TEST_CASE("bound to command", M) {
   Mapping map;
-  CHECK(map.type() == Mapping::Stem);
+  CHECK(map.bindingType() == Mapping::EmptyBinding);
   CHECK(map.boundBuffer() == 0);
   CHECK(map.boundCommand() == 0);
 
   map.bindTo(Command(0));
 
-  CHECK(map.type() == Mapping::Native);
+  CHECK(map.bindingType() == Mapping::CommandBinding);
   REQUIRE(map.boundBuffer() == 0);
   REQUIRE_FALSE(map.boundCommand() == 0);
 }
 
-TEST_CASE("bind to buffer", M) {
+TEST_CASE("bound to buffer", M) {
   Mapping map;
   map.bindTo("hello");
 
-  CHECK(map.type() == Mapping::User);
+  CHECK(map.bindingType() == Mapping::BufferBinding);
   REQUIRE_FALSE(map.boundBuffer() == 0);
   REQUIRE(map.boundCommand() == 0);
 }
@@ -35,26 +35,42 @@ TEST_CASE("match buffer", M) {
 
   SECTION("unmapped") {
     const auto m = map.match("a");
-    REQUIRE(m.index == 0);
     REQUIRE(m.ambiguous == false);
     REQUIRE(m.mapping == 0);
   }
 
-  map.set("aa", "");
-  REQUIRE_FALSE(map.isLeaf());
+  SECTION("incomplete match") {
+    map.set("aa", Command(0));
+
+    const auto m = map.match("a");
+    REQUIRE(m.ambiguous == true);
+    REQUIRE(m.mapping != 0);
+    REQUIRE(m.mapping != &map);
+    REQUIRE(m.mapping->bindingType() == Mapping::EmptyBinding);
+    REQUIRE_FALSE(m.mapping->isBound());
+  }
 
   SECTION("ambiguous match") {
+    map.set("a", Command(0));
+    map.set("aa", Command(0));
+
     const auto m = map.match("a");
-    REQUIRE(m.index == 0);
     REQUIRE(m.ambiguous == true);
-    REQUIRE(m.mapping == 0);
+    REQUIRE(m.mapping != 0);
+    REQUIRE(m.mapping != &map);
+    REQUIRE(m.mapping->bindingType() == Mapping::CommandBinding);
+    REQUIRE(m.mapping->isBound());
   }
 
   SECTION("perfect match") {
-    const auto m = map.match("aa");
-    REQUIRE(m.index == 1);
+    map.set("a", Command(0));
+    REQUIRE_FALSE(map.isLeaf());
+
+    const auto m = map.match("a");
     REQUIRE(m.ambiguous == false);
-    REQUIRE_FALSE(m.mapping == 0);
-    REQUIRE(m.mapping->type() == Mapping::User);
+    REQUIRE(m.mapping != 0);
+    REQUIRE(m.mapping != &map);
+    REQUIRE(m.mapping->bindingType() == Mapping::CommandBinding);
+    REQUIRE(m.mapping->isBound());
   }
 }

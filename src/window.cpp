@@ -42,7 +42,7 @@ Window::Window(const MappingArray &mappings, QWidget *parent)
 
   m_mappingTimer.setInterval(1000);
   m_mappingTimer.setSingleShot(true);
-  connect(&m_mappingTimer, &QTimer::timeout, this, &Window::execDelayedMapping);
+  connect(&m_mappingTimer, &QTimer::timeout, this, &Window::execMapping);
 
   addPage("http://cfillion.tk", NewTab);
   addPage("http://files.cfillion.tk");
@@ -179,42 +179,39 @@ void Window::shiftPageIndexes(const int start)
 bool Window::handleInput(const KeyPress &kp)
 {
   const bool eatKey = m_mode == NormalMode;
-  const QString seq = kp.toString();
+  const QString text = kp.toString();
 
-  if(seq.isEmpty())
-    return eatKey;
+  m_buffer << text;
 
-  m_mappingTimer.stop();
-  m_buffer << seq;
-
-  auto match = m_mappings[std::min(m_mode, CommandMode)]->match(m_buffer);
-
-  if(!eatKey && match.index == -1)
-    m_buffer.clear(); // clears the counter in insert and prompt modes
-  else if(!match.ambiguous && !match.mapping)
-    m_buffer.truncate(match.index+1);
+  if(!eatKey)
+    m_buffer.resetCounter();
 
   Q_EMIT bufferChanged(m_buffer);
 
-  if(!match.mapping) {
-    if(m_delayedMapping) {
-      execDelayedMapping();
-      return handleInput(kp);
-    }
-
+  if(m_buffer.empty())
     return eatKey;
+
+  m_mappingTimer.stop();
+
+  const auto match = m_mapping->match(text);
+
+  if(match.mapping) {
+    m_mapping = match.mapping;
+
+    if(!match.ambiguous)
+      execMapping();
+    else if(m_mapping->isBound())
+      m_mappingTimer.start();
+
+    return true;
   }
 
-  if(match.ambiguous) {
-    m_delayedMapping = match.mapping;
-    m_mappingTimer.start();
-  }
-  else {
-    m_delayedMapping = 0;
-    execMapping(match.mapping);
-  }
+  if(m_mapping->isBound())
+    execMapping();
+  else if(!m_buffer.empty())
+    clearBuffer();
 
-  return true;
+  return eatKey;
 }
 
 void Window::simulateInput(const Buffer &buf)
@@ -223,7 +220,7 @@ void Window::simulateInput(const Buffer &buf)
     const KeyPress kp(seq);
     const bool eaten = handleInput(kp);
 
-    if(!eaten && prompt()->hasFocus())
+    if(!eaten && m_mode >= CommandMode)
       prompt()->insert(kp.displayString());
   }
 }
@@ -231,6 +228,8 @@ void Window::simulateInput(const Buffer &buf)
 void Window::setMode(const Mode mode)
 {
   m_mode = mode;
+  clearBuffer(); // resets m_mapping
+
   Q_EMIT modeChanged(m_mode);
 }
 
@@ -272,25 +271,20 @@ void Window::execSearchPrompt(const QString &input)
   currentPage()->findText(input, m_mode == SearchForwardMode);
 }
 
-void Window::execDelayedMapping()
+void Window::execMapping()
 {
-  execMapping(m_delayedMapping);
-  // m_delayedMapping is unset in clearBuffer which is called by execMapping
-}
+  const Mapping *mapping = m_mapping;
+  const int counter = m_buffer.counter();
 
-void Window::execMapping(const Mapping *mapping)
-{
-  if(mapping->type() == Mapping::Native) {
+  clearBuffer();
+
+  if(mapping->bindingType() == Mapping::CommandBinding) {
     Command cmd = *mapping->boundCommand();
-    cmd.setCounter(m_buffer.counter());
+    cmd.setCounter(counter);
     execCommand(cmd);
   }
 
-  // this can't be done earlier because we need the counter to be set
-  // and it can't be done later because it would re-trigger the mapping
-  clearBuffer();
-
-  if(mapping->type() == Mapping::User) {
+  if(mapping->bindingType() == Mapping::BufferBinding) {
     const Buffer &buf = *mapping->boundBuffer();
     simulateInput(buf);
   }
@@ -310,7 +304,7 @@ void Window::execCommand(Command &cmd)
 
 void Window::clearBuffer()
 {
-  m_delayedMapping = 0;
+  m_mapping = m_mappings[std::min(m_mode, CommandMode)];
   m_buffer.clear();
   Q_EMIT bufferChanged(m_buffer);
 }

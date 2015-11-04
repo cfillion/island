@@ -59,8 +59,7 @@ private:
   void execPrompt(const QString &);
   void execCommandPrompt(const QString &);
   void execSearchPrompt(const QString &);
-  void execDelayedMapping();
-  void execMapping(const Mapping *);
+  void execMapping();
   void execCommand(Command &);
   void clearBuffer();
   void resizeCompleter();
@@ -75,7 +74,7 @@ private:
   Island::Mode m_mode;
   MappingArray m_mappings;
   Buffer m_buffer;
-  Mapping *m_delayedMapping;
+  const Mapping *m_mapping;
   QTimer m_mappingTimer;
 };
 

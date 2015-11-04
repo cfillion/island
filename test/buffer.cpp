@@ -36,7 +36,7 @@ TEST_CASE("counter", M) {
 
   b << "4" << "2";
   REQUIRE(b.counter() == 42);
-  REQUIRE(b.size() == 0);
+  REQUIRE(b.empty());
   REQUIRE(b.toString() == "42");
 
   b << "a" << "3";
@@ -54,12 +54,12 @@ TEST_CASE("counter", M) {
 TEST_CASE("ignore leading zeros from counter") {
   const Buffer b("001");
   CHECK(b.counter() == 1);
-  CHECK(b.size() == 0);
+  CHECK(b.empty());
   REQUIRE(b.toString() == "1");
 }
 
 TEST_CASE("zero counter is ignored") {
   const Buffer b("00");
-  CHECK(b.size() == 0);
+  CHECK(b.empty());
   REQUIRE(b.counter() == -1);
 }

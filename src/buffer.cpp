@@ -21,17 +21,25 @@ Buffer &Buffer::operator<<(const QString &str)
 
 void Buffer::push(const QString &str)
 {
-  if(m_list.isEmpty() && str.size() == 1 && str[0].isNumber()) {
-    if(m_counter.size() > 0 || str != "0")
+  if(str.isEmpty())
+    return;
+
+  if(empty() && str[0].isNumber()) {
+    if(m_counter.size() > 0 || str[0] != '0')
       m_counter += str;
   }
   else
-    m_list << str;
+    m_list.push_back(str);
 }
 
 QString Buffer::toString() const
 {
-  return m_counter + m_list.join(QString());
+  QString string = m_counter;
+
+  for(const QString &seq : m_list)
+    string += seq;
+
+  return string;
 }
 
 int Buffer::counter() const
@@ -44,21 +52,26 @@ int Buffer::counter() const
 
 void Buffer::clear()
 {
-  m_counter.clear();
+  resetCounter();
   m_list.clear();
 }
 
-void Buffer::truncate(const int i)
+void Buffer::resetCounter()
 {
-  if(i == m_list.size())
-    return clear();
-
-  m_list = m_list.mid(i);
+  m_counter.clear();
 }
 
-Buffer Buffer::truncateCopy(const int i) const
+void Buffer::truncate(const int n)
+{
+  if(size() == n)
+    return clear();
+
+  m_list.erase(m_list.begin(), m_list.begin() + n);
+}
+
+Buffer Buffer::truncateCopy(const int n) const
 {
   Buffer copy(*this);
-  copy.truncate(i);
+  copy.truncate(n);
   return copy;
 }

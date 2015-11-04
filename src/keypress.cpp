@@ -108,6 +108,11 @@ bool KeyPress::operator!=(const KeyPress &o) const
   return !(*this == o);
 }
 
+bool KeyPress::operator<(const KeyPress &o) const
+{
+  return m_key + m_mods < o.key() + o.modifiers();
+}
+
 QString KeyPress::toString() const
 {
   const QString charStr = encodeCharacter();
