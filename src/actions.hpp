@@ -7,12 +7,16 @@ namespace Actions {
   CommandResult normal_mode(const Command &);
   CommandResult insert_mode(const Command &);
   CommandResult command_mode(const Command &);
+
   CommandResult open(const Command &);
   CommandResult tab_open(const Command &);
   CommandResult tab_reload(const Command &);
   CommandResult tab_close(const Command &);
+  CommandResult tab_stop(const Command &);
+
   CommandResult history_back(const Command &);
   CommandResult history_forward(const Command &);
+
   CommandResult prompt_execute(const Command &);
   CommandResult prompt_home(const Command &);
   CommandResult prompt_end(const Command &);
@@ -21,6 +25,7 @@ namespace Actions {
   CommandResult prompt_clear(const Command &);
   CommandResult prompt_complete(const Command &);
   CommandResult prompt_complete_reverse(const Command &);
+
   CommandResult search_forward(const Command &);
   CommandResult search_backward(const Command &);
   CommandResult search_next(const Command &);

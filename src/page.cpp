@@ -162,6 +162,11 @@ void Page::findText(const QString &input, const bool forward)
   m_engine->findText(input, flags);
 }
 
+void Page::stop()
+{
+  m_engine->triggerPageAction(QWebEnginePage::Stop);
+}
+
 QUrl Page::parseUrl(const QString &input)
 {
   return QUrl::fromUserInput(input);

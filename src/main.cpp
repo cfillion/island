@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
   nmap.set("n", &Actions::search_next);
   nmap.set("N", &Actions::search_previous);
   nmap.set("<Esc>", &Actions::search_clear);
+  nmap.set("<C-c>", &Actions::tab_stop);
 
   Mapping imap;
   imap.set("<Esc>", &Actions::normal_mode);

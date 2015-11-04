@@ -84,6 +84,16 @@ CommandResult Actions::tab_close(const Command &cmd)
   return res;
 }
 
+CommandResult Actions::tab_stop(const Command &cmd)
+{
+  CommandResult res;
+
+  if(Page *p = GetPage(cmd, &res))
+    p->stop();
+
+  return res;
+}
+
 CommandResult Actions::history_back(const Command &cmd)
 {
   const int motionSize = std::max(1, cmd.counter());
@@ -177,6 +187,10 @@ CommandResult Actions::search_previous(const Command &)
 
 CommandResult Actions::search_clear(const Command &cmd)
 {
-  WIN->currentPage()->findText(QString());
-  return {};
+  CommandResult res;
+
+  if(Page *p = GetPage(cmd, &res))
+    p->findText(QString());
+
+  return res;
 }

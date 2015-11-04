@@ -41,6 +41,7 @@ public:
   bool load(const QString &input);
   void reload(const bool useCache = true);
   void findText(const QString &, const bool forward = true);
+  void stop();
 
 Q_SIGNALS:
   void displayTitleChanged(const QString &);
