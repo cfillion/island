@@ -228,7 +228,7 @@ void Window::simulateInput(const Buffer &buf)
 void Window::setMode(const Mode mode)
 {
   m_mode = mode;
-  clearBuffer(); // resets m_mapping
+  m_mapping = m_mappings[std::min(m_mode, CommandMode)];
 
   Q_EMIT modeChanged(m_mode);
 }
@@ -304,7 +304,9 @@ void Window::execCommand(Command &cmd)
 
 void Window::clearBuffer()
 {
-  m_mapping = m_mappings[std::min(m_mode, CommandMode)];
+  if(m_mapping->root())
+    m_mapping = m_mapping->root();
+
   m_buffer.clear();
   Q_EMIT bufferChanged(m_buffer);
 }

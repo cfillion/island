@@ -16,6 +16,13 @@ QDebug operator<<(QDebug debug, const MappingMatch &m)
   return debug;
 }
 
+Mapping::Mapping(Mapping *parent)
+  : m_parent(parent), m_root(parent)
+{
+  if(m_parent && m_parent->root())
+    m_root = m_parent->root();
+}
+
 Mapping::~Mapping()
 {
   qDeleteAll(m_children);
@@ -51,18 +58,16 @@ Mapping *Mapping::resolve(const Buffer &buf)
 
 Mapping *Mapping::resolve(const QString &key)
 {
-  Mapping *node = m_children.value(key);
+  if(Mapping *node = m_children.value(key))
+    return node;
 
-  if(!node)
-    node = m_children[key] = new Mapping;
- 
-  return node;
+  return m_children[key] = new Mapping(this);
 }
 
 MappingMatch Mapping::match(const QString &key) const
 {
   const Mapping *node = m_children.value(key);
-  return {node, node && !node->isLeaf()};
+  return {node, node && !node->empty()};
 }
 
 const Buffer *Mapping::boundBuffer() const
