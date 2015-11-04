@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
   nmap.set("H", &Actions::history_back);
   nmap.set("L", &Actions::history_forward);
   nmap.set("ga", &Actions::tab_open);
+  nmap.set("gt", &Actions::tab_goto);
   nmap.set("r", &Actions::tab_reload);
   nmap.set("R", {&Actions::tab_reload, {}, VA_FORCE});
   nmap.set("o", ":open<Space>");

@@ -2,8 +2,6 @@
 
 #include "actions.hpp"
 
-#define ACTION(x) {#x, Actions::x}
-
 using namespace CommandOptions;
 
 const CommandRegistry Island::ActionNames{
@@ -11,13 +9,11 @@ const CommandRegistry Island::ActionNames{
   {"back",       &Actions::history_back},
   {"close",      &Actions::tab_close},
   {"forward",    &Actions::history_forward},
+  {"goto",       &Actions::tab_goto},
   {"nohlsearch", &Actions::search_clear},
   {"open",       &Actions::open,          EN_ARG},
   {"reload",     &Actions::tab_reload,    EN_FORCE},
   {"stop",       &Actions::tab_stop},
-  {"tabclose",   &Actions::tab_close},
   {"tabopen",    &Actions::tab_open,      EN_ARG},
-  {"tabreload",  &Actions::tab_reload,    EN_FORCE},
-  {"tabstop",    &Actions::tab_stop,    EN_FORCE},
 
 };

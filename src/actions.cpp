@@ -94,6 +94,16 @@ CommandResult Actions::tab_stop(const Command &cmd)
   return res;
 }
 
+CommandResult Actions::tab_goto(const Command &cmd)
+{
+  CommandResult res;
+
+  if(Page *p = GetPage(cmd, &res))
+    WIN->setCurrentPage(p);
+
+  return res;
+}
+
 CommandResult Actions::history_back(const Command &cmd)
 {
   const int motionSize = std::max(1, cmd.counter());
