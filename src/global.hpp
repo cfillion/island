@@ -7,6 +7,8 @@ namespace Island {
   enum Mode {
     NormalMode,
     InsertMode,
+
+    // prompt modes (>= CommandMode)
     CommandMode,
     SearchForwardMode,
     SearchBackwardMode,

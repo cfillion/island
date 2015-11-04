@@ -236,7 +236,9 @@ void Window::setMode(const Mode mode)
 
 void Window::execPrompt(const QString &input)
 {
+  // don't execute the prompt at the same time the keymapping is handled
   // executing this later prevents <CR> from being added to the input buffer
+  // and the statusbar to be overridden by the mapping's action
   QTimer::singleShot(0, this, [=] {
     switch(m_mode) {
     case CommandMode:
@@ -250,6 +252,8 @@ void Window::execPrompt(const QString &input)
       break;
     }
 
+    // mode-switching commands cannot be ran from the prompt
+    // since 93f05a0a0c921148adc9479695f4b1b0891d1f26
     setMode(NormalMode);
   });
 }

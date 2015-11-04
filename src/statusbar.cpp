@@ -36,7 +36,6 @@ StatusBar::StatusBar(QWidget *parent)
   m_progress->hide();
 
   connect(m_prompt, &Prompt::editingFinished, this, &StatusBar::promptFinished);
-  connect(m_prompt, &Prompt::promptChanged, this, &StatusBar::promptChanged);
 
   QHBoxLayout *layout = new QHBoxLayout(this);
   layout->setSpacing(5);
@@ -96,15 +95,24 @@ void StatusBar::setBuffer(const Buffer &buffer)
 
 void StatusBar::setMode(const Mode mode)
 {
-  switch(mode) {
-  case NormalMode:
-  case InsertMode:
-    m_mode->setText(QString("-- %1 --")
-      .arg(mode == NormalMode ? "NORMAL" : "INSERT"));
-
+  if(mode < CommandMode) {
     m_mode->show();
     m_status->show();
     m_prompt->hide();
+  }
+  else {
+    m_mode->hide();
+    m_status->hide();
+    m_prompt->show();
+    m_prompt->setFocus();
+  }
+
+  switch(mode) {
+  case NormalMode:
+    m_mode->setText("-- NORMAL --");
+    break;
+  case InsertMode:
+    m_mode->setText("-- INSERT --");
     break;
   case CommandMode:
     m_prompt->setPrompt(":");
@@ -116,14 +124,6 @@ void StatusBar::setMode(const Mode mode)
     m_prompt->setPrompt("?");
     break;
   }
-}
-
-void StatusBar::promptChanged()
-{
-  m_prompt->setFocus();
-  m_mode->hide();
-  m_status->hide();
-  m_prompt->show();
 }
 
 void StatusBar::setStatus(const QString &text)
