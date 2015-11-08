@@ -241,7 +241,7 @@ void Window::execPrompt(const QString &input)
   QTimer::singleShot(0, this, [=] {
     switch(m_mode) {
     case CommandMode:
-      execCommandPrompt(input.simplified());
+      execCommandPrompt(input);
       break;
     case SearchForwardMode:
     case SearchBackwardMode:
@@ -259,7 +259,7 @@ void Window::execPrompt(const QString &input)
 
 void Window::execCommandPrompt(const QString &input)
 {
-  if(input.isEmpty())
+  if(input.simplified().isEmpty())
     return;
 
   Command cmd(input);

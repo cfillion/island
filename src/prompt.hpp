@@ -5,12 +5,6 @@
 
 class Completer;
 
-struct Word {
-  int index;
-  int start;
-  QString text;
-};
-
 class Prompt : public QLineEdit
 {
   Q_OBJECT
@@ -39,8 +33,7 @@ private:
   void check();
   void cursorMoved(const int, const int);
   void selectionChanged();
-  Word currentWord() const;
-  void replaceWord(const QString &);
+  void replaceWord(const int start, const int end, const QString &);
 
   int m_promptSize;
   bool m_isCommandPrompt;

@@ -47,8 +47,6 @@ void Prompt::check()
 {
   if(prompt().size() < m_promptSize)
     send();
-  else
-    m_completer->dismiss();
 }
 
 void Prompt::send()
@@ -58,6 +56,8 @@ void Prompt::send()
 
 void Prompt::cursorMoved(const int, const int after)
 {
+  m_completer->dismiss();
+
   if(after < m_promptSize)
     setCursorPosition(m_promptSize);
 }
@@ -80,34 +80,18 @@ void Prompt::complete(const int movement)
     return;
   }
 
-  const Word word = currentWord();
+  QString input = text();
+ input.remove(cursorPosition() - m_promptSize, input.size());
 
-  m_completer->trigger(word.index, word.text);
+  m_completer->trigger(input);
   m_completer->move(movement);
 }
 
-Word Prompt::currentWord() const
+void Prompt::replaceWord(const int start, const int end, const QString &newText)
 {
-  QString text = this->text();
-  text.remove(cursorPosition() - m_promptSize, text.size());
-
-  Word word;
-  word.index = text.count("\x20");
-  word.start = text.lastIndexOf("\x20")+1;
-
-  text.remove(0, word.start);
-  word.text = text;
-
-  return word;
-}
-
-void Prompt::replaceWord(const QString &newWord)
-{
-  const Word word = currentWord();
-
   blockSignals(true);
-  setText(text().replace(word.start, word.text.size(), newWord));
-  setCursorPosition(word.start + newWord.size() + 1);
+  setText(text().replace(start, end, newText));
+  setCursorPosition(m_promptSize + start + newText.size());
   blockSignals(false);
 }
 

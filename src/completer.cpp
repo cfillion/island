@@ -18,7 +18,7 @@ Completer::Completer(QWidget *parent)
 
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-  connect(this, &Completer::currentTextChanged, this, &Completer::wordChanged);
+  connect(this, &Completer::currentTextChanged, this, &Completer::replaceWord);
 
   hide();
 }
@@ -30,12 +30,36 @@ QSize Completer::sizeHint() const
   return size;
 }
 
-void Completer::trigger(const int index, const QString &word)
+void Completer::trigger(const QString &leftInput)
 {
-  if(isVisible() || index != 0)
+  const CommandParser parser(leftInput);
+
+  if(isVisible() || !parser.isValid())
     return;
 
-  const auto list = Command::findCommands(word);
+  if(parser.nameEnd() == leftInput.size())
+    completeName(parser);
+  else
+    completeArgument(parser);
+
+  const int size = count();
+
+  if(size == 1) {
+    replaceWord(item(0)->text());
+    clear();
+  }
+  else if(size > 1) {
+    show();
+    Q_EMIT triggered();
+  }
+}
+
+void Completer::completeName(const CommandParser &parser)
+{
+  m_startIndex = parser.nameStart();
+  m_endIndex = parser.nameEnd();
+
+  const auto list = Command::findCommands(parser.name());
 
   for(const CommandEntry *entry : list) {
     addItem(entry->name);
@@ -43,17 +67,12 @@ void Completer::trigger(const int index, const QString &word)
     if(entry->hasFlag(EN_FORCE))
       addItem(entry->name + "!");
   }
+}
 
-  const int size = count();
-
-  if(size == 1) {
-    Q_EMIT wordChanged(item(0)->text());
-    clear();
-  }
-  else if(size > 1) {
-    show();
-    Q_EMIT triggered();
-  }
+void Completer::completeArgument(const CommandParser &parser)
+{
+  m_startIndex = parser.argumentStart();
+  m_endIndex = parser.argumentEnd();
 }
 
 void Completer::dismiss()
@@ -78,6 +97,12 @@ void Completer::move(const int movement)
   const int row = (currentRow() + movement) % size;
 
   setCurrentRow(row > -1 ? row : size - 1);
+}
+
+void Completer::replaceWord(const QString &word)
+{
+  Q_EMIT wordChanged(m_startIndex, m_endIndex, word);
+  m_endIndex = m_startIndex + word.size();
 }
 
 bool Completer::event(QEvent *e)

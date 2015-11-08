@@ -26,6 +26,20 @@ UseCommandRegistry::~UseCommandRegistry()
   Command::s_registry = m_backup;
 }
 
+CommandParser::CommandParser(const QString &input)
+{
+  static const QRegularExpression pattern(
+    "\\A"
+    "(?:\\s*(?<counter>\\d+)\\s*)?"
+    "(?<name>[a-zA-Z0-9_]*)"
+    "(?<variant>[\\!])?"
+    "(?:\\s+(?<argument>.*?)\\s*)?"
+    "\\z"
+  );
+
+  m_match = pattern.match(input);
+}
+
 CommandRegistry *Command::s_registry = 0;
 
 Command::Command(const CommandFunc &func, const QString &arg,
@@ -38,31 +52,21 @@ Command::Command(const CommandFunc &func, const QString &arg,
 Command::Command(const QString &input)
   : m_isValid(false), m_data(0), m_counter(-1), m_func(0)
 {
-  static const QRegularExpression pattern(
-    "\\A"
-    "(?:(?<counter>\\d*)\\s*)"
-    "(?<name>[a-zA-Z0-9_]+)"
-    "(?<variant>[\\!])?"
-    "(?:\\s+(?<args>.+))?"
-    "\\z"
-  );
+  const CommandParser parser(input);
 
-  const auto match = pattern.match(input);
+  const QString counter = parser.counter();
+  const QString name = parser.name();
+  const QString arg = parser.argument();
 
-  const QString counter = match.captured("counter");
-  const QString name = match.captured("name");
-  const QString args = match.captured("args");
-  const QChar variant = match.captured("variant")[0];
-
-  m_variant = variant == '!' ? VA_FORCE : VA_DEFAULT;
+  m_variant = parser.variant() == "!" ? VA_FORCE : VA_DEFAULT;
 
   const CommandEntry *entry = 0;
 
-  if(!match.hasMatch() || !findCommand(name, &entry) || !checkVariant(entry)) {
+  if(!parser.isValid() || !findCommand(name, &entry) || !checkVariant(entry)) {
     m_error = "Not a command: " + input;
     return;
   }
-  else if(!args.isEmpty() && !entry->hasFlag(EN_ARG)) {
+  else if(!arg.isEmpty() && !entry->hasFlag(EN_ARG)) {
     m_error = "Trailing characters";
     return;
   }
@@ -72,7 +76,7 @@ Command::Command(const QString &input)
 
   m_isValid = true;
   m_func = entry->func;
-  m_arg = args;
+  m_arg = arg;
 }
 
 bool Command::findCommand(const QString &name, const CommandEntry **entry)

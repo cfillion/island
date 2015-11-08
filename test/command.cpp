@@ -178,16 +178,6 @@ TEST_CASE("unexpected argument", M) {
   REQUIRE(cmd.exec().message == "Trailing characters");
 }
 
-TEST_CASE("ignore space padding", M) {
-  const UseCommandRegistry reg(&TestReg);
-
-  const Command cmd("4  test     hello");
-  CHECK(cmd.counter() == 4);
-  CHECK(cmd.func() == &test_cmd);
-  CHECK(cmd.argument() == "hello");
-  REQUIRE(cmd.isValid());
-}
-
 TEST_CASE("variant from string", M) {
   const UseCommandRegistry reg(&TestReg);
 
@@ -238,5 +228,29 @@ TEST_CASE("command search", M) {
     CHECK(list.size() == 2);
     REQUIRE(list[0]->name == "test");
     REQUIRE(list[1]->name == "tester");
+  }
+}
+
+TEST_CASE("command parser", M) {
+  SECTION("empty name is valid") {
+    const CommandParser parser("4");
+    CHECK(parser.counter() == "4");
+    CHECK(parser.name() == "");
+    REQUIRE(parser.isValid());
+  }
+
+  SECTION("empty argument is captured") {
+    const CommandParser parser("4cmd ");
+    CHECK(parser.argument() == "");
+    CHECK(parser.argumentStart() == 5);
+    REQUIRE(parser.isValid());
+  }
+
+  SECTION("ignores space padding") {
+    const CommandParser parser("  4  test     !olleh  ");
+    CHECK(parser.counter() == "4");
+    CHECK(parser.name() == "test");
+    CHECK(parser.argument() == "!olleh");
+    REQUIRE(parser.isValid());
   }
 }

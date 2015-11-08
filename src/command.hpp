@@ -1,6 +1,7 @@
 #ifndef ISLAND_COMMAND_HPP
 #define ISLAND_COMMAND_HPP
 
+#include <QRegularExpressionMatch>
 #include <QString>
 #include <set>
 #include <vector>
@@ -53,6 +54,28 @@ public:
 private:
   CommandRegistry *m_backup;
 };
+
+#define ISLAND_PARSER_COMPONENT(x) \
+  QString x() const { return m_match.captured(#x); } \
+  int x ## Start() const { return m_match.capturedStart(#x); } \
+  int x ## End() const { return m_match.capturedEnd(#x); }
+
+class CommandParser {
+public:
+  CommandParser(const QString &input);
+
+  bool isValid() const { return m_match.hasMatch(); }
+
+  ISLAND_PARSER_COMPONENT(counter);
+  ISLAND_PARSER_COMPONENT(name);
+  ISLAND_PARSER_COMPONENT(variant);
+  ISLAND_PARSER_COMPONENT(argument);
+
+private:
+  QRegularExpressionMatch m_match;
+};
+
+#undef ISLAND_PARSER_COMPONENT
 
 class Command {
 public:
