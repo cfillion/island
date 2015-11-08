@@ -253,4 +253,11 @@ TEST_CASE("command parser", M) {
     CHECK(parser.argument() == "!olleh");
     REQUIRE(parser.isValid());
   }
+
+  SECTION("space padding before command name without counter") {
+    const CommandParser parser("  test ");
+    CHECK(parser.counter() == "");
+    CHECK(parser.name() == "test");
+    REQUIRE(parser.isValid());
+  }
 }
