@@ -44,6 +44,7 @@ public:
   bool handleInput(const KeyPress &);
   void simulateInput(const Buffer &);
 
+  Island::Mode mode() const { return m_mode; }
   void setMode(const Island::Mode);
 
 Q_SIGNALS:
