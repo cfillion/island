@@ -181,13 +181,19 @@ bool Window::handleInput(const KeyPress &kp)
   const bool eatKey = m_mode == NormalMode;
   const QString text = kp.toString();
 
+  // ignore invalid keystrokes (including modifiers)
+  if(text.isEmpty())
+    return eatKey;
+
   m_buffer << text;
 
+  // disable counter for non-normal modes
   if(!eatKey)
     m_buffer.resetCounter();
 
   Q_EMIT bufferChanged(m_buffer);
 
+  // don't execute counter keystrokes
   if(m_buffer.empty())
     return eatKey;
 
@@ -205,13 +211,14 @@ bool Window::handleInput(const KeyPress &kp)
 
     return true;
   }
+  else {
+    if(m_mapping->isBound())
+      execMapping();
+    else if(!m_buffer.empty())
+      clearBuffer();
 
-  if(m_mapping->isBound())
-    execMapping();
-  else if(!m_buffer.empty())
-    clearBuffer();
-
-  return eatKey;
+    return eatKey;
+  }
 }
 
 void Window::simulateInput(const Buffer &buf)
