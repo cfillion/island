@@ -118,7 +118,7 @@ void StatusBar::setMode(const Mode mode)
     m_mode->setText("-- INSERT --");
     break;
   case CommandMode:
-    m_prompt->setPrompt(":");
+    m_prompt->setPrompt(":", true);
     break;
   case SearchForwardMode:
     m_prompt->setPrompt("/");

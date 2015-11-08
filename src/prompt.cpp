@@ -5,7 +5,7 @@
 #include <QKeyEvent>
 
 Prompt::Prompt(QWidget *parent)
-  : QLineEdit(parent), m_promptSize(0)
+  : QLineEdit(parent), m_promptSize(0), m_isCommandPrompt(false)
 {
   m_completer = new Completer(this);
 
@@ -20,9 +20,10 @@ Prompt::Prompt(QWidget *parent)
   connect(m_completer, &Completer::wordChanged, this, &Prompt::replaceWord);
 }
 
-void Prompt::setPrompt(const QString &prompt)
+void Prompt::setPrompt(const QString &prompt, const bool isCommandPrompt)
 {
   m_promptSize = prompt.size();
+  m_isCommandPrompt = isCommandPrompt;
 
   QLineEdit::setText(prompt);
 }
@@ -74,6 +75,11 @@ void Prompt::selectionChanged()
 
 void Prompt::complete(const int movement)
 {
+  if(!m_isCommandPrompt) {
+    insert("\t");
+    return;
+  }
+
   const Word word = currentWord();
 
   m_completer->trigger(word.index, word.text);

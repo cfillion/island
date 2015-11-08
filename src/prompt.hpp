@@ -18,7 +18,7 @@ class Prompt : public QLineEdit
 public:
   Prompt(QWidget *parent = 0);
 
-  void setPrompt(const QString &);
+  void setPrompt(const QString &, const bool commandPrompt = false);
   QString prompt() const;
 
   void setText(const QString &);
@@ -43,6 +43,7 @@ private:
   void replaceWord(const QString &);
 
   int m_promptSize;
+  bool m_isCommandPrompt;
   Completer *m_completer;
 };
 
