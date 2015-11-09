@@ -149,7 +149,7 @@ QString KeyPress::toString() const
 
 QString KeyPress::displayString() const
 {
-  if(m_mods != Qt::NoModifier)
+  if(m_mods != Qt::NoModifier && m_mods != Qt::ShiftModifier)
     return QString();
 
   const QString charStr = encodeCharacter(false);

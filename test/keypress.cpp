@@ -33,6 +33,7 @@ TEST_CASE("letters", M) {
     const KeyPress ki(Qt::Key_A, Qt::ShiftModifier);
 
     REQUIRE(ki.toString() == "A");
+    REQUIRE(ki.displayString() == "A");
     REQUIRE(KeyPress("A") == ki);
   }
 
