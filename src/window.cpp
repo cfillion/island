@@ -319,6 +319,7 @@ void Window::execMapping()
 void Window::execCommand(Command &cmd)
 {
   cmd.setData(this);
+
   const CommandResult res = cmd.exec();
 
   QString message = res.message;

@@ -50,7 +50,7 @@ Command::Command(const CommandFunc &func, const QString &arg,
 }
 
 Command::Command(const QString &input)
-  : m_isValid(false), m_data(0), m_counter(-1), m_func(0)
+  : m_isValid(false), m_data(0), m_counter(-1), m_func(0), m_entry(0)
 {
   const CommandParser parser(input);
 
@@ -81,14 +81,11 @@ bool Command::findCommand(const QString &name, const CommandEntry **entry)
 {
   const CommandList matches = findCommands(name);
 
-  if(matches.empty() || (matches.size() > 1 && matches.front()->name != name)) {
-    *entry = 0;
+  if(matches.empty() || (matches.size() > 1 && matches.front()->name != name))
     return false;
-  }
-  else {
-    *entry = matches.front();
-    return true;
-  }
+
+  *entry = matches.front();
+  return true;
 };
 
 CommandList Command::findCommands(const QString &prefix)
@@ -125,4 +122,12 @@ CommandResult Command::exec() const
     return m_func(*this);
   else
     return CommandResult{false, m_error};
+}
+
+bool Command::hasFlag(const CommandOptions::Flag fl) const
+{
+  if(!m_entry)
+    return false;
+
+  return m_entry->hasFlag(fl);
 }
