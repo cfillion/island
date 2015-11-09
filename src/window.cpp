@@ -334,26 +334,36 @@ void Window::clearBuffer()
   Q_EMIT bufferChanged(m_buffer);
 }
 
-QString Window::sprintf(const QString &input)
+QString Window::sprintf(const QString &input) const
 {
   QString str(input);
 
-  auto found = [&str](const QRegularExpressionMatch &m, const QString &r) {
-    str.replace(m.capturedStart(0), m.capturedLength(0), r);
-  };
-
   static const QRegularExpression regex("%([a-zA-Z%])");
-  auto it = regex.globalMatch(input);
+  auto it = regex.globalMatch(str);
 
   while(it.hasNext()) {
     const auto match = it.next();
     const QCharRef c = match.captured(1)[0];
+    const QString replacement = expandFormat(c);
 
-    if(c == 'u')
-      found(match, m_current->displayUrl());
+    if(replacement.isEmpty())
+      continue;
+
+    const int start = match.capturedStart(0);
+    const int length = match.capturedLength(0);
+
+    str.replace(start, length, replacement);
   }
 
   return str;
+}
+
+QString Window::expandFormat(const QChar &c) const
+{
+  if(c == 'u')
+    return m_current->displayUrl();
+
+  return QString();
 }
 
 void Window::resizeEvent(QResizeEvent *)

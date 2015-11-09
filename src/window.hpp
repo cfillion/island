@@ -53,7 +53,9 @@ Q_SIGNALS:
   void modeChanged(const Island::Mode);
 
 protected:
-  void resizeEvent(QResizeEvent *) override;
+  virtual void resizeEvent(QResizeEvent *) override;
+
+  virtual QString expandFormat(const QChar &c) const;
 
 private:
   void currentTabMotion(const bool polarity, const int size);
@@ -66,7 +68,7 @@ private:
   void clearBuffer();
   void resizeCompleter();
 
-  QString sprintf(const QString &);
+  QString sprintf(const QString &) const;
 
   Page *m_current;
   QList<Page *> m_pages;
