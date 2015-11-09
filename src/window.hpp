@@ -43,6 +43,7 @@ public:
 
   bool handleInput(const KeyPress &);
   void simulateInput(const Buffer &);
+  void simulateInput(const KeyPress &);
 
   Island::Mode mode() const { return m_mode; }
   void setMode(const Island::Mode);
@@ -64,6 +65,8 @@ private:
   void execCommand(Command &);
   void clearBuffer();
   void resizeCompleter();
+
+  QString sprintf(const QString &);
 
   Page *m_current;
   QList<Page *> m_pages;

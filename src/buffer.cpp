@@ -1,10 +1,26 @@
 #include "buffer.hpp"
 
+#include <QDebug>
 #include <QRegularExpression>
+
+QDebug operator<<(QDebug debug, const Buffer &buf)
+{
+  QDebugStateSaver saver(debug);
+  debug.nospace()
+    << "Buffer("
+    << buf.counter();
+
+  for(const QString &seq : buf)
+    debug << ", " << seq;
+
+  debug << ')';
+
+  return debug;
+}
 
 void Buffer::importString(const QString &input)
 {
-  static const QRegularExpression pattern("(\\<[^\\>]+\\>|.)");
+  static const QRegularExpression pattern("(\\<[^\\>]+\\>|%[a-zA-Z%]|.)");
   auto matches = pattern.globalMatch(input);
 
   while(matches.hasNext()) {

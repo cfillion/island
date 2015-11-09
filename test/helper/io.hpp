@@ -3,10 +3,12 @@
 
 #include <ostream>
 
-class QString;
+class Buffer;
 class KeyPress;
+class QString;
 
-std::ostream &operator<<(std::ostream &, const QString &);
+std::ostream &operator<<(std::ostream &, const Buffer &);
 std::ostream &operator<<(std::ostream &, const KeyPress &);
+std::ostream &operator<<(std::ostream &, const QString &);
 
 #endif

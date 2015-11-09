@@ -53,6 +53,11 @@ Window::Window(const MappingArray &mappings, QWidget *parent)
   setMode(NormalMode);
 }
 
+Prompt *Window::prompt() const
+{
+  return m_status->prompt();
+}
+
 int Window::addPage(const QString &url, const Window::OpenMode mode)
 {
   int index = currentPageIndex();
@@ -224,12 +229,21 @@ bool Window::handleInput(const KeyPress &kp)
 void Window::simulateInput(const Buffer &buf)
 {
   for(const QString &seq : buf) {
-    const KeyPress kp(seq);
-    const bool eaten = handleInput(kp);
-
-    if(!eaten && m_mode >= CommandMode)
-      prompt()->insert(kp.displayString());
+    if(seq.startsWith('%') && seq.size() > 1) {
+      for(const QChar &c : sprintf(seq))
+        simulateInput(KeyPress(c));
+    }
+    else
+      simulateInput(KeyPress(seq));
   }
+}
+
+void Window::simulateInput(const KeyPress &kp)
+{
+  const bool eaten = handleInput(kp);
+
+  if(!eaten && m_mode >= CommandMode)
+    prompt()->insert(kp.displayString());
 }
 
 void Window::setMode(const Mode mode)
@@ -242,17 +256,19 @@ void Window::setMode(const Mode mode)
 
 void Window::execPrompt(const QString &input)
 {
+  const QString &prompt = sprintf(input);
+
   // don't execute the prompt at the same time the keymapping is handled
   // executing this later prevents <CR> from being added to the input buffer
   // and the statusbar to be overridden by the mapping's action
   QTimer::singleShot(0, this, [=] {
     switch(m_mode) {
     case CommandMode:
-      execCommandPrompt(input);
+      execCommandPrompt(prompt);
       break;
     case SearchForwardMode:
     case SearchBackwardMode:
-      execSearchPrompt(input);
+      execSearchPrompt(prompt);
       break;
     default:
       break;
@@ -318,9 +334,26 @@ void Window::clearBuffer()
   Q_EMIT bufferChanged(m_buffer);
 }
 
-Prompt *Window::prompt() const
+QString Window::sprintf(const QString &input)
 {
-  return m_status->prompt();
+  QString str(input);
+
+  auto found = [&str](const QRegularExpressionMatch &m, const QString &r) {
+    str.replace(m.capturedStart(0), m.capturedLength(0), r);
+  };
+
+  static const QRegularExpression regex("%([a-zA-Z%])");
+  auto it = regex.globalMatch(input);
+
+  while(it.hasNext()) {
+    const auto match = it.next();
+    const QCharRef c = match.captured(1)[0];
+
+    if(c == 'u')
+      found(match, m_current->displayUrl());
+  }
+
+  return str;
 }
 
 void Window::resizeEvent(QResizeEvent *)

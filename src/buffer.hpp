@@ -36,4 +36,6 @@ private:
   std::vector<QString> m_list;
 };
 
+QDebug operator<<(QDebug, const Buffer &);
+
 #endif

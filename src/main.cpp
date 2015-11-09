@@ -46,6 +46,8 @@ int main(int argc, char *argv[])
   nmap.set("R", {&Actions::tab_reload, {}, VA_FORCE});
   nmap.set("o", ":open<Space>");
   nmap.set("O", ":tabopen<Space>");
+  nmap.set("go", "o%u");
+  nmap.set("gO", "O%u");
   nmap.set("/", &Actions::search_forward);
   nmap.set("?", &Actions::search_backward);
   nmap.set("n", &Actions::search_next);

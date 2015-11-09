@@ -21,6 +21,10 @@ TEST_CASE("input to buffer", M) {
   SECTION("special char with letters") {
     REQUIRE(Buffer("a<CR>b") == Buffer() << "a" << "<CR>" << "b");
   }
+
+  SECTION("format sequences") {
+    REQUIRE(Buffer("a%ub") == Buffer() << "a" << "%u" << "b");
+  }
 }
 
 TEST_CASE("truncate buffer", M) {
