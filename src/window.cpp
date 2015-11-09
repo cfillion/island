@@ -231,14 +231,20 @@ bool Window::handleInput(const KeyPress &kp)
 
 void Window::simulateInput(const Buffer &buf)
 {
+  std::vector<KeyPress> keys;
+
+  // do string expansion before simulating any keypresses
   for(const QString &seq : buf) {
     if(seq.startsWith('%') && seq.size() > 1) {
       for(const QChar &c : sprintf(seq))
-        simulateInput(KeyPress(c));
+        keys.push_back(KeyPress(c));
     }
     else
-      simulateInput(KeyPress(seq));
+      keys.push_back(KeyPress(seq));
   }
+
+  for(const KeyPress &kp : keys)
+    simulateInput(kp);
 }
 
 void Window::simulateInput(const KeyPress &kp)
@@ -300,13 +306,13 @@ void Window::execSearchPrompt(const QString &input)
 void Window::execMapping()
 {
   const Mapping *mapping = m_mapping;
-  const int counter = m_buffer.counter();
 
-  clearBuffer();
+  if(m_mapping->root())
+    m_mapping = m_mapping->root();
 
   if(mapping->bindingType() == Mapping::CommandBinding) {
     Command cmd = *mapping->boundCommand();
-    cmd.setCounter(counter);
+    cmd.setCounter(m_buffer.counter());
     execCommand(cmd);
   }
 
@@ -314,6 +320,8 @@ void Window::execMapping()
     const Buffer &buf = *mapping->boundBuffer();
     simulateInput(buf);
   }
+
+  clearBuffer();
 }
 
 void Window::execCommand(Command &cmd)
@@ -331,9 +339,6 @@ void Window::execCommand(Command &cmd)
 
 void Window::clearBuffer()
 {
-  if(m_mapping->root())
-    m_mapping = m_mapping->root();
-
   m_buffer.clear();
   Q_EMIT bufferChanged(m_buffer);
 }
@@ -349,9 +354,9 @@ QString Window::sprintf(const QString &input) const
   while(it.hasNext()) {
     const auto match = it.next();
     const QCharRef c = match.captured(1)[0];
-    const QString replacement = expandFormat(c);
+    QString replacement;
 
-    if(replacement.isEmpty())
+    if(!expandFormat(c, replacement))
       continue;
 
     const int start = match.capturedStart(0) + offset;
@@ -364,14 +369,20 @@ QString Window::sprintf(const QString &input) const
   return str;
 }
 
-QString Window::expandFormat(const QChar &c) const
+bool Window::expandFormat(const QChar &c, QString &val) const
 {
   if(c == '%')
-    return c;
+    val = c;
   else if(c == 'u')
-    return m_current->displayUrl();
+    val = m_current->displayUrl();
+  else if(c == 'c') {
+    if(m_buffer.counter() > 0)
+      val = QString::number(m_buffer.counter());
+  }
+  else
+    return false;
 
-  return QString();
+  return true;
 }
 
 void Window::resizeEvent(QResizeEvent *)

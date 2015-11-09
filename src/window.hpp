@@ -55,7 +55,7 @@ Q_SIGNALS:
 protected:
   virtual void resizeEvent(QResizeEvent *) override;
 
-  virtual QString expandFormat(const QChar &c) const;
+  virtual bool expandFormat(const QChar &c, QString &) const;
 
 private:
   void currentTabMotion(const bool polarity, const int size);
