@@ -114,16 +114,22 @@ CommandResult Actions::tab_do(const Command &cmd)
 
   if(!tabCmd.isValid())
     return {false, tabCmd.errorString()};
-  else if(!tabCmd.hasFlag(EN_TAB))
+  else if(!tabCmd.hasFlag(CO_TAB))
     return {false, "Unsupported command"};
+  else if(tabCmd.hasFlag(CO_CURPG))
+    tabCmd.setCounter(cmd.counter());
 
   CommandResult res;
 
+  Page *current = WIN->currentPage();
   const int pageCount = WIN->pageCount();
 
   // iterating over tabs in reverse is required for :tabdo close to work
   for(int i = pageCount; i > 0; i--) {
-    tabCmd.setCounter(i);
+    if(tabCmd.hasFlag(CO_CURPG))
+      WIN->setCurrentPageIndex(i-1);
+    else
+      tabCmd.setCounter(i);
 
     res = tabCmd.exec();
 
@@ -133,6 +139,8 @@ CommandResult Actions::tab_do(const Command &cmd)
     if(!res.ok)
       break;
   }
+
+  WIN->setCurrentPage(current);
 
   return res;
 }

@@ -64,7 +64,7 @@ void Completer::completeName(const CommandParser &parser)
   for(const CommandEntry *entry : list) {
     addItem(entry->name);
 
-    if(entry->hasFlag(EN_FORCE))
+    if(entry->hasFlag(CO_FORCE))
       addItem(entry->name + "!");
   }
 }

@@ -21,9 +21,10 @@ typedef CommandResult (*CommandFunc)(const Command &);
 
 namespace CommandOptions {
   enum Flag {
-    EN_ARG   = 1<<0, // enable argument
-    EN_FORCE = 1<<1, // enable force variant
-    EN_TAB   = 1<<2, // enable :tabdo
+    CO_ARG   = 1<<0, // enable argument
+    CO_FORCE = 1<<1, // enable force variant
+    CO_TAB   = 1<<2, // enable :tabdo
+    CO_CURPG = 1<<3, // enable current page switch in :tabdo
   };
 
   enum Variant {

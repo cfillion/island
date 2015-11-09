@@ -64,7 +64,7 @@ Command::Command(const QString &input)
     m_error = "Not a command: " + input;
     return;
   }
-  else if(!arg.isEmpty() && !m_entry->hasFlag(EN_ARG)) {
+  else if(!arg.isEmpty() && !m_entry->hasFlag(CO_ARG)) {
     m_error = "Trailing characters";
     return;
   }
@@ -110,7 +110,7 @@ bool Command::checkVariant() const
   case VA_DEFAULT:
     return true;
   case VA_FORCE:
-    return m_entry->hasFlag(EN_FORCE);
+    return m_entry->hasFlag(CO_FORCE);
   }
 
   return false;

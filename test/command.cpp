@@ -24,10 +24,10 @@ static CommandResult alt_cmd(const Command &)
 using namespace CommandOptions;
 
 static const CommandRegistry TestReg{
-  {"test",   &test_cmd,  EN_ARG},
-  {"tester", &alt_cmd,   EN_ARG},
+  {"test",   &test_cmd,  CO_ARG},
+  {"tester", &alt_cmd,   CO_ARG},
   {"noarg",  &test_cmd},
-  {"force",  &test_cmd,  EN_FORCE},
+  {"force",  &test_cmd,  CO_FORCE},
 };
 
 static const char *M = "[command]";
@@ -234,18 +234,18 @@ TEST_CASE("query flags") {
   const UseCommandRegistry reg(&TestReg);
 
   SECTION("valid") {
-    REQUIRE(Command("test").hasFlag(EN_ARG));
-    REQUIRE_FALSE(Command("noarg").hasFlag(EN_ARG));
+    REQUIRE(Command("test").hasFlag(CO_ARG));
+    REQUIRE_FALSE(Command("noarg").hasFlag(CO_ARG));
   }
 
   SECTION("invalid") {
     const Command cmd("helloworld");
-    REQUIRE_FALSE(cmd.hasFlag(EN_ARG));
+    REQUIRE_FALSE(cmd.hasFlag(CO_ARG));
   }
 
   SECTION("unknown") {
     const Command cmd(&test_cmd);
-    REQUIRE_FALSE(cmd.hasFlag(EN_ARG));
+    REQUIRE_FALSE(cmd.hasFlag(CO_ARG));
   }
 }
 

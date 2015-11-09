@@ -6,15 +6,15 @@ using namespace CommandOptions;
 
 const CommandRegistry Island::ActionNames{
 
-  {"back",       &Actions::history_back,    EN_TAB},
-  {"close",      &Actions::tab_close,       EN_TAB},
-  {"forward",    &Actions::history_forward, EN_TAB},
+  {"back",       &Actions::history_back,    CO_TAB | CO_CURPG},
+  {"close",      &Actions::tab_close,       CO_TAB},
+  {"forward",    &Actions::history_forward, CO_TAB | CO_CURPG},
   {"goto",       &Actions::tab_goto,        0},
-  {"nohlsearch", &Actions::search_clear,    EN_TAB},
-  {"open",       &Actions::open,            EN_ARG | EN_TAB},
-  {"reload",     &Actions::tab_reload,      EN_FORCE | EN_TAB},
-  {"stop",       &Actions::tab_stop,        EN_TAB},
-  {"tabdo",      &Actions::tab_do,          EN_ARG},
-  {"tabopen",    &Actions::tab_open,        EN_ARG},
+  {"nohlsearch", &Actions::search_clear,    CO_TAB},
+  {"open",       &Actions::open,            CO_ARG | CO_TAB},
+  {"reload",     &Actions::tab_reload,      CO_FORCE | CO_TAB},
+  {"stop",       &Actions::tab_stop,        CO_TAB},
+  {"tabdo",      &Actions::tab_do,          CO_ARG},
+  {"tabopen",    &Actions::tab_open,        CO_ARG},
 
 };
