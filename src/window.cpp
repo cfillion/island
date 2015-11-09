@@ -103,6 +103,9 @@ void Window::setCurrentPageIndex(const int index)
 
 void Window::setCurrentPage(Page *p)
 {
+  if(m_current == p)
+    return;
+
   if(m_current) {
     m_current->setCurrent(false);
     m_current->disconnect(this);
