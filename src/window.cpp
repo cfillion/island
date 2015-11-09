@@ -344,6 +344,7 @@ QString Window::sprintf(const QString &input) const
 
   static const QRegularExpression regex("%([a-zA-Z%])");
   auto it = regex.globalMatch(str);
+  int offset = 0;
 
   while(it.hasNext()) {
     const auto match = it.next();
@@ -353,8 +354,9 @@ QString Window::sprintf(const QString &input) const
     if(replacement.isEmpty())
       continue;
 
-    const int start = match.capturedStart(0);
+    const int start = match.capturedStart(0) + offset;
     const int length = match.capturedLength(0);
+    offset += replacement.size() - length;
 
     str.replace(start, length, replacement);
   }
@@ -364,7 +366,9 @@ QString Window::sprintf(const QString &input) const
 
 QString Window::expandFormat(const QChar &c) const
 {
-  if(c == 'u')
+  if(c == '%')
+    return c;
+  else if(c == 'u')
     return m_current->displayUrl();
 
   return QString();
