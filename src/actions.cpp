@@ -147,16 +147,26 @@ CommandResult Actions::tab_do(const Command &cmd)
 
 CommandResult Actions::history_back(const Command &cmd)
 {
+  if(cmd.variant() == VA_FORCE) {
+    WIN->currentPage()->historyMotion(std::numeric_limits<int>::min());
+    return {};
+  }
+
   const int motionSize = std::max(1, cmd.counter());
 
   if(WIN->currentPage()->historyMotion(motionSize * -1))
-    return{};
+    return {};
   else
     return {false, "End of history"};
 }
 
 CommandResult Actions::history_forward(const Command &cmd)
 {
+  if(cmd.variant() == VA_FORCE) {
+    WIN->currentPage()->historyMotion(std::numeric_limits<int>::max());
+    return {};
+  }
+
   const int motionSize = std::max(1, cmd.counter());
 
   if(WIN->currentPage()->historyMotion(motionSize))
