@@ -41,6 +41,11 @@ CommandResult Actions::command_mode(const Command &cmd)
   return {};
 }
 
+CommandResult Actions::echo(const Command &cmd)
+{
+  return {true, cmd.argument()};
+}
+
 CommandResult Actions::open(const Command &cmd)
 {
   if(!cmd.hasArgument())

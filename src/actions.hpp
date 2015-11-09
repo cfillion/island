@@ -7,6 +7,7 @@ namespace Actions {
   CommandResult normal_mode(const Command &);
   CommandResult insert_mode(const Command &);
   CommandResult command_mode(const Command &);
+  CommandResult echo(const Command &);
 
   CommandResult open(const Command &);
   CommandResult tab_open(const Command &);
