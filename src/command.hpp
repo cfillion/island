@@ -92,6 +92,7 @@ public:
 
   CommandFunc func() const { return m_func; }
   const CommandEntry *entry() const { return m_entry; }
+  bool hasFlag(const CommandOptions::Flag) const;
 
   bool hasArgument() const { return !m_arg.isEmpty(); }
   const QString &argument() const { return m_arg; }

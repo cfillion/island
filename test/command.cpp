@@ -230,6 +230,24 @@ TEST_CASE("entry from string") {
   }
 }
 
+TEST_CASE("query flags") {
+  const UseCommandRegistry reg(&TestReg);
+
+  SECTION("valid") {
+    REQUIRE(Command("test").hasFlag(EN_ARG));
+    REQUIRE_FALSE(Command("noarg").hasFlag(EN_ARG));
+  }
+
+  SECTION("invalid") {
+    const Command cmd("helloworld");
+    REQUIRE_FALSE(cmd.hasFlag(EN_ARG));
+  }
+
+  SECTION("unknown") {
+    const Command cmd(&test_cmd);
+    REQUIRE_FALSE(cmd.hasFlag(EN_ARG));
+  }
+}
 
 TEST_CASE("command search", M) {
   const UseCommandRegistry reg(&TestReg);
