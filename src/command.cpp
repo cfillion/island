@@ -45,7 +45,7 @@ CommandRegistry *Command::s_registry = 0;
 Command::Command(const CommandFunc &func, const QString &arg,
     const Variant va, const int counter, void *data)
   : m_isValid(true), m_data(data), m_counter(counter),
-    m_func(func), m_arg(arg), m_variant(va)
+    m_func(func), m_arg(arg), m_variant(va), m_entry(0)
 {
 }
 
@@ -60,13 +60,11 @@ Command::Command(const QString &input)
 
   m_variant = parser.variant() == "!" ? VA_FORCE : VA_DEFAULT;
 
-  const CommandEntry *entry = 0;
-
-  if(!parser.isValid() || !findCommand(name, &entry) || !checkVariant(entry)) {
+  if(!parser.isValid() || !findCommand(name, &m_entry) || !checkVariant()) {
     m_error = "Not a command: " + input;
     return;
   }
-  else if(!arg.isEmpty() && !entry->hasFlag(EN_ARG)) {
+  else if(!arg.isEmpty() && !m_entry->hasFlag(EN_ARG)) {
     m_error = "Trailing characters";
     return;
   }
@@ -75,7 +73,7 @@ Command::Command(const QString &input)
     m_counter = counter.toInt();
 
   m_isValid = true;
-  m_func = entry->func;
+  m_func = m_entry->func;
   m_arg = arg;
 }
 
@@ -83,13 +81,14 @@ bool Command::findCommand(const QString &name, const CommandEntry **entry)
 {
   const CommandList matches = findCommands(name);
 
-  if(matches.empty() || (matches.size() > 1 && matches.front()->name != name))
+  if(matches.empty() || (matches.size() > 1 && matches.front()->name != name)) {
+    *entry = 0;
     return false;
-
-  if(entry)
+  }
+  else {
     *entry = matches.front();
-
-  return true;
+    return true;
+  }
 };
 
 CommandList Command::findCommands(const QString &prefix)
@@ -108,13 +107,13 @@ CommandList Command::findCommands(const QString &prefix)
   return list;
 }
 
-bool Command::checkVariant(const CommandEntry *entry) const
+bool Command::checkVariant() const
 {
   switch(m_variant) {
   case VA_DEFAULT:
     return true;
   case VA_FORCE:
-    return entry->hasFlag(EN_FORCE);
+    return m_entry->hasFlag(EN_FORCE);
   }
 
   return false;

@@ -21,8 +21,9 @@ typedef CommandResult (*CommandFunc)(const Command &);
 
 namespace CommandOptions {
   enum Flag {
-    EN_ARG   = 1<<1,
-    EN_FORCE = 1<<2,
+    EN_ARG   = 1<<0,
+    EN_FORCE = 1<<1,
+    EN_TABDO = 1<<2,
   };
 
   enum Variant {
@@ -87,7 +88,10 @@ public:
   Command(const QString &cmd);
 
   bool isValid() const { return m_isValid; }
+  const QString &errorString() const { return m_error; }
+
   CommandFunc func() const { return m_func; }
+  const CommandEntry *entry() const { return m_entry; }
 
   bool hasArgument() const { return !m_arg.isEmpty(); }
   const QString &argument() const { return m_arg; }
@@ -108,7 +112,7 @@ private:
   friend UseCommandRegistry;
 
   static bool findCommand(const QString &, const CommandEntry ** = 0);
-  bool checkVariant(const CommandEntry *) const;
+  bool checkVariant() const;
 
   bool m_isValid;
   void *m_data;
@@ -117,6 +121,7 @@ private:
   QString m_arg;
   QString m_error;
   CommandOptions::Variant m_variant;
+  const CommandEntry *m_entry;
 };
 
 #endif

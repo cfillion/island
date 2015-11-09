@@ -140,9 +140,11 @@ TEST_CASE("execute invalid command", M) {
   const UseCommandRegistry reg(&TestReg);
 
   const Command cmd("hello_world");
+  REQUIRE(cmd.errorString() == "Not a command: hello_world");
+
   const CommandResult res = cmd.exec();
   REQUIRE_FALSE(res.ok);
-  REQUIRE(res.message == "Not a command: hello_world");
+  REQUIRE(res.message == cmd.errorString());
 }
 
 TEST_CASE("ill-formed commands are invalid", M) {
@@ -178,6 +180,14 @@ TEST_CASE("unexpected argument", M) {
   REQUIRE(cmd.exec().message == "Trailing characters");
 }
 
+TEST_CASE("variant from reference", M) {
+  const Command set(&test_cmd, {}, VA_FORCE);
+  REQUIRE(set.variant() == VA_FORCE);
+
+  const Command def(&test_cmd);
+  REQUIRE(def.variant() == VA_DEFAULT);
+}
+
 TEST_CASE("variant from string", M) {
   const UseCommandRegistry reg(&TestReg);
 
@@ -201,13 +211,25 @@ TEST_CASE("invalid variant", M) {
   REQUIRE(cmd.exec().message == "Not a command: test!");
 }
 
-TEST_CASE("variant from constructor", M) {
-  const Command set(&test_cmd, {}, VA_FORCE);
-  REQUIRE(set.variant() == VA_FORCE);
-
-  const Command def(&test_cmd);
-  REQUIRE(def.variant() == VA_DEFAULT);
+TEST_CASE("entry from reference") {
+  Command cmd(&test_cmd);
+  REQUIRE(cmd.entry() == 0);
 }
+
+TEST_CASE("entry from string") {
+  const UseCommandRegistry reg(&TestReg);
+
+  SECTION("valid") {
+    const Command cmd("test");
+    REQUIRE(cmd.entry()->func == &test_cmd);
+  }
+
+  SECTION("invalid") {
+    const Command cmd("helloworld");
+    REQUIRE(cmd.entry() == 0);
+  }
+}
+
 
 TEST_CASE("command search", M) {
   const UseCommandRegistry reg(&TestReg);
