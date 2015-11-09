@@ -33,7 +33,7 @@ public:
 
   int addPage(const QString &url, const OpenMode mode = NewTab);
   void setCurrentPage(Page *);
-  void setCurrentTab(const int index);
+  void setCurrentPageIndex(const int index);
   Page *currentPage() const { return m_current; }
   int currentPageIndex() const;
   int pageCount() const { return m_pages.size(); }

@@ -31,7 +31,7 @@ Window::Window(const MappingArray &mappings, QWidget *parent)
   main_layout->addLayout(m_stack);
   main_layout->addWidget(m_status);
 
-  connect(m_tabs, &TabBar::triggered, this, &Window::setCurrentTab);
+  connect(m_tabs, &TabBar::triggered, this, &Window::setCurrentPageIndex);
   connect(m_tabs, &TabBar::closeRequested, this, &Window::closeTab);
   connect(m_tabs, &TabBar::wheelMotion, this, &Window::currentTabMotion);
 
@@ -48,7 +48,7 @@ Window::Window(const MappingArray &mappings, QWidget *parent)
   addPage("http://files.cfillion.tk");
   addPage("data:text/html,<h1>test</h1>", Split);
   addPage("http://google.com/");
-  setCurrentTab(0);
+  setCurrentPageIndex(0);
 
   setMode(NormalMode);
 }
@@ -95,7 +95,7 @@ int Window::addPage(const QString &url, const Window::OpenMode mode)
   return index;
 }
 
-void Window::setCurrentTab(const int index)
+void Window::setCurrentPageIndex(const int index)
 {
   if(Page *p = page(index))
     setCurrentPage(p);
@@ -142,9 +142,9 @@ void Window::closePage(Page *page)
 
   if(index == currentPageIndex()) {
     if(index == 0)
-      setCurrentTab(index+1);
+      setCurrentPageIndex(index+1);
     else
-      setCurrentTab(index-1);
+      setCurrentPageIndex(index-1);
   }
 
   page->destroyComponents();

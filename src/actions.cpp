@@ -59,7 +59,7 @@ CommandResult Actions::open(const Command &cmd)
 CommandResult Actions::tab_open(const Command &cmd)
 {
   const int index = WIN->addPage(cmd.argument());
-  WIN->setCurrentTab(index);
+  WIN->setCurrentPageIndex(index);
 
   return {};
 }
