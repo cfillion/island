@@ -38,8 +38,8 @@ int main(int argc, char *argv[])
   nmap.set("i", &Actions::insert_mode);
   nmap.set(":", &Actions::command_mode);
   nmap.set("d", &Actions::tab_close);
-  nmap.set("H", ":back<Space>%c<CR>");
-  nmap.set("L", ":forward<Space>%c<CR>");
+  nmap.set("H", ":back %c<CR>");
+  nmap.set("L", ":forward %c<CR>");
   nmap.set("ga", &Actions::tab_open);
   nmap.set("gt", &Actions::tab_goto);
   nmap.set("r", &Actions::tab_reload);

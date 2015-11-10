@@ -71,7 +71,11 @@ KeyPress::KeyPress(const QString &seq)
   const auto match = pattern.match(seq);
 
   if(!match.hasMatch()) {
-    decodeCharacter(seq);
+    if(seq == "\x20")
+      m_key = Qt::Key_Space;
+    else
+      decodeCharacter(seq);
+
     return;
   }
 

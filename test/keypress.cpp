@@ -123,6 +123,20 @@ TEST_CASE("less/more keys", M) {
   }
 }
 
+TEST_CASE("simple space", M) {
+  SECTION("recognized without modifiers") {
+    const KeyPress ki("\x20");
+    REQUIRE(ki.toString() == "<Space>");
+    REQUIRE(ki.displayString() == "\x20");
+    REQUIRE(ki == KeyPress(Qt::Key_Space));
+  }
+
+  SECTION("dropped with modifiers") {
+    const KeyPress ki("<C-\x20>");
+    REQUIRE(ki.toString() == "");
+  }
+}
+
 TEST_CASE("modifiers keys", M) {
   const KeyPress ki(Qt::Key_Control, Qt::ControlModifier);
   REQUIRE(ki.toString() == "");
