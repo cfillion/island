@@ -15,7 +15,6 @@ namespace Actions {
   CommandResult tab_close(const Command &);
   CommandResult tab_stop(const Command &);
   CommandResult tab_goto(const Command &);
-  CommandResult tab_do(const Command &);
 
   CommandResult history_back(const Command &);
   CommandResult history_forward(const Command &);

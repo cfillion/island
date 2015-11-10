@@ -109,47 +109,6 @@ CommandResult Actions::tab_goto(const Command &cmd)
   return res;
 }
 
-CommandResult Actions::tab_do(const Command &cmd)
-{
-  if(!cmd.hasArgument())
-    return {false, "Argument required"};
-
-  Command tabCmd(cmd.argument());
-  tabCmd.setData(cmd.data<void *>());
-
-  if(!tabCmd.isValid())
-    return {false, tabCmd.errorString()};
-  else if(!tabCmd.hasFlag(CO_TAB))
-    return {false, "Unsupported command"};
-  else if(tabCmd.hasFlag(CO_CURPG))
-    tabCmd.setCounter(cmd.counter());
-
-  CommandResult res;
-
-  Page *current = WIN->currentPage();
-  const int pageCount = WIN->pageCount();
-
-  // iterating over tabs in reverse is required for :tabdo close to work
-  for(int i = pageCount; i > 0; i--) {
-    if(tabCmd.hasFlag(CO_CURPG))
-      WIN->setCurrentPageIndex(i-1);
-    else
-      tabCmd.setCounter(i);
-
-    res = tabCmd.exec();
-
-    if(!res.message.isEmpty())
-      res.message.prepend(QString("(tab %1) ").arg(i));
-
-    if(!res.ok)
-      break;
-  }
-
-  WIN->setCurrentPage(current);
-
-  return res;
-}
-
 CommandResult Actions::history_back(const Command &cmd)
 {
   if(cmd.variant() == VA_FORCE) {
