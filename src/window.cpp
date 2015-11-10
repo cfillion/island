@@ -318,7 +318,10 @@ void Window::execMapping()
 
   if(mapping->bindingType() == Mapping::BufferBinding) {
     const Buffer &buf = *mapping->boundBuffer();
+
+    setUpdatesEnabled(false);
     simulateInput(buf);
+    QTimer::singleShot(0, this, [=] { setUpdatesEnabled(true); });
   }
 
   clearBuffer();
