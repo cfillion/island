@@ -111,32 +111,34 @@ CommandResult Actions::tab_goto(const Command &cmd)
 
 CommandResult Actions::history_back(const Command &cmd)
 {
-  if(cmd.variant() == VA_FORCE) {
-    WIN->currentPage()->historyMotion(std::numeric_limits<int>::min());
-    return {};
+  const int jumpSize = cmd.variant() == VA_DEFAULT
+    ? std::max(1, cmd.argument().toInt()) * -1
+    : std::numeric_limits<int>::min();
+
+  CommandResult res;
+
+  if(Page *p = GetPage(cmd, &res)) {
+    if(!p->historyMotion(jumpSize) && cmd.variant() != VA_FORCE)
+      return {false, "End of history"};
   }
 
-  const int motionSize = std::max(1, cmd.counter());
-
-  if(WIN->currentPage()->historyMotion(motionSize * -1))
-    return {};
-  else
-    return {false, "End of history"};
+  return res;
 }
 
 CommandResult Actions::history_forward(const Command &cmd)
 {
-  if(cmd.variant() == VA_FORCE) {
-    WIN->currentPage()->historyMotion(std::numeric_limits<int>::max());
-    return {};
+  const int jumpSize = cmd.variant() == VA_DEFAULT
+    ? std::max(1, cmd.argument().toInt())
+    : std::numeric_limits<int>::max();
+
+  CommandResult res;
+
+  if(Page *p = GetPage(cmd, &res)) {
+    if(!p->historyMotion(jumpSize) && cmd.variant() != VA_FORCE)
+      return {false, "Start of history"};
   }
 
-  const int motionSize = std::max(1, cmd.counter());
-
-  if(WIN->currentPage()->historyMotion(motionSize))
-    return {};
-  else
-    return {false, "Start of history"};
+  return res;
 }
 
 CommandResult Actions::prompt_execute(const Command &cmd)
