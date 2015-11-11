@@ -79,6 +79,8 @@ TEST_CASE("iterating", M) {
   REQUIRE(r.next() == 13);
   REQUIRE_FALSE(r.hasNext());
 
+  REQUIRE(r.next() == 0);
+
   r.reset();
   REQUIRE(r.hasNext());
 }

@@ -61,6 +61,9 @@ bool Range::hasNext() const
 
 int Range::next()
 {
+  if(!hasNext())
+    return 0;
+
   m_currentOffset++;
   return current();
 }
