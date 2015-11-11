@@ -52,7 +52,7 @@ public:
 
   int current() const;
   int next();
-  void resolve(const int minimumBaseValue = 0);
+  void resolve(const int minimumBaseValue = 1);
   void rewind();
 
   const RangeComponent &min() const { return m_min; }

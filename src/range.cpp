@@ -110,18 +110,14 @@ Range::Range(const QString &input)
 
 void Range::sort()
 {
-  if(isValid()) {
-    const auto min = m_min;
-    const auto max = m_max;
+  if(!isValid())
+    return;
 
-    m_min = std::min(min, max);
-    m_max = std::max(min, max);
+  const auto min = m_min;
+  const auto max = m_max;
 
-    if(m_min.value() == 0)
-      m_min = m_max;
-  }
-  else if(m_min.isValid() && m_max.isNull())
-    m_max = m_min;
+  m_min = std::min(min, max);
+  m_max = std::max(min, max);
 }
 
 bool Range::isValid() const
@@ -167,7 +163,7 @@ int Range::next()
 
 QString Range::toString(const Format mode) const
 {
-  if(m_min == m_max || m_max.isNull())
+  if(m_max.isNull() || m_min == m_max)
     return m_min.toString();
   else if(mode == Default)
     return QString("%1,%2").arg(m_min.toString(), m_max.toString());

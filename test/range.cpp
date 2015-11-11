@@ -18,8 +18,7 @@ TEST_CASE("integer constructor", M) {
   SECTION("single") {
     const Range r(42);
     REQUIRE(r.min() == 42);
-    REQUIRE(r.max() == 42);
-    REQUIRE(r.isValid());
+    REQUIRE(r.max().isNull());
   }
 
   SECTION("sorting") {
@@ -31,8 +30,8 @@ TEST_CASE("integer constructor", M) {
 
   SECTION("invalid") {
     const Range r;
-    REQUIRE(r.min() == 0);
-    REQUIRE(r.max() == 0);
+    REQUIRE(r.min().isNull());
+    REQUIRE(r.max().isNull());
     REQUIRE_FALSE(r.isValid());
   }
 }
@@ -55,8 +54,7 @@ TEST_CASE("string constructor", M) {
   SECTION("single") {
     const Range r("42");
     CHECK(r.min() == 42);
-    CHECK(r.max() == 42);
-    REQUIRE(r.isValid());
+    CHECK(r.max().isNull());
   }
 
   SECTION("sorting") {
@@ -95,6 +93,8 @@ TEST_CASE("iterating", M) {
 
 TEST_CASE("iterate over single component with 1 as value", M) {
   Range r(1);
+  r.resolve();
+
   CHECK(r.hasNext());
   REQUIRE(r.next() == 1);
   CHECK_FALSE(r.hasNext());
@@ -177,8 +177,9 @@ TEST_CASE("sort on resolution") {
 
 TEST_CASE("relative zero") {
   Range r(4, {0, RangeComponent::Relative});
-  CHECK(r.isValid());
+  r.resolve();
 
+  CHECK(r.isValid());
   REQUIRE(r.min().value() == 4);
   REQUIRE(r.max().value() == 4);
 }
