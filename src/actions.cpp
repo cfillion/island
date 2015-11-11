@@ -12,8 +12,7 @@ using namespace Island;
 
 static Page *GetPage(const Window *win, Range *range, CommandResult *res)
 {
-  if(!range->isValid())
-    range->reset(win->currentPageIndex() + 1);
+  range->resolve(win->currentPageIndex() + 1);
 
   if(!range->hasNext())
     return 0;

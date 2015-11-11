@@ -12,9 +12,58 @@ QDebug operator<<(QDebug debug, const Range &range)
   return debug;
 }
 
-Range::Range(const int min, const int max)
+bool RangeComponent::isNull() const
 {
-  reset(min, max);
+  return m_value == 0;
+}
+
+bool RangeComponent::isValid() const
+{
+  return m_type == Absolute && !isNull();
+}
+
+void RangeComponent::resolve(const int baseValue)
+{
+  switch(m_type) {
+  case Absolute:
+    if(isNull())
+      m_value = baseValue;
+    break;
+  case Relative:
+    m_value = baseValue + m_value;
+    m_type = Absolute;
+    break;
+  }
+}
+
+QString RangeComponent::toString() const
+{
+  if(m_value == 0)
+    return QString();
+
+  return QString::number(m_value);
+}
+
+bool RangeComponent::operator==(const RangeComponent &o) const
+{
+  return m_value == o.value() && m_type == o.type();
+}
+
+bool RangeComponent::operator!=(const RangeComponent &o) const
+{
+  return !(*this == o);
+}
+
+bool RangeComponent::operator<(const RangeComponent &o) const
+{
+  return m_value < o.value();
+}
+
+Range::Range(const RangeComponent &min, const RangeComponent &max)
+  : m_min(min), m_max(max)
+{
+  sort();
+  rewind();
 }
 
 Range::Range(const QString &input)
@@ -22,41 +71,59 @@ Range::Range(const QString &input)
   static const QRegularExpression regex("\\A(\\d+)(?:,(\\d+))?\\z");
   const auto match = regex.match(input);
 
-  const int min = match.captured(1).toInt();
-  const int max = match.captured(2).toInt();
+  m_min = match.captured(1).toInt();
+  m_max = match.captured(2).toInt();
 
-  reset(min, max);
+  sort();
+  rewind();
 }
 
-void Range::reset()
+void Range::sort()
 {
-  m_currentOffset = -1;
-}
+  if(isValid()) {
+    const auto min = m_min;
+    const auto max = m_max;
 
-void Range::reset(const int min, const int max)
-{
-  m_min = std::min(min, max);
-  m_max = std::max(min, max);
+    m_min = std::min(min, max);
+    m_max = std::max(min, max);
 
-  if(m_min == 0)
-    m_min = m_max;
-
-  reset();
-}
-
-int Range::current() const
-{
-  return m_currentOffset + m_min;
+    if(m_min.value() == 0)
+      m_min = m_max;
+  }
+  else if(m_min.isValid() && m_max.isNull())
+    m_max = m_min;
 }
 
 bool Range::isValid() const
 {
-  return m_min > 0 && m_max > 0;
+  return m_min.isValid() && m_max.isValid();
+}
+
+void Range::resolve(const int minimumBaseValue)
+{
+  m_min.resolve(minimumBaseValue);
+  m_max.resolve(m_min.value());
+
+  sort();
+}
+
+void Range::rewind()
+{
+  m_currentOffset = -1;
+}
+
+int Range::current() const
+{
+  if(!isValid())
+    return 0;
+
+  return m_min.value() + m_currentOffset;
 }
 
 bool Range::hasNext() const
 {
-  return isValid() && current() < m_max;
+  const int cv = current();
+  return cv == 0 || cv < m_max.value();
 }
 
 int Range::next()
@@ -70,12 +137,10 @@ int Range::next()
 
 QString Range::toString(const Format mode) const
 {
-  if(m_min == m_max) {
-    if(isValid())
-      return QString::number(m_max);
-  }
+  if(m_min == m_max)
+    return m_max.toString();
   else if(mode == Default)
-    return QString("%1,%2").arg(m_min).arg(m_max);
+    return QString("%1,%2").arg(m_min.toString(), m_max.toString());
 
   return QString();
 }

@@ -67,7 +67,7 @@ TEST_CASE("set data pointer", M) {
 }
 
 TEST_CASE("data pointer from constructor", M) {
-  Command ptr(&test_cmd, {}, VA_DEFAULT, -1, (void*)0x42);
+  Command ptr(&test_cmd, {}, VA_DEFAULT, Range(), (void*)0x42);
   REQUIRE(ptr.data<void*>() == (void*)0x42);
 }
 
