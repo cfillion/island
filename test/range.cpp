@@ -64,6 +64,18 @@ TEST_CASE("string constructor", M) {
     REQUIRE(r.isValid());
   }
 
+  SECTION("null minimum") {
+    const Range r(",42");
+    CHECK(r.min().isNull());
+    CHECK(r.max() == 42);
+  }
+
+  SECTION("null maximum") {
+    const Range r("42,");
+    CHECK(r.min() == 42);
+    CHECK(r.max().isNull());
+  }
+
   SECTION("invalid") {
     const Range r("hello");
     CHECK(r.min().value() == 0);

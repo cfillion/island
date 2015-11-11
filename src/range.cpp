@@ -102,7 +102,7 @@ Range::Range(const RangeComponent &min, const RangeComponent &max)
 
 Range::Range(const QString &input)
 {
-  static const QRegularExpression regex("\\A([\\+-]?\\d+)(?:,([\\+-]?\\d+))?\\z");
+  static const QRegularExpression regex("\\A([\\+-]?\\d+)?(?:,([\\+-]?\\d+)?)?\\z");
   const auto match = regex.match(input);
 
   m_min = RangeComponent(match.captured(1));

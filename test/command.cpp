@@ -92,10 +92,33 @@ TEST_CASE("counter from constructor", M) {
 TEST_CASE("range from string") {
   const UseCommandRegistry reg(&TestReg);
 
-  const Command cmd("+4,-2test");
-  CHECK(cmd.isValid());
-  CHECK(cmd.func() == &test_cmd);
-  REQUIRE(cmd.range().toString() == "+4,-2");
+  SECTION("absolute") {
+    const Command cmd("2,4test");
+    CHECK(cmd.isValid());
+    CHECK(cmd.func() == &test_cmd);
+    REQUIRE(cmd.range().toString() == "2,4");
+  }
+
+  SECTION("relative") {
+    const Command cmd("+4,-2test");
+    CHECK(cmd.isValid());
+    CHECK(cmd.func() == &test_cmd);
+    REQUIRE(cmd.range().toString() == "+4,-2");
+  }
+
+  SECTION("null minimum") {
+    const Command cmd(",2test");
+    CHECK(cmd.isValid());
+    CHECK(cmd.func() == &test_cmd);
+    REQUIRE(cmd.range().toString() == ",2");
+  }
+
+  SECTION("null maximum") {
+    const Command cmd("2,test");
+    CHECK(cmd.isValid());
+    CHECK(cmd.func() == &test_cmd);
+    REQUIRE(cmd.range().toString() == "2");
+  }
 }
 
 TEST_CASE("execute", M) {
