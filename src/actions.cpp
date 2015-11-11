@@ -91,8 +91,16 @@ CommandResult Actions::tab_close(const Command &cmd)
 {
   CommandResult res;
 
+  // Storing the matching pages first to fix closing a range of page.
+  // Otherwise the end of the range would no longer be a valid tab id
+  // by the time we get there.
+  std::vector<Page *> pages;
+
   Range range = cmd.range();
   while(Page *p = GetPage(WIN, &range, &res))
+    pages.push_back(p);
+
+  for(Page *p : pages)
     WIN->closePage(p);
 
   return res;
