@@ -30,7 +30,7 @@ CommandParser::CommandParser(const QString &input)
 {
   static const QRegularExpression pattern(
     "\\A"
-    "(?:\\s*(?<range>\\d+(?:,\\d+)?))?"
+    "(?:\\s*(?<range>[\\+-]?\\d+(?:,[\\+-]?\\d+)?))?"
     "(?:\\s*(?<name>[a-zA-Z0-9_]*))"
     "(?<variant>[\\!])?"
     "(?:\\s+(?<argument>.*?)\\s*)?"

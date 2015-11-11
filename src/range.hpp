@@ -14,6 +14,7 @@ public:
 
   RangeComponent(const int v = 0, const Type t = Absolute)
     : m_value(v), m_type(t) {}
+  RangeComponent(const QString &);
 
   int value() const { return m_value; }
   Type type() const { return m_type; }
@@ -54,8 +55,8 @@ public:
   void resolve(const int minimumBaseValue = 0);
   void rewind();
 
-  int min() const { return m_min.value(); }
-  int max() const { return m_max.value(); }
+  const RangeComponent &min() const { return m_min; }
+  const RangeComponent &max() const { return m_max; }
 
   bool operator==(const Range &) const;
   bool operator!=(const Range &) const;
@@ -70,5 +71,6 @@ private:
 };
 
 QDebug operator<<(QDebug, const Range &);
+QDebug operator<<(QDebug, const RangeComponent &);
 
 #endif

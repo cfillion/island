@@ -7,10 +7,12 @@ class Buffer;
 class KeyPress;
 class QString;
 class Range;
+class RangeComponent;
 
 std::ostream &operator<<(std::ostream &, const Buffer &);
 std::ostream &operator<<(std::ostream &, const KeyPress &);
 std::ostream &operator<<(std::ostream &, const QString &);
 std::ostream &operator<<(std::ostream &, const Range &);
+std::ostream &operator<<(std::ostream &, const RangeComponent &);
 
 #endif

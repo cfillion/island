@@ -71,7 +71,7 @@ TEST_CASE("data pointer from constructor", M) {
   REQUIRE(ptr.data<void*>() == (void*)0x42);
 }
 
-TEST_CASE("set counter", M) {
+TEST_CASE("set range", M) {
   const UseCommandRegistry reg(&TestReg);
 
   Command ptr(&test_cmd);
@@ -92,11 +92,10 @@ TEST_CASE("counter from constructor", M) {
 TEST_CASE("range from string") {
   const UseCommandRegistry reg(&TestReg);
 
-  const Command cmd("42test");
+  const Command cmd("+4,-2test");
   CHECK(cmd.isValid());
   CHECK(cmd.func() == &test_cmd);
-  REQUIRE(cmd.range().min() == 42);
-  REQUIRE(cmd.range().max() == 42);
+  REQUIRE(cmd.range().toString() == "+4,-2");
 }
 
 TEST_CASE("execute", M) {

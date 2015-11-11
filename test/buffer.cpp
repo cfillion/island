@@ -39,17 +39,17 @@ TEST_CASE("range", M) {
   Buffer b;
   REQUIRE(b.range() == Range());
 
-  b << "4" << "," << "2";
-  REQUIRE(b.range() == Range(4,2));
+  b << "+4" << "," << "-" << "2";
+  REQUIRE(b.range().toString() == "+4,-2");
   REQUIRE(b.empty());
-  REQUIRE(b.toString() == "4,2");
+  REQUIRE(b.toString() == "+4,-2");
 
   b << "a" << "3";
-  REQUIRE(b.range() == Range(4,2));
+  REQUIRE(b.range().toString() == "+4,-2");
   REQUIRE(b.size() == 2);
-  REQUIRE(b.toString() == "4,2a3");
+  REQUIRE(b.toString() == "+4,-2a3");
 
-  REQUIRE(b.truncateCopy(0).range() == Range(4,2));
+  REQUIRE(b.truncateCopy(0).range() == b.range());
   REQUIRE(b.truncateCopy(b.size()).range() == Range());
 
   b.clear();

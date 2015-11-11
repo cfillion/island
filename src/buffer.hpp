@@ -32,6 +32,7 @@ public:
   std::vector<QString>::const_iterator end() const { return m_list.cend(); }
 
 private:
+  static bool isRangeCharacter(const QChar &);
   void importString(const QString &input);
 
   QString m_range;

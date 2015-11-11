@@ -42,7 +42,7 @@ void Buffer::push(const QString &str)
   if(str.isEmpty())
     return;
 
-  if(empty() && (str[0].isNumber() || str[0] == ',')) {
+  if(empty() && isRangeCharacter(str[0])) {
     if(m_range.size() > 0 || str[0] != '0')
       m_range += str;
   }
@@ -89,4 +89,9 @@ Buffer Buffer::truncateCopy(const int n) const
   Buffer copy(*this);
   copy.truncate(n);
   return copy;
+}
+
+bool Buffer::isRangeCharacter(const QChar &c)
+{
+  return c.isNumber() || c == ',' || c == '+' || c == '-';
 }

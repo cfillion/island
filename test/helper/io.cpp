@@ -40,3 +40,9 @@ std::ostream &operator<<(std::ostream &os, const Range &range)
   debugPrint(os, range);
   return os;
 }
+
+std::ostream &operator<<(std::ostream &os, const RangeComponent &c)
+{
+  debugPrint(os, c);
+  return os;
+}

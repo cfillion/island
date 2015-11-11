@@ -12,6 +12,31 @@ QDebug operator<<(QDebug debug, const Range &range)
   return debug;
 }
 
+QDebug operator<<(QDebug debug, const RangeComponent &c)
+{
+  QDebugStateSaver saver(debug);
+  debug.nospace().noquote() << '(' << c.value() << '\x20';
+
+  switch(c.type()) {
+  case RangeComponent::Absolute:
+    debug << "abs";
+    break;
+  case RangeComponent::Relative:
+    debug << "rel";
+    break;
+  };
+
+  debug << ')';
+
+  return debug;
+}
+
+RangeComponent::RangeComponent(const QString &input)
+{
+  m_value = input.toInt();
+  m_type = input.isEmpty() || input[0].isNumber() ? Absolute : Relative;
+}
+
 bool RangeComponent::isNull() const
 {
   return m_value == 0;
@@ -30,7 +55,7 @@ void RangeComponent::resolve(const int baseValue)
       m_value = baseValue;
     break;
   case Relative:
-    m_value = baseValue + m_value;
+    m_value += baseValue;
     m_type = Absolute;
     break;
   }
@@ -41,7 +66,12 @@ QString RangeComponent::toString() const
   if(m_value == 0)
     return QString();
 
-  return QString::number(m_value);
+  QString str = QString::number(m_value);
+
+  if(m_type == Relative && m_value >= 0)
+    str.prepend("+");
+
+  return str;
 }
 
 bool RangeComponent::operator==(const RangeComponent &o) const
@@ -68,11 +98,11 @@ Range::Range(const RangeComponent &min, const RangeComponent &max)
 
 Range::Range(const QString &input)
 {
-  static const QRegularExpression regex("\\A(\\d+)(?:,(\\d+))?\\z");
+  static const QRegularExpression regex("\\A([\\+-]?\\d+)(?:,([\\+-]?\\d+))?\\z");
   const auto match = regex.match(input);
 
-  m_min = match.captured(1).toInt();
-  m_max = match.captured(2).toInt();
+  m_min = RangeComponent(match.captured(1));
+  m_max = RangeComponent(match.captured(2));
 
   sort();
   rewind();
@@ -137,8 +167,8 @@ int Range::next()
 
 QString Range::toString(const Format mode) const
 {
-  if(m_min == m_max)
-    return m_max.toString();
+  if(m_min == m_max || m_max.isNull())
+    return m_min.toString();
   else if(mode == Default)
     return QString("%1,%2").arg(m_min.toString(), m_max.toString());
 

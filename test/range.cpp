@@ -1,4 +1,5 @@
 #include "vendor/catch.hpp"
+#include "helper/io.hpp"
 
 #include <range.hpp>
 
@@ -37,31 +38,38 @@ TEST_CASE("integer constructor", M) {
 }
 
 TEST_CASE("string constructor", M) {
-  SECTION("valid") {
+  SECTION("absolute") {
     const Range r("2,4");
-    REQUIRE(r.min() == 2);
-    REQUIRE(r.max() == 4);
+    CHECK(r.min() == 2);
+    CHECK(r.max() == 4);
     REQUIRE(r.isValid());
+  }
+
+  SECTION("relative") {
+    const Range r("-2,+1");
+    CHECK(r.min() == RangeComponent(-2, RangeComponent::Relative));
+    CHECK(r.max() == RangeComponent(1, RangeComponent::Relative));
+    REQUIRE_FALSE(r.isValid());
   }
 
   SECTION("single") {
     const Range r("42");
-    REQUIRE(r.min() == 42);
-    REQUIRE(r.max() == 42);
+    CHECK(r.min() == 42);
+    CHECK(r.max() == 42);
     REQUIRE(r.isValid());
   }
 
   SECTION("sorting") {
     const Range r("4,2");
-    REQUIRE(r.min() == 2);
-    REQUIRE(r.max() == 4);
+    CHECK(r.min() == 2);
+    CHECK(r.max() == 4);
     REQUIRE(r.isValid());
   }
 
   SECTION("invalid") {
     const Range r("hello");
-    REQUIRE(r.min() == 0);
-    REQUIRE(r.max() == 0);
+    CHECK(r.min().value() == 0);
+    CHECK(r.max().value() == 0);
     REQUIRE_FALSE(r.isValid());
   }
 }
@@ -103,19 +111,25 @@ TEST_CASE("string formatting") {
     REQUIRE(Range(2, 4).toString(Range::Counter) == "");
     REQUIRE(Range(42).toString(Range::Counter) == "42");
   }
+
+  SECTION("relative") {
+    const RangeComponent::Type rel = RangeComponent::Relative;
+    REQUIRE(Range(RangeComponent(2, rel)).toString() == "+2");
+    REQUIRE(Range(RangeComponent(-2, rel)).toString() == "-2");
+  }
 }
 
 TEST_CASE("relative range is not sorted") {
   SECTION("left") {
     const Range r({42, RangeComponent::Relative}, 2);
-    REQUIRE(r.min() == 42);
-    REQUIRE(r.max() == 2);
+    REQUIRE(r.min().value() == 42);
+    REQUIRE(r.max().value() == 2);
   }
 
   SECTION("right") {
     const Range r(2, {42, RangeComponent::Relative});
-    REQUIRE(r.min() == 2);
-    REQUIRE(r.max() == 42);
+    REQUIRE(r.min().value() == 2);
+    REQUIRE(r.max().value() == 42);
   }
 }
 
@@ -136,7 +150,7 @@ TEST_CASE("relative minimum") {
   r.resolve(1);
 
   CHECK(r.isValid());
-  REQUIRE(r.min() == 3);
+  REQUIRE(r.min().value() == 3);
 }
 
 TEST_CASE("relative maximum") {
@@ -152,8 +166,8 @@ TEST_CASE("relative maximum") {
 TEST_CASE("sort on resolution") {
   Range r(4, {-2, RangeComponent::Relative});
   CHECK_FALSE(r.isValid());
-  CHECK(r.min() == 4);
-  CHECK(r.max() == -2);
+  CHECK(r.min().value() == 4);
+  CHECK(r.max().value() == -2);
 
   r.resolve();
 
@@ -165,6 +179,6 @@ TEST_CASE("relative zero") {
   Range r(4, {0, RangeComponent::Relative});
   CHECK(r.isValid());
 
-  REQUIRE(r.min() == 4);
-  REQUIRE(r.max() == 4);
+  REQUIRE(r.min().value() == 4);
+  REQUIRE(r.max().value() == 4);
 }
