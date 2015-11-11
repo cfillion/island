@@ -195,9 +195,9 @@ bool Window::handleInput(const KeyPress &kp)
 
   m_buffer << text;
 
-  // disable counter for non-normal modes
+  // disable range for non-normal modes
   if(!eatKey)
-    m_buffer.resetCounter();
+    m_buffer.resetRange();
 
   Q_EMIT bufferChanged(m_buffer);
 
@@ -312,7 +312,7 @@ void Window::execMapping()
 
   if(mapping->bindingType() == Mapping::CommandBinding) {
     Command cmd = *mapping->boundCommand();
-    cmd.setCounter(m_buffer.counter());
+    cmd.setRange(m_buffer.range());
     execCommand(cmd);
   }
 
@@ -378,10 +378,10 @@ bool Window::expandFormat(const QChar &c, QString &val) const
     val = c;
   else if(c == 'u')
     val = m_current->displayUrl();
-  else if(c == 'c') {
-    if(m_buffer.counter() > 0)
-      val = QString::number(m_buffer.counter());
-  }
+  else if(c == 'r')
+    val = m_buffer.range().toString();
+  else if(c == 'c')
+    val = m_buffer.range().toString(Range::Counter);
   else
     return false;
 

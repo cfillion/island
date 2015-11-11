@@ -10,15 +10,21 @@ using namespace Island;
 
 #define WIN cmd.data<Window *>()
 
-static Page *GetPage(const Command &cmd, CommandResult *res)
+static Page *GetPage(const Window *win, Range *range, CommandResult *res)
 {
-  if(!cmd.hasCounter())
-    return WIN->currentPage();
-  else if(cmd.counter() <= WIN->pageCount())
-    return WIN->page(cmd.counter() - 1);
+  if(!range->isValid())
+    range->reset(win->currentPageIndex() + 1);
+
+  if(!range->hasNext())
+    return 0;
+
+  const int current = range->next();
+
+  if(current <= win->pageCount())
+    return win->page(current - 1);
 
   res->ok = false;
-  res->message = QString("Invalid tab identifier: %1").arg(cmd.counter());
+  res->message = QString("Invalid tab identifier: %1").arg(current);
 
   return 0;
 };
@@ -53,7 +59,8 @@ CommandResult Actions::open(const Command &cmd)
 
   CommandResult res;
 
-  if(Page *p = GetPage(cmd, &res)) {
+  Range range = cmd.range();
+  while(Page *p = GetPage(WIN, &range, &res)) {
     if(!p->load(cmd.argument()))
       res = {false, "Invalid url"};
   }
@@ -73,7 +80,8 @@ CommandResult Actions::tab_reload(const Command &cmd)
 {
   CommandResult res;
 
-  if(Page *p = GetPage(cmd, &res))
+  Range range = cmd.range();
+  while(Page *p = GetPage(WIN, &range, &res))
     p->reload(cmd.variant() == VA_DEFAULT);
 
   return res;
@@ -83,7 +91,8 @@ CommandResult Actions::tab_close(const Command &cmd)
 {
   CommandResult res;
 
-  if(Page *p = GetPage(cmd, &res))
+  Range range = cmd.range();
+  while(Page *p = GetPage(WIN, &range, &res))
     WIN->closePage(p);
 
   return res;
@@ -93,7 +102,8 @@ CommandResult Actions::tab_stop(const Command &cmd)
 {
   CommandResult res;
 
-  if(Page *p = GetPage(cmd, &res))
+  Range range = cmd.range();
+  while(Page *p = GetPage(WIN, &range, &res))
     p->stop();
 
   return res;
@@ -103,7 +113,8 @@ CommandResult Actions::tab_goto(const Command &cmd)
 {
   CommandResult res;
 
-  if(Page *p = GetPage(cmd, &res))
+  Range range = cmd.range();
+  while(Page *p = GetPage(WIN, &range, &res))
     WIN->setCurrentPage(p);
 
   return res;
@@ -117,7 +128,8 @@ CommandResult Actions::history_back(const Command &cmd)
 
   CommandResult res;
 
-  if(Page *p = GetPage(cmd, &res)) {
+  Range range = cmd.range();
+  while(Page *p = GetPage(WIN, &range, &res)) {
     if(!p->historyMotion(jumpSize) && cmd.variant() != VA_FORCE)
       return {false, "End of history"};
   }
@@ -133,7 +145,8 @@ CommandResult Actions::history_forward(const Command &cmd)
 
   CommandResult res;
 
-  if(Page *p = GetPage(cmd, &res)) {
+  Range range = cmd.range();
+  while(Page *p = GetPage(WIN, &range, &res)) {
     if(!p->historyMotion(jumpSize) && cmd.variant() != VA_FORCE)
       return {false, "Start of history"};
   }
@@ -216,7 +229,8 @@ CommandResult Actions::search_clear(const Command &cmd)
 {
   CommandResult res;
 
-  if(Page *p = GetPage(cmd, &res))
+  Range range = cmd.range();
+  while(Page *p = GetPage(WIN, &range, &res))
     p->findText(QString());
 
   return res;

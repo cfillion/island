@@ -6,9 +6,11 @@
 class Buffer;
 class KeyPress;
 class QString;
+class Range;
 
 std::ostream &operator<<(std::ostream &, const Buffer &);
 std::ostream &operator<<(std::ostream &, const KeyPress &);
 std::ostream &operator<<(std::ostream &, const QString &);
+std::ostream &operator<<(std::ostream &, const Range &);
 
 #endif

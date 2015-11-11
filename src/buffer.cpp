@@ -3,12 +3,14 @@
 #include <QDebug>
 #include <QRegularExpression>
 
+#include "range.hpp"
+
 QDebug operator<<(QDebug debug, const Buffer &buf)
 {
   QDebugStateSaver saver(debug);
   debug.nospace()
     << "Buffer("
-    << buf.counter();
+    << buf.range();
 
   for(const QString &seq : buf)
     debug << ", " << seq;
@@ -40,9 +42,9 @@ void Buffer::push(const QString &str)
   if(str.isEmpty())
     return;
 
-  if(empty() && str[0].isNumber()) {
-    if(m_counter.size() > 0 || str[0] != '0')
-      m_counter += str;
+  if(empty() && (str[0].isNumber() || str[0] == ',')) {
+    if(m_range.size() > 0 || str[0] != '0')
+      m_range += str;
   }
   else
     m_list.push_back(str);
@@ -50,7 +52,7 @@ void Buffer::push(const QString &str)
 
 QString Buffer::toString() const
 {
-  QString string = m_counter;
+  QString string = m_range;
 
   for(const QString &seq : m_list)
     string += seq;
@@ -58,23 +60,20 @@ QString Buffer::toString() const
   return string;
 }
 
-int Buffer::counter() const
+Range Buffer::range() const
 {
-  if(m_counter.isEmpty())
-    return -1;
-  else
-    return m_counter.toInt();
+  return Range(m_range);
 }
 
 void Buffer::clear()
 {
-  resetCounter();
+  resetRange();
   m_list.clear();
 }
 
-void Buffer::resetCounter()
+void Buffer::resetRange()
 {
-  m_counter.clear();
+  m_range.clear();
 }
 
 void Buffer::truncate(const int n)

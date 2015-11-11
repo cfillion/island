@@ -6,6 +6,8 @@
 #include <set>
 #include <vector>
 
+#include "range.hpp"
+
 class Command;
 class Window;
 
@@ -66,7 +68,7 @@ public:
 
   bool isValid() const { return m_match.hasMatch(); }
 
-  ISLAND_PARSER_COMPONENT(counter);
+  ISLAND_PARSER_COMPONENT(range);
   ISLAND_PARSER_COMPONENT(name);
   ISLAND_PARSER_COMPONENT(variant);
   ISLAND_PARSER_COMPONENT(argument);
@@ -83,7 +85,7 @@ public:
 
   Command(const CommandFunc &func, const QString &arg = QString(),
       const CommandOptions::Variant va = CommandOptions::VA_DEFAULT,
-      const int counter = -1, void *data = 0);
+      const Range range = Range(), void *data = 0);
   Command(const QString &cmd);
 
   bool isValid() const { return m_isValid; }
@@ -96,9 +98,8 @@ public:
   bool hasArgument() const { return !m_arg.isEmpty(); }
   const QString &argument() const { return m_arg; }
 
-  void setCounter(const int n) { m_counter = n; }
-  bool hasCounter() const { return m_counter > 0; }
-  int counter() const { return m_counter; }
+  void setRange(const Range &r) { m_range = r; }
+  const Range &range() const { return m_range; }
 
   void setData(void *ptr) { m_data = ptr; }
   template<class T> T data() const { return static_cast<T>(m_data); }
@@ -116,7 +117,7 @@ private:
 
   bool m_isValid;
   void *m_data;
-  int m_counter;
+  Range m_range;
   CommandFunc m_func;
   QString m_arg;
   QString m_error;

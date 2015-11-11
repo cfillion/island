@@ -77,33 +77,26 @@ TEST_CASE("set counter", M) {
   Command ptr(&test_cmd);
   Command str("test");
 
-  CHECK(ptr.counter() == -1);
-  CHECK(str.counter() == -1);
-  CHECK_FALSE(ptr.hasCounter());
+  CHECK_FALSE(ptr.range().isValid());
+  CHECK_FALSE(str.range().isValid());
 
-  ptr.setCounter(42);
-  REQUIRE(ptr.counter() == 42);
-  REQUIRE(ptr.hasCounter());
+  ptr.setRange({2, 4});
+  REQUIRE(ptr.range() == Range(2, 4));
 }
 
 TEST_CASE("counter from constructor", M) {
-  Command ptr(&test_cmd, {}, VA_DEFAULT, 5);
-  REQUIRE(ptr.counter() == 5);
+  Command ptr(&test_cmd, {}, VA_DEFAULT, {1});
+  REQUIRE(ptr.range() == Range(1));
 }
 
-TEST_CASE("counter from string") {
+TEST_CASE("range from string") {
   const UseCommandRegistry reg(&TestReg);
 
   const Command cmd("42test");
   CHECK(cmd.isValid());
   CHECK(cmd.func() == &test_cmd);
-  REQUIRE(cmd.counter() == 42);
-}
-
-TEST_CASE("zero counter is invalid", M) {
-  Command cmd(&test_cmd);
-  cmd.setCounter(0);
-  REQUIRE_FALSE(cmd.hasCounter());
+  REQUIRE(cmd.range().min() == 42);
+  REQUIRE(cmd.range().max() == 42);
 }
 
 TEST_CASE("execute", M) {
@@ -273,8 +266,8 @@ TEST_CASE("command search", M) {
 
 TEST_CASE("command parser", M) {
   SECTION("empty name is valid") {
-    const CommandParser parser("4");
-    CHECK(parser.counter() == "4");
+    const CommandParser parser("4,2");
+    CHECK(parser.range() == "4,2");
     CHECK(parser.name() == "");
     REQUIRE(parser.isValid());
   }
@@ -288,15 +281,15 @@ TEST_CASE("command parser", M) {
 
   SECTION("ignores space padding") {
     const CommandParser parser("  4  test     !olleh  ");
-    CHECK(parser.counter() == "4");
+    CHECK(parser.range() == "4");
     CHECK(parser.name() == "test");
     CHECK(parser.argument() == "!olleh");
     REQUIRE(parser.isValid());
   }
 
-  SECTION("space padding before command name without counter") {
+  SECTION("space padding before command name without range") {
     const CommandParser parser("  test ");
-    CHECK(parser.counter() == "");
+    CHECK(parser.range() == "");
     CHECK(parser.name() == "test");
     REQUIRE(parser.isValid());
   }

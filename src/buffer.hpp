@@ -4,13 +4,15 @@
 #include <QString>
 #include <vector>
 
+class Range;
+
 class Buffer {
 public:
   Buffer() {}
   Buffer(const QString &in) { importString(in); }
   Buffer(const char *in) { importString(in); }
 
-  int counter() const;
+  Range range() const;
   QString toString() const;
   void truncate(const int n);
   Buffer truncateCopy(const int n) const;
@@ -18,7 +20,7 @@ public:
   bool empty() const { return m_list.empty(); }
   int size() const { return m_list.size(); }
   void clear();
-  void resetCounter();
+  void resetRange();
   void push(const QString &);
 
   const QString &operator[](const int i) const { return m_list[i]; }
@@ -32,7 +34,7 @@ public:
 private:
   void importString(const QString &input);
 
-  QString m_counter;
+  QString m_range;
   std::vector<QString> m_list;
 };
 

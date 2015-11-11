@@ -30,7 +30,7 @@ CommandParser::CommandParser(const QString &input)
 {
   static const QRegularExpression pattern(
     "\\A"
-    "(?:\\s*(?<counter>\\d+))?"
+    "(?:\\s*(?<range>\\d+(?:,\\d+)?))?"
     "(?:\\s*(?<name>[a-zA-Z0-9_]*))"
     "(?<variant>[\\!])?"
     "(?:\\s+(?<argument>.*?)\\s*)?"
@@ -43,18 +43,18 @@ CommandParser::CommandParser(const QString &input)
 CommandRegistry *Command::s_registry = 0;
 
 Command::Command(const CommandFunc &func, const QString &arg,
-    const Variant va, const int counter, void *data)
-  : m_isValid(true), m_data(data), m_counter(counter),
+    const Variant va, const Range range, void *data)
+  : m_isValid(true), m_data(data), m_range(range),
     m_func(func), m_arg(arg), m_variant(va), m_entry(0)
 {
 }
 
 Command::Command(const QString &input)
-  : m_isValid(false), m_data(0), m_counter(-1), m_func(0), m_entry(0)
+  : m_isValid(false), m_data(0), m_func(0), m_entry(0)
 {
   const CommandParser parser(input);
 
-  const QString counter = parser.counter();
+  const QString range = parser.range();
   const QString name = parser.name();
   const QString arg = parser.argument();
 
@@ -69,8 +69,8 @@ Command::Command(const QString &input)
     return;
   }
 
-  if(!counter.isEmpty())
-    m_counter = counter.toInt();
+  if(!range.isEmpty())
+    m_range = Range(range);
 
   m_isValid = true;
   m_func = m_entry->func;

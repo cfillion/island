@@ -4,6 +4,7 @@
 
 #include <buffer.hpp>
 #include <keypress.hpp>
+#include <range.hpp>
 
 template <typename T>
 static void debugPrint(std::ostream &os, const T &val)
@@ -31,5 +32,11 @@ std::ostream &operator<<(std::ostream &os, const QString &str)
 std::ostream &operator<<(std::ostream &os, const KeyPress &kp)
 {
   debugPrint(os, kp);
+  return os;
+}
+
+std::ostream &operator<<(std::ostream &os, const Range &range)
+{
+  debugPrint(os, range);
   return os;
 }

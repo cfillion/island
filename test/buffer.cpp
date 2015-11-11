@@ -2,6 +2,7 @@
 #include "helper/io.hpp"
 
 #include <buffer.hpp>
+#include <range.hpp>
 
 static const char *M = "[buffer]";
 
@@ -34,36 +35,36 @@ TEST_CASE("truncate buffer", M) {
   REQUIRE(b.truncateCopy(1) == "orld");
 }
 
-TEST_CASE("counter", M) {
+TEST_CASE("range", M) {
   Buffer b;
-  REQUIRE(b.counter() == -1);
+  REQUIRE(b.range() == Range());
 
-  b << "4" << "2";
-  REQUIRE(b.counter() == 42);
+  b << "4" << "," << "2";
+  REQUIRE(b.range() == Range(4,2));
   REQUIRE(b.empty());
-  REQUIRE(b.toString() == "42");
+  REQUIRE(b.toString() == "4,2");
 
   b << "a" << "3";
-  REQUIRE(b.counter() == 42);
+  REQUIRE(b.range() == Range(4,2));
   REQUIRE(b.size() == 2);
-  REQUIRE(b.toString() == "42a3");
+  REQUIRE(b.toString() == "4,2a3");
 
-  REQUIRE(b.truncateCopy(0).counter() == 42);
-  REQUIRE(b.truncateCopy(b.size()).counter() == -1);
+  REQUIRE(b.truncateCopy(0).range() == Range(4,2));
+  REQUIRE(b.truncateCopy(b.size()).range() == Range());
 
   b.clear();
-  REQUIRE(b.counter() == -1);
+  REQUIRE(b.range() == Range());
 }
 
-TEST_CASE("ignore leading zeros from counter") {
+TEST_CASE("ignore leading zeros from range") {
   const Buffer b("001");
-  CHECK(b.counter() == 1);
+  CHECK(b.range() == Range(1));
   CHECK(b.empty());
   REQUIRE(b.toString() == "1");
 }
 
-TEST_CASE("zero counter is ignored") {
+TEST_CASE("zero range is ignored") {
   const Buffer b("00");
   CHECK(b.empty());
-  REQUIRE(b.counter() == -1);
+  REQUIRE_FALSE(b.range().isValid());
 }
