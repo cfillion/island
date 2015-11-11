@@ -47,7 +47,7 @@ bool RangeComponent::isValid() const
   return m_type == Absolute && !isNull();
 }
 
-void RangeComponent::resolve(const int baseValue)
+void RangeComponent::resolve(const int baseValue, const int wrapBound)
 {
   switch(m_type) {
   case Absolute:
@@ -56,6 +56,10 @@ void RangeComponent::resolve(const int baseValue)
     break;
   case Relative:
     m_value += baseValue;
+
+    while(m_value < 1)
+      m_value += std::max(1, wrapBound);
+
     m_type = Absolute;
     break;
   }
@@ -125,10 +129,10 @@ bool Range::isValid() const
   return m_min.isValid() && m_max.isValid();
 }
 
-void Range::resolve(const int minimumBaseValue)
+void Range::resolve(const int minimumBaseValue, const int wrapBound)
 {
-  m_min.resolve(minimumBaseValue);
-  m_max.resolve(m_min.value());
+  m_min.resolve(minimumBaseValue, wrapBound);
+  m_max.resolve(m_min.value(), wrapBound);
 
   sort();
 }

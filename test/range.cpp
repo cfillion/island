@@ -180,6 +180,38 @@ TEST_CASE("relative zero") {
   r.resolve();
 
   CHECK(r.isValid());
-  REQUIRE(r.min().value() == 4);
-  REQUIRE(r.max().value() == 4);
+  REQUIRE(r.min() == 4);
+  REQUIRE(r.max() == 4);
+}
+
+TEST_CASE("relative wrapping") {
+  Range r({-1, RangeComponent::Relative}, {-3, RangeComponent::Relative});
+  r.resolve(1, 42);
+
+  CHECK(r.isValid());
+  REQUIRE(r.min() == 39);
+  REQUIRE(r.max() == 42);
+}
+
+TEST_CASE("relative wrapping of single ranges") {
+  Range r(RangeComponent(-1, RangeComponent::Relative));
+  r.resolve(1, 42);
+
+  CHECK(r.isValid());
+  REQUIRE(r.min() == 42);
+  REQUIRE(r.max() == 42);
+}
+
+TEST_CASE("relative deep wrapping") {
+  Range r(RangeComponent(-8, RangeComponent::Relative));
+  r.resolve(1, 2);
+
+  CHECK(r.isValid());
+  REQUIRE(r.min() == 1);
+  REQUIRE(r.max() == 1);
+}
+
+TEST_CASE("relative wrapping don't cause infinite loops due to bad input") {
+  Range r(RangeComponent(-8, RangeComponent::Relative));
+  r.resolve(1, 0);
 }

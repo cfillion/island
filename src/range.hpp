@@ -23,7 +23,7 @@ public:
   bool isValid() const;
   QString toString() const;
 
-  void resolve(const int baseValue);
+  void resolve(const int baseValue, const int wrapBound);
 
   bool operator==(const RangeComponent &) const;
   bool operator!=(const RangeComponent &) const;
@@ -52,7 +52,7 @@ public:
 
   int current() const;
   int next();
-  void resolve(const int minimumBaseValue = 1);
+  void resolve(const int minimumBaseValue = 1, const int wrapBound = 1);
   void rewind();
 
   const RangeComponent &min() const { return m_min; }

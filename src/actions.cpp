@@ -12,14 +12,15 @@ using namespace Island;
 
 static Page *GetPage(const Window *win, Range *range, CommandResult *res)
 {
-  range->resolve(win->currentPageIndex() + 1);
+  const int pageCount = win->pageCount();
+  range->resolve(win->currentPageIndex() + 1, pageCount);
 
   if(!range->hasNext())
     return 0;
 
   const int current = range->next();
 
-  if(current <= win->pageCount())
+  if(current <= pageCount)
     return win->page(current - 1);
 
   res->ok = false;
