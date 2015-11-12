@@ -42,6 +42,8 @@ int main(int argc, char *argv[])
   nmap.set("L", ":forward %c<CR>");
   nmap.set("ga", &Actions::tab_open);
   nmap.set("gt", &Actions::tab_goto);
+  nmap.set("J", &Actions::tab_next);
+  nmap.set("K", &Actions::tab_prev);
   nmap.set("r", &Actions::tab_reload);
   nmap.set("R", {&Actions::tab_reload, {}, VA_FORCE});
   nmap.set("o", ":%ropen<Space>");
@@ -51,7 +53,7 @@ int main(int argc, char *argv[])
   nmap.set("/", &Actions::search_forward);
   nmap.set("?", &Actions::search_backward);
   nmap.set("n", &Actions::search_next);
-  nmap.set("N", &Actions::search_previous);
+  nmap.set("N", &Actions::search_prev);
   nmap.set("<Esc>", &Actions::search_clear);
   nmap.set("<C-c>", &Actions::tab_stop);
 

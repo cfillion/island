@@ -15,6 +15,8 @@ namespace Actions {
   CommandResult tab_close(const Command &);
   CommandResult tab_stop(const Command &);
   CommandResult tab_goto(const Command &);
+  CommandResult tab_next(const Command &);
+  CommandResult tab_prev(const Command &);
 
   CommandResult history_back(const Command &);
   CommandResult history_forward(const Command &);
@@ -31,7 +33,7 @@ namespace Actions {
   CommandResult search_forward(const Command &);
   CommandResult search_backward(const Command &);
   CommandResult search_next(const Command &);
-  CommandResult search_previous(const Command &);
+  CommandResult search_prev(const Command &);
   CommandResult search_clear(const Command &);
 };
 

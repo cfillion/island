@@ -128,6 +128,33 @@ CommandResult Actions::tab_goto(const Command &cmd)
   return res;
 }
 
+CommandResult Actions::tab_next(const Command &cmd)
+{
+  Range r(cmd.range());
+  r.resolve();
+
+  const int index = WIN->currentPageIndex() + r.counter();
+
+  WIN->setCurrentPageIndex(index % WIN->pageCount());
+
+  return {};
+}
+
+CommandResult Actions::tab_prev(const Command &cmd)
+{
+  Range r(cmd.range());
+  r.resolve();
+
+  int index = WIN->currentPageIndex() - r.counter();
+
+  while(index < 0)
+    index += WIN->pageCount();
+
+  WIN->setCurrentPageIndex(index);
+
+  return {};
+}
+
 CommandResult Actions::history_back(const Command &cmd)
 {
   const int jumpSize = cmd.variant() == VA_DEFAULT
@@ -228,7 +255,7 @@ CommandResult Actions::search_next(const Command &)
   return {false, "Not implemented"};
 }
 
-CommandResult Actions::search_previous(const Command &)
+CommandResult Actions::search_prev(const Command &)
 {
   return {false, "Not implemented"};
 }

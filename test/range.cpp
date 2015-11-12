@@ -227,3 +227,8 @@ TEST_CASE("relative wrapping don't cause infinite loops due to bad input") {
   Range r(RangeComponent(-8, RangeComponent::Relative));
   r.resolve(1, 0);
 }
+
+TEST_CASE("counter is the range's minimum value") {
+  Range r(2, 4);
+  REQUIRE(r.counter() == r.min().value());
+}

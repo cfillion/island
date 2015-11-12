@@ -55,6 +55,7 @@ public:
   void resolve(const int minimumBaseValue = 1, const int wrapBound = 1);
   void rewind();
 
+  int counter() const { return m_min.value(); }
   const RangeComponent &min() const { return m_min; }
   const RangeComponent &max() const { return m_max; }
 
