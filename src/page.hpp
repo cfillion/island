@@ -38,6 +38,8 @@ public:
   int loadProgress() const;
 
   bool historyMotion(const int);
+  bool canGoBack() const;
+  bool canGoForward() const;
   bool load(const QString &input);
   void reload(const bool useCache = true);
   void findText(const QString &, const bool forward = true);
@@ -51,7 +53,8 @@ Q_SIGNALS:
   void triggered(Page *);
 
 private:
-  QUrl parseUrl(const QString &input);
+  static QUrl parseUrl(const QString &input);
+
   void setUrl(const QUrl &);
   void fetchIcon(const QUrl &);
   void setLoading(const bool);

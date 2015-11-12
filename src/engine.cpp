@@ -73,6 +73,17 @@ bool Engine::historyMotion(const int movement)
   return index >= 0 && index < size;
 }
 
+bool Engine::canGoBack() const
+{
+  return history()->canGoBack();
+}
+
+bool Engine::canGoForward() const
+{
+  return history()->canGoForward();
+}
+
+
 bool Engine::loadDeferredUrl()
 {
   if(m_deferredUrl.isEmpty())

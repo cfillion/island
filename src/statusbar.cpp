@@ -28,7 +28,7 @@ StatusBar::StatusBar(QWidget *parent)
   m_url->setAlignment(Qt::AlignRight);
   m_url->setTextFormat(Qt::PlainText);
 
-  m_tabPosition = new QLabel;
+  m_pageState = new QLabel;
 
   m_progress = new QProgressBar;
   m_progress->setTextVisible(false);
@@ -45,7 +45,7 @@ StatusBar::StatusBar(QWidget *parent)
   layout->addWidget(m_prompt);
   layout->addWidget(m_buffer);
   layout->addWidget(m_url);
-  layout->addWidget(m_tabPosition);
+  layout->addWidget(m_pageState);
   layout->addWidget(m_progress);
   layout->setStretch(1, 20);
   layout->setStretch(2, 20);
@@ -74,11 +74,31 @@ void StatusBar::updateLabels()
   m_url->setText(metrics.elidedText(m_page->displayUrl(),
     Qt::ElideMiddle, width() / 2));
 
-  const int pageId = m_page->index() + 1;
-  m_tabPosition->setText(QString("[%0/%2]").arg(pageId).arg(m_pageCount));
+  m_pageState->setText(currentStateText());
 
   m_progress->setVisible(m_page->isLoading());
   m_progress->setValue(m_page->loadProgress());
+}
+
+QString StatusBar::currentStateText() const
+{
+  QString history;
+  if(m_page->canGoBack())
+    history.append('+');
+  if(m_page->canGoForward())
+    history.append('-');
+
+  const int pageId = m_page->index() + 1;
+  const QString pageIndex = QString("%0/%2").arg(pageId).arg(m_pageCount);
+
+  QStringList components = QStringList()
+    << history
+    << pageIndex
+  ;
+
+  components.removeAll(QString());
+
+  return QString("[%1]").arg(components.join("] ["));
 }
 
 void StatusBar::setPageCount(const int pageCount)
@@ -139,9 +159,10 @@ void StatusBar::resizeEvent(QResizeEvent *e)
   const int width = e->size().width();
   const bool showAll = width > 150;
 
+  m_status->setVisible(width > 500);
   m_url->setVisible(width > 400);
   m_buffer->setVisible(showAll);
-  m_tabPosition->setVisible(showAll);
+  m_pageState->setVisible(showAll);
 
   updateLabels();
 }

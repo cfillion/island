@@ -130,6 +130,16 @@ bool Page::historyMotion(const int motion)
   return m_engine->historyMotion(motion);
 }
 
+bool Page::canGoBack() const
+{
+  return m_engine->canGoBack();
+}
+
+bool Page::canGoForward() const
+{
+  return m_engine->canGoForward();
+}
+
 bool Page::load(const QString &input)
 {
   const QUrl url = parseUrl(input);

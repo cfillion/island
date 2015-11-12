@@ -14,6 +14,8 @@ public:
 
   bool loadDeferredUrl();
 
+  bool canGoBack() const;
+  bool canGoForward() const;
   bool historyMotion(const int);
   void setUrl(const QUrl &url);
 

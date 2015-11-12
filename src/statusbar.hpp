@@ -34,6 +34,7 @@ protected:
 
 private:
   void updateLabels();
+  QString currentStateText() const;
 
   Page *m_page;
   int m_pageCount;
@@ -43,8 +44,8 @@ private:
   Prompt *m_prompt;
   QLabel *m_buffer;
   QLabel *m_url;
+  QLabel *m_pageState;
   QProgressBar *m_progress;
-  QLabel *m_tabPosition;
 };
 
 #endif
