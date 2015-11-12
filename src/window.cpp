@@ -356,7 +356,7 @@ QString Window::sprintf(const QString &input) const
 
   while(it.hasNext()) {
     const auto match = it.next();
-    const QCharRef c = match.captured(1)[0];
+    const QChar &c = match.captured(1)[0];
     QString replacement;
 
     if(!expandFormat(c, replacement))
