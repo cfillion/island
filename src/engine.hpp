@@ -4,11 +4,13 @@
 #include <QUrl>
 #include <QWebEngineView>
 
+class Window;
+
 class Engine : public QWebEngineView {
   Q_OBJECT
 
 public:
-  Engine(const QUrl &url, QWidget *parent = 0);
+  Engine(const QUrl &url, Window *parent = 0);
   QUrl url() const;
   QString title() const;
 
@@ -24,6 +26,8 @@ Q_SIGNALS:
   void linkHovered(const QString &);
 
 protected:
+  QWebEngineView *createWindow(QWebEnginePage::WebWindowType type) override;
+
   void showEvent(QShowEvent *) override;
   void childEvent(QChildEvent *) override;
   bool eventFilter(QObject *, QEvent *) override;
@@ -33,6 +37,7 @@ private:
 
   QString m_titleOverride;
   QUrl m_deferredUrl;
+  Window *m_window;
 };
 
 #endif

@@ -4,8 +4,11 @@
 #include <QWebEngineHistory>
 #include <QWebEngineSettings>
 
-Engine::Engine(const QUrl &url, QWidget *parent)
-  : QWebEngineView(parent)
+#include "page.hpp"
+#include "window.hpp"
+
+Engine::Engine(const QUrl &url, Window *window)
+  : QWebEngineView(window), m_window(window)
 {
   connect(page(), &QWebEnginePage::linkHovered, this, &Engine::linkHovered);
 
@@ -36,6 +39,12 @@ bool Engine::eventFilter(QObject *, QEvent *e)
     Q_EMIT triggered();
 
   return false;
+}
+
+QWebEngineView *Engine::createWindow(QWebEnginePage::WebWindowType)
+{
+  const int index = m_window->addPage(QString());
+  return m_window->page(index)->engine();
 }
 
 QUrl Engine::url() const
@@ -82,7 +91,6 @@ bool Engine::canGoForward() const
 {
   return history()->canGoForward();
 }
-
 
 bool Engine::loadDeferredUrl()
 {
