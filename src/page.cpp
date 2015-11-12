@@ -11,17 +11,16 @@
 Page::Page(const QString &url, Window *parent)
   : QObject(parent), m_window(parent), m_viewport(0), m_iconReply(0)
 {
-  m_engine = new Engine(parseUrl(url), parent);
+  m_engine = new Engine(parent);
 
   m_label = new TabLabel(parent);
-  m_label->setTitle(m_engine->title());
 
   // TODO: use a global app-wide instance
   m_iconRequestManager = new QNetworkAccessManager(this);
 
   connect(this, &Page::iconChanged, label(), &TabLabel::setIcon);
 
-  connect(engine(), &Engine::titleChanged, label(), &TabLabel::setTitle);
+  connect(engine(), &Engine::titleChanged, this, &Page::setTitle);
   connect(engine(), &Engine::triggered, this, [=] { Q_EMIT triggered(this); });
   connect(engine(), &Engine::linkHovered, this, &Page::setHoveredLink);
   connect(engine(), &Engine::iconUrlChanged, this, &Page::fetchIcon);
@@ -32,6 +31,8 @@ Page::Page(const QString &url, Window *parent)
   // proxy connections
   connect(label(), &TabLabel::textChanged, this, &Page::displayTitleChanged);
   connect(engine(), &Engine::urlChanged, this, &Page::displayUrlChanged);
+
+  m_engine->setUrl(parseUrl(url));
 }
 
 void Page::destroyComponents()
@@ -107,6 +108,11 @@ int Page::loadProgress() const
   return label()->loadProgress();
 }
 
+void Page::setTitle()
+{
+  label()->setTitle(engine()->title());
+}
+
 void Page::setLoading(const bool isLoading)
 {
   label()->setLoading(isLoading);
@@ -140,28 +146,6 @@ bool Page::canGoForward() const
   return m_engine->canGoForward();
 }
 
-bool Page::load(const QString &input)
-{
-  const QUrl url = parseUrl(input);
-
-  if(!url.isValid())
-    return false;
-
-  m_engine->setUrl(url);
-  return true;
-}
-
-void Page::reload(const bool useCache)
-{
-  if(m_engine->loadDeferredUrl())
-    return;
-
-  m_engine->triggerPageAction(
-    useCache ? QWebEnginePage::Reload
-    : QWebEnginePage::ReloadAndBypassCache
-  );
-}
-
 void Page::findText(const QString &input, const bool forward)
 {
   QWebEnginePage::FindFlags flags;
@@ -172,9 +156,25 @@ void Page::findText(const QString &input, const bool forward)
   m_engine->findText(input, flags);
 }
 
+void Page::reload(const bool useCache)
+{
+  engine()->reload(useCache);
+}
+
 void Page::stop()
 {
-  m_engine->triggerPageAction(QWebEnginePage::Stop);
+  engine()->stop();
+}
+
+bool Page::load(const QString &input)
+{
+  const QUrl url = parseUrl(input);
+
+  if(!url.isValid())
+    return false;
+
+  m_engine->setUrl(url);
+  return true;
 }
 
 QUrl Page::parseUrl(const QString &input)

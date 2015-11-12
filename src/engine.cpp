@@ -2,25 +2,35 @@
 
 #include <QChildEvent>
 #include <QWebEngineHistory>
+#include <QWebEngineProfile>
 #include <QWebEngineSettings>
 
 #include "page.hpp"
 #include "window.hpp"
 
-Engine::Engine(const QUrl &url, Window *window)
+Engine::Engine(Window *window)
   : QWebEngineView(window), m_window(window)
 {
-  connect(page(), &QWebEnginePage::linkHovered, this, &Engine::linkHovered);
+  EnginePage *page = new EnginePage(window);
+  setPage(page);
+
+  connect(page, &QWebEnginePage::linkHovered, this, &Engine::linkHovered);
 
   settings()->setAttribute(QWebEngineSettings::LinksIncludedInFocusChain, false);
 
   // TODO: optional load on focus setting
-  setDeferredUrl(url);
+  page->setBlockRequests(true);
+}
+
+EnginePage *Engine::page() const
+{
+  return dynamic_cast<EnginePage *>(QWebEngineView::page());
 }
 
 void Engine::showEvent(QShowEvent *)
 {
-  loadDeferredUrl();
+  if(page()->isBlockingRequests())
+    reload();
 }
 
 void Engine::childEvent(QChildEvent *e)
@@ -28,7 +38,7 @@ void Engine::childEvent(QChildEvent *e)
   if(!e->added())
     return;
 
-  // using childEvent is required to handle events on the webview
+  // using childEvent is required to handle most events on the webview
   // see https://bugreports.qt.io/browse/QTBUG-43602
   e->child()->installEventFilter(this);
 }
@@ -49,9 +59,6 @@ QWebEngineView *Engine::createWindow(QWebEnginePage::WebWindowType)
 
 QUrl Engine::url() const
 {
-  if(!m_deferredUrl.isEmpty())
-    return m_deferredUrl;
-
   QUrl url(page()->url());
 
   if(url.isEmpty())
@@ -62,10 +69,25 @@ QUrl Engine::url() const
 
 QString Engine::title() const
 {
-  if(m_titleOverride.isEmpty())
-    return QWebEngineView::title();
-  else
-    return m_titleOverride;
+  if(page()->isBlockingRequests()) {
+    return "*"+url()
+      .toString(QUrl::RemoveScheme | QUrl::RemoveUserInfo | QUrl::DecodeReserved)
+      .remove(QRegExp("^//(www\\.)?"))
+    ;
+  }
+
+  return QWebEngineView::title();
+}
+
+void Engine::reload(const bool useCache)
+{
+  if(page()->isBlockingRequests())
+    page()->setBlockRequests(false);
+
+  triggerPageAction(
+    useCache ? QWebEnginePage::Reload
+    : QWebEnginePage::ReloadAndBypassCache
+  );
 }
 
 bool Engine::historyMotion(const int movement)
@@ -92,33 +114,25 @@ bool Engine::canGoForward() const
   return history()->canGoForward();
 }
 
-bool Engine::loadDeferredUrl()
+void Engine::stop()
 {
-  if(m_deferredUrl.isEmpty())
-    return false;
-
-  load(m_deferredUrl);
-  m_deferredUrl = QUrl();
-
-  return true;
+  triggerPageAction(QWebEnginePage::Stop);
 }
 
-void Engine::setDeferredUrl(const QUrl &url)
+EnginePage::EnginePage(QObject *parent)
+  : QWebEnginePage(new QWebEngineProfile(parent), parent),
+    m_blockRequests(false)
 {
-  m_deferredUrl = url;
-
-  m_titleOverride = "*"+url
-    .toString(QUrl::RemoveScheme | QUrl::RemoveUserInfo | QUrl::DecodeReserved)
-    .remove(QRegExp("^//(www\\.)?"))
-  ;
-
-  Q_EMIT titleChanged(m_titleOverride);
 }
 
-void Engine::setUrl(const QUrl &url)
+Engine *EnginePage::view() const
 {
-  if(m_deferredUrl.isEmpty())
-    load(url);
-  else
-    setDeferredUrl(url);
+  return dynamic_cast<Engine *>(QWebEnginePage::view());
+}
+
+bool EnginePage::acceptNavigationRequest(const QUrl &, NavigationType, bool)
+{
+  Q_EMIT titleChanged(QString());
+
+  return !m_blockRequests;
 }

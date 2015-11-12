@@ -4,22 +4,24 @@
 #include <QUrl>
 #include <QWebEngineView>
 
+class EnginePage;
 class Window;
 
 class Engine : public QWebEngineView {
   Q_OBJECT
 
 public:
-  Engine(const QUrl &url, Window *parent = 0);
+  Engine(Window *parent = 0);
   QUrl url() const;
   QString title() const;
 
-  bool loadDeferredUrl();
+  EnginePage *page() const;
 
+  void reload(const bool useCache = true);
+  void stop();
   bool canGoBack() const;
   bool canGoForward() const;
   bool historyMotion(const int);
-  void setUrl(const QUrl &url);
 
 Q_SIGNALS:
   void triggered();
@@ -33,11 +35,25 @@ protected:
   bool eventFilter(QObject *, QEvent *) override;
 
 private:
-  void setDeferredUrl(const QUrl &);
-
-  QString m_titleOverride;
-  QUrl m_deferredUrl;
   Window *m_window;
+};
+
+class EnginePage : public QWebEnginePage {
+  Q_OBJECT
+
+public:
+  EnginePage(QObject *parent = 0);
+
+  bool isBlockingRequests() const { return m_blockRequests; }
+  void setBlockRequests(const bool newVal) { m_blockRequests = newVal; }
+
+  Engine *view() const;
+
+protected:
+  bool acceptNavigationRequest(const QUrl &, NavigationType, bool) override;
+
+private:
+  bool m_blockRequests;
 };
 
 #endif

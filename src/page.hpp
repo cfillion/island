@@ -40,10 +40,10 @@ public:
   bool historyMotion(const int);
   bool canGoBack() const;
   bool canGoForward() const;
-  bool load(const QString &input);
-  void reload(const bool useCache = true);
-  void findText(const QString &, const bool forward = true);
+  void reload(const bool = true);
   void stop();
+  void findText(const QString &, const bool forward = true);
+  bool load(const QString &input);
 
 Q_SIGNALS:
   void displayTitleChanged(const QString &);
@@ -55,8 +55,8 @@ Q_SIGNALS:
 private:
   static QUrl parseUrl(const QString &input);
 
-  void setUrl(const QUrl &);
   void fetchIcon(const QUrl &);
+  void setTitle();
   void setLoading(const bool);
   void setLoadProgress(const int);
   void setHoveredLink(const QString &);
