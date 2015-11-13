@@ -66,6 +66,7 @@ private:
   void execSearchPrompt(const QString &);
   void execMapping();
   void execCommand(Command &);
+  void rewindMapping();
   void clearBuffer();
   void resizeCompleter();
 

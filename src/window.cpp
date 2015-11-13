@@ -243,6 +243,8 @@ bool Window::handleInput(const KeyPress &kp)
     else if(!m_buffer.empty())
       clearBuffer();
 
+    rewindMapping();
+
     return eatKey;
   }
 }
@@ -325,8 +327,7 @@ void Window::execMapping()
 {
   const Mapping *mapping = m_mapping;
 
-  if(m_mapping->root())
-    m_mapping = m_mapping->root();
+  rewindMapping();
 
   if(mapping->bindingType() == Mapping::CommandBinding) {
     Command cmd = *mapping->boundCommand();
@@ -356,6 +357,12 @@ void Window::execCommand(Command &cmd)
     message.prepend("Error: ");
 
   m_status->setStatus(message);
+}
+
+void Window::rewindMapping()
+{
+  if(m_mapping->root())
+    m_mapping = m_mapping->root();
 }
 
 void Window::clearBuffer()
