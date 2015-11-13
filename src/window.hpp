@@ -38,6 +38,7 @@ public:
   int currentPageIndex() const;
   int pageCount() const { return m_pages.size(); }
   Page *page(const int i) const { return m_pages.value(i); }
+  void movePage(Page *, const int newIndex);
   void closeTab(const int index);
   void closePage(Page *page);
 

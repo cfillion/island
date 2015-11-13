@@ -128,6 +128,24 @@ void Window::setCurrentPage(Page *p)
   clearBuffer();
 }
 
+void Window::movePage(Page *page, const int to)
+{
+  const int oldIndex = page->index();
+  const int newIndex = std::max(0, std::min(to, pageCount() - 1));
+
+  if(oldIndex == newIndex)
+    return;
+
+  m_pages.move(oldIndex, newIndex);
+
+  TabLabel *label = page->label();
+  m_tabs->removeLabel(label);
+  m_tabs->insertLabel(newIndex, label);
+
+  // newIndex may be smaller than oldIndex (eg. :tabmove -1)
+  shiftPageIndexes(std::min(newIndex, oldIndex));
+}
+
 void Window::closeTab(const int index)
 {
   if(Page *p = page(index))

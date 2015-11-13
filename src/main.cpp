@@ -45,6 +45,9 @@ int main(int argc, char *argv[])
   nmap.set("J", &Actions::tab_next);
   nmap.set("K", &Actions::tab_prev);
   nmap.set("r", &Actions::tab_reload);
+  nmap.set("gm", ":tabmove %c<CR>");
+  nmap.set("gr", ":tabrmove %c<CR>");
+  nmap.set("gl", ":tablmove %c<CR>");
   nmap.set("R", {&Actions::tab_reload, {}, VA_FORCE});
   nmap.set("o", ":%ropen<Space>");
   nmap.set("O", ":%rtabopen<Space>");

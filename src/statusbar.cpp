@@ -60,6 +60,7 @@ void StatusBar::setPage(Page *p)
   m_page = p;
   connect(m_page, &Page::displayUrlChanged, this, &StatusBar::updateLabels);
   connect(m_page, &Page::progressChanged, this, &StatusBar::updateLabels);
+  connect(m_page, &Page::indexChanged, this, &StatusBar::updateLabels);
 
   updateLabels();
 }

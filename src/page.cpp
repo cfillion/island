@@ -18,6 +18,7 @@ Page::Page(const QString &url, Window *parent)
   // TODO: use a global app-wide instance
   m_iconRequestManager = new QNetworkAccessManager(this);
 
+  connect(this, &Page::indexChanged, label(), &TabLabel::setIndex);
   connect(this, &Page::iconChanged, label(), &TabLabel::setIcon);
 
   connect(engine(), &Engine::titleChanged, this, &Page::setTitle);
@@ -76,7 +77,7 @@ int Page::index() const
 
 void Page::setIndex(const int newIndex)
 {
-  label()->setIndex(newIndex);
+  Q_EMIT indexChanged(newIndex);
 }
 
 bool Page::isCurrent() const

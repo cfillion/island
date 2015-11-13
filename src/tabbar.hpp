@@ -12,6 +12,7 @@ class TabBar : public QWidget {
 public:
   TabBar(QWidget *parent = 0);
   void insertLabel(const int index, TabLabel *);
+  void removeLabel(TabLabel *);
 
 Q_SIGNALS:
   void triggered(const int index);

@@ -29,6 +29,21 @@ static Page *GetPage(const Window *win, Range *range, CommandResult *res)
   return 0;
 };
 
+static std::vector<Page *> GetPages(const Window *win,
+  Range *range, CommandResult *res)
+{
+  // Collecting matching first helps commands affecting page id (eg :close)
+  // Otherwise the end of the range could no longer be a valid tab identifier
+  // by the time we get there using only GetPage.
+
+  std::vector<Page *> vector;
+
+  while(Page *page = GetPage(win, range, res))
+    vector.push_back(page);
+
+  return vector;
+}
+
 CommandResult Actions::normal_mode(const Command &cmd)
 {
   WIN->setMode(NormalMode);
@@ -91,16 +106,8 @@ CommandResult Actions::tab_close(const Command &cmd)
 {
   CommandResult res;
 
-  // Storing the matching pages first to fix closing a range of page.
-  // Otherwise the end of the range would no longer be a valid tab id
-  // by the time we get there.
-  std::vector<Page *> pages;
-
   Range range = cmd.range();
-  while(Page *p = GetPage(WIN, &range, &res))
-    pages.push_back(p);
-
-  for(Page *p : pages)
+  for(Page *p : GetPages(WIN, &range, &res))
     WIN->closePage(p);
 
   return res;
@@ -153,6 +160,48 @@ CommandResult Actions::tab_prev(const Command &cmd)
   WIN->setCurrentPageIndex(index);
 
   return {};
+}
+
+CommandResult Actions::tab_move(const Command &cmd)
+{
+  if(!cmd.hasArgument())
+    return {false, "Missing motion"};
+
+  CommandResult res;
+
+  const int newIndex = std::max(1, cmd.argument().toInt()) - 1;
+
+  Range range(cmd.range());
+  if(Page *p = GetPage(WIN, &range, &res))
+    WIN->movePage(p, newIndex);
+
+  return res;
+}
+
+CommandResult Actions::tab_move_right(const Command &cmd)
+{
+  CommandResult res;
+
+  const int motion = std::max(1, cmd.argument().toInt());
+
+  Range range(cmd.range());
+  for(Page *p : GetPages(WIN, &range, &res))
+    WIN->movePage(p, p->index() + motion);
+
+  return res;
+}
+
+CommandResult Actions::tab_move_left(const Command &cmd)
+{
+  CommandResult res;
+
+  const int motion = std::max(1, cmd.argument().toInt());
+
+  Range range(cmd.range());
+  for(Page *p : GetPages(WIN, &range, &res))
+    WIN->movePage(p, p->index() - motion);
+
+  return res;
 }
 
 CommandResult Actions::history_back(const Command &cmd)

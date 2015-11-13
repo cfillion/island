@@ -17,6 +17,9 @@ namespace Actions {
   CommandResult tab_goto(const Command &);
   CommandResult tab_next(const Command &);
   CommandResult tab_prev(const Command &);
+  CommandResult tab_move(const Command &);
+  CommandResult tab_move_left(const Command &);
+  CommandResult tab_move_right(const Command &);
 
   CommandResult history_back(const Command &);
   CommandResult history_forward(const Command &);

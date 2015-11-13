@@ -19,6 +19,11 @@ void TabBar::insertLabel(const int index, TabLabel *label)
   m_layout->insertWidget(index, label);
 }
 
+void TabBar::removeLabel(TabLabel *label)
+{
+  m_layout->removeWidget(label);
+}
+
 void TabBar::mousePressEvent(QMouseEvent *e)
 {
   QObject *obj = childAt(e->pos());

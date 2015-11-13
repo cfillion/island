@@ -46,6 +46,7 @@ public:
   bool load(const QString &input);
 
 Q_SIGNALS:
+  void indexChanged(const int);
   void displayTitleChanged(const QString &);
   void iconChanged(const QIcon &);
   void displayUrlChanged();
