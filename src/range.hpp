@@ -47,6 +47,7 @@ public:
   Range(const QString &);
 
   bool isValid() const;
+  bool isNull() const;
   bool hasNext() const;
   QString toString(const Format mode = Default) const;
 

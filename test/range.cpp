@@ -149,10 +149,12 @@ TEST_CASE("resolve null range") {
   Range r;
   REQUIRE(r.min() == 0);
   REQUIRE(r.max() == 0);
+  REQUIRE(r.isNull());
 
   r.resolve(42);
   REQUIRE(r.min() == 42);
   REQUIRE(r.max() == 42);
+  REQUIRE_FALSE(r.isNull());
 }
 
 TEST_CASE("relative minimum") {

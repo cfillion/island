@@ -135,6 +135,11 @@ bool Range::isValid() const
   return m_min.isValid() && m_max.isValid();
 }
 
+bool Range::isNull() const
+{
+  return m_min.isNull() && m_max.isNull();
+}
+
 void Range::resolve(const int minimumBaseValue, const int wrapBound)
 {
   m_min.resolve(minimumBaseValue, wrapBound);

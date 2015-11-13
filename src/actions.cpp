@@ -126,9 +126,15 @@ CommandResult Actions::tab_stop(const Command &cmd)
 
 CommandResult Actions::tab_goto(const Command &cmd)
 {
+  Range range = cmd.range();
+
+  if(range.isNull()) {
+    WIN->setCurrentPageIndex(0);
+    return {};
+  }
+
   CommandResult res;
 
-  Range range = cmd.range();
   while(Page *p = GetPage(WIN, &range, &res))
     WIN->setCurrentPage(p);
 
