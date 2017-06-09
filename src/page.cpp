@@ -5,9 +5,6 @@
 #include "viewport.hpp"
 #include "window.hpp"
 
-#include <QNetworkReply>
-#include <QNetworkRequest>
-
 Page::Page(const QString &url, Window *parent)
   : QObject(parent), m_window(parent), m_viewport(0), m_iconReply(0)
 {
@@ -15,19 +12,15 @@ Page::Page(const QString &url, Window *parent)
 
   m_label = new TabLabel(parent);
 
-  // TODO: use a global app-wide instance
-  m_iconRequestManager = new QNetworkAccessManager(this);
-
   connect(this, &Page::indexChanged, label(), &TabLabel::setIndex);
-  connect(this, &Page::iconChanged, label(), &TabLabel::setIcon);
 
   connect(engine(), &Engine::titleChanged, this, &Page::setTitle);
   connect(engine(), &Engine::triggered, this, [=] { Q_EMIT triggered(this); });
   connect(engine(), &Engine::linkHovered, this, &Page::setHoveredLink);
-  connect(engine(), &Engine::iconUrlChanged, this, &Page::fetchIcon);
   connect(engine(), &Engine::loadStarted, this, [=] { setLoading(true); });
   connect(engine(), &Engine::loadProgress, this, &Page::setLoadProgress);
   connect(engine(), &Engine::loadFinished, this, [=] { setLoading(false); });
+  connect(engine(), &Engine::iconChanged, label(), &TabLabel::setIcon);
 
   // proxy connections
   connect(label(), &TabLabel::textChanged, this, &Page::displayTitleChanged);
@@ -43,26 +36,6 @@ void Page::destroyComponents()
 
   if(m_viewport->count() == 1)
     m_viewport->deleteLater();
-}
-
-void Page::fetchIcon(const QUrl &url)
-{
-  if(m_iconReply) {
-    if(m_iconReply->url() == url)
-      return;
-
-    m_iconReply->abort();
-    m_iconReply->deleteLater();
-  }
-
-  m_iconReply = m_iconRequestManager->get(QNetworkRequest(url));
-  m_iconReply->setParent(this);
-
-  connect(m_iconReply, &QNetworkReply::finished, this, [=] {
-    const QByteArray data = m_iconReply->readAll();
-    m_icon = QIcon(QPixmap::fromImage(QImage::fromData(data)));
-    Q_EMIT iconChanged(m_icon);
-  });
 }
 
 QString Page::displayTitle() const

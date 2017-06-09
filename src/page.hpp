@@ -56,7 +56,6 @@ Q_SIGNALS:
 private:
   static QUrl parseUrl(const QString &input);
 
-  void fetchIcon(const QUrl &);
   void setTitle();
   void setLoading(const bool);
   void setLoadProgress(const int);
