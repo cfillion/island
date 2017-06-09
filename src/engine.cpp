@@ -27,10 +27,12 @@ EnginePage *Engine::page() const
   return dynamic_cast<EnginePage *>(QWebEngineView::page());
 }
 
-void Engine::showEvent(QShowEvent *)
+void Engine::showEvent(QShowEvent *e)
 {
   if(page()->isBlockingRequests())
     reload();
+  else
+    QWebEngineView::showEvent(e);
 }
 
 void Engine::childEvent(QChildEvent *e)
