@@ -1,4 +1,4 @@
-#include "vendor/catch.hpp"
+#include <catch.hpp>
 #include "helper/io.hpp"
 
 #include <command.hpp>

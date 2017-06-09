@@ -1,4 +1,4 @@
-#include "vendor/catch.hpp"
+#include <catch.hpp>
 
 #include <boost/none.hpp>
 #include <mapping.hpp>

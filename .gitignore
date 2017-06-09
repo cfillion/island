@@ -1,4 +1,5 @@
-build/
-bin/
-.tup/
-test/vendor/catch.hpp
+/.tup/
+/bin/
+/build/
+/GPUCache/
+/vendor/

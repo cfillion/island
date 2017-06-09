@@ -26,7 +26,7 @@ CXX = join {
   '`pkg-config --cflags Qt5WebEngineWidgets`',
 }
 
-CCFLAGS = '-c %f -o %o'
+CCFLAGS = '-c %f -o %o -Ivendor'
 LDFLAGS  = join {
   '%f',
   '`pkg-config --libs Qt5WebEngineWidgets`',
